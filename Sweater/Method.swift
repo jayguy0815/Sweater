@@ -47,5 +47,11 @@ class Methods{
         return dateString
     }
     
-    
+    //MARK: func - check file in app.
+    func checkFile(fileName :String) -> Bool {
+        let fileManager = FileManager.default
+        let filePath = NSHomeDirectory()+"/Documents/"+fileName
+        let exist = fileManager.fileExists(atPath: filePath)
+        return exist
+    }
 }

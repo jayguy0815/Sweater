@@ -19,15 +19,12 @@ class CreateActivityViewController: UIViewController,UINavigationControllerDeleg
     @IBOutlet weak var datePicker: UIDatePicker!
     @IBOutlet weak var peoplePicker: UIPickerView!
     
-    
-    
     var sportType : String?
     let errorText : String = "錯誤"
     let pleaseEnter : String = "請輸入"
     let methods = Methods()
     var activity : [String : Any] = [:]
     var people : [Int] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
-    
 
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -14,6 +14,10 @@
 		2D204A7322B0A13300D8749A /* mainBackground.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2D204A7222B0A13300D8749A /* mainBackground.jpg */; };
 		2D204A7722B0A44A00D8749A /* basketball.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D204A7622B0A44A00D8749A /* basketball.png */; };
 		2D204A7B22B0A75400D8749A /* badminton.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D204A7A22B0A75400D8749A /* badminton.png */; };
+		2D6E43CE22B774FF0073E56F /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E43CD22B774FF0073E56F /* TestViewController.swift */; };
+		2D6E43D022B77D4B0073E56F /* MapSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E43CF22B77D4B0073E56F /* MapSelectionViewController.swift */; };
+		2D6E43F022B8ECD80073E56F /* MapData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E43EF22B8ECD80073E56F /* MapData.swift */; };
+		2D6E43F322B9D42F0073E56F /* CustomAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E43F222B9D42F0073E56F /* CustomAnnotation.swift */; };
 		2DFD9DCE22A8F7B1006A58E2 /* AuthTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DFD9DCA22A8F7B1006A58E2 /* AuthTestViewController.swift */; };
 		2DFD9DD122A8F7B1006A58E2 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DFD9DCD22A8F7B1006A58E2 /* SignUpViewController.swift */; };
 		2DFD9DD322A8F950006A58E2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DFD9DD222A8F950006A58E2 /* AppDelegate.swift */; };
@@ -41,6 +45,10 @@
 		2D204A7A22B0A75400D8749A /* badminton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = badminton.png; sourceTree = "<group>"; };
 		2D3F3FC4226F15360098B414 /* Sweater.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sweater.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D3F3FD5226F15370098B414 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2D6E43CD22B774FF0073E56F /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
+		2D6E43CF22B77D4B0073E56F /* MapSelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSelectionViewController.swift; sourceTree = "<group>"; };
+		2D6E43EF22B8ECD80073E56F /* MapData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapData.swift; sourceTree = "<group>"; };
+		2D6E43F222B9D42F0073E56F /* CustomAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAnnotation.swift; sourceTree = "<group>"; };
 		2DFD9DCA22A8F7B1006A58E2 /* AuthTestViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthTestViewController.swift; sourceTree = "<group>"; };
 		2DFD9DCD22A8F7B1006A58E2 /* SignUpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		2DFD9DD222A8F950006A58E2 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -119,6 +127,7 @@
 			isa = PBXGroup;
 			children = (
 				2DFD9DD822A8FAA1006A58E2 /* Launch Screen.storyboard */,
+				2D6E43F122B9D3EA0073E56F /* Map */,
 				2D204A6F22B08D0E00D8749A /* Image */,
 				2D060E2D22AE39D600BA34A6 /* Account */,
 				2D3F3FC6226F15360098B414 /* Sweater */,
@@ -152,11 +161,22 @@
 			path = Sweater;
 			sourceTree = "<group>";
 		};
+		2D6E43F122B9D3EA0073E56F /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				2D6E43EF22B8ECD80073E56F /* MapData.swift */,
+				2DFF16F622B60F2B002F4EE9 /* MapViewController.swift */,
+				2D6E43CF22B77D4B0073E56F /* MapSelectionViewController.swift */,
+				2D6E43F222B9D42F0073E56F /* CustomAnnotation.swift */,
+			);
+			path = Map;
+			sourceTree = "<group>";
+		};
 		2DFF167F22B0AEE6002F4EE9 /* Activity */ = {
 			isa = PBXGroup;
 			children = (
 				2DFF168022B0AF4F002F4EE9 /* CreateActivityViewController.swift */,
-				2DFF16F622B60F2B002F4EE9 /* MapViewController.swift */,
+				2D6E43CD22B774FF0073E56F /* TestViewController.swift */,
 			);
 			path = Activity;
 			sourceTree = "<group>";
@@ -340,14 +360,18 @@
 			files = (
 				2DFF16F722B60F2B002F4EE9 /* MapViewController.swift in Sources */,
 				2DFF16F522B52A15002F4EE9 /* Method.swift in Sources */,
+				2D6E43F322B9D42F0073E56F /* CustomAnnotation.swift in Sources */,
 				2DFF16AD22B259DF002F4EE9 /* TabbarViewController.swift in Sources */,
 				2DFF16AF22B25A61002F4EE9 /* MainNavigationViewController.swift in Sources */,
 				2DFD9DD322A8F950006A58E2 /* AppDelegate.swift in Sources */,
 				2DFF168122B0AF4F002F4EE9 /* CreateActivityViewController.swift in Sources */,
 				2D060E2C22AE0CF300BA34A6 /* Account.swift in Sources */,
 				2DFD9DD122A8F7B1006A58E2 /* SignUpViewController.swift in Sources */,
+				2D6E43D022B77D4B0073E56F /* MapSelectionViewController.swift in Sources */,
 				2DFF16A722B22D77002F4EE9 /* ViewController.swift in Sources */,
+				2D6E43F022B8ECD80073E56F /* MapData.swift in Sources */,
 				2DFD9DCE22A8F7B1006A58E2 /* AuthTestViewController.swift in Sources */,
+				2D6E43CE22B774FF0073E56F /* TestViewController.swift in Sources */,
 				2D204A6E22AFF8F600D8749A /* MainViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

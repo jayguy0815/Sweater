@@ -17,12 +17,102 @@ import IQKeyboardManagerSwift
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
-
+    var ref : DatabaseReference!
+    var methods : Methods!
+   
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FirebaseApp.configure()
         IQKeyboardManager.shared.enable = true
+        ref = Database.database().reference()
+        
+        ref.child("activities").observe(.value) { (snapshot) in
+            if let activityIDDic = snapshot.value as? [String:Any]{
+                let activityDic = activityIDDic
+                print(activityDic)
+                let array = Array(activityDic.keys)
+                print(array)
+                for i in 0..<array.count {
+                    let dic = activityDic[array[i]] as! [String:Any]
+                    print(dic)
+                    let activity = Activity()
+                    
+                    guard let dateString = dic["date"] as? String else{
+                        continue
+                    }
+                    
+                    let date = Activity.shared.convertdate(from: dateString)
+                    activity.name = dic["activityName"] as! String
+                    activity.date = date
+                    activity.creater = dic["creator"] as! String
+                    activity.content = dic["content"] as! String
+                    activity.address = dic["address"] as! String
+                    activity.courtName = dic["courtName"] as! String
+                    activity.latitue = dic["latitude"] as! Double
+                    activity.longitue = dic["longitude"] as! Double
+                    activity.peopleCounter = dic["peopleCounter"] as! Int
+                    activity.participantCounter = 1
+                    Activity.shared.activities.append(activity)
+                }
+            }
+        }
+        
+        
+        ref.child("maps_basketball").observeSingleEvent(of: .value) { (snapshot) in
+            for distdata in snapshot.children {
+                guard let distSnapshot = distdata as? DataSnapshot else {
+                    continue
+                }
+                let dist = distSnapshot.key
+                
+                //self.distList.append(dist)
+                MapData.shared.distList.append(dist)
+            }
+            for dist in MapData.shared.distList {
+                self.ref.child("maps_basketball").child(dist).observeSingleEvent(of: .value) { (snapshot) in
+                    for courtdata in snapshot.children{
+                        guard let courtSnapshot = courtdata as? DataSnapshot else{
+                            continue
+                        }
+                        let court = courtSnapshot.key
+                        //self.courtList.append(court)
+                        MapData.shared.courtList.append(court)
+                    }
+                    for court in MapData.shared.courtList{
+                        self.ref.child("maps_basketball").child(dist).child(court).child("coordinates").observeSingleEvent(of: .value) { (snapshot) in
+                            
+                            let coordinate = snapshot.value as? [String:Double]
+                            let latitude = coordinate?["latitude"]
+                            if latitude != nil{
+                                //self.latitudeList.append(latitude!)
+                                MapData.shared.latitudeList.append(latitude!)
+                            }
+                            let longitude = coordinate?["longitude"]
+                            if longitude != nil{
+                                //self.longitudeList.append(longitude!)
+                                MapData.shared.longitudeList.append(longitude!)
+                            }
+                        }
+                        self.ref.child("maps_basketball").child(dist).child(court).observeSingleEvent(of: .value) { (addsnapshot) in
+                            guard addsnapshot.value != nil else {
+                                return
+                            }
+                            let addressData = addsnapshot.value as? [String:Any]
+                            let address = addressData?["address"]
+                            if address != nil{
+                                //self.addressList.append(address! as! String)
+                                MapData.shared.addressList.append(address! as! String)
+                            }
+                            
+                        }
+                    }
+                }
+            }
+        }
+        //methods.saveToFile()
+        
+        
         return true
     }
 

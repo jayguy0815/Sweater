@@ -28,8 +28,8 @@ class Methods{
         return view
     }
     
-    func newAlert(errorTitle : String, errorMessage : String, actionTitle : String) -> UIAlertController{
-        let alert = UIAlertController(title: errorTitle, message: errorMessage, preferredStyle: .alert)
+    func newAlert(Title : String, Message : String, actionTitle : String) -> UIAlertController{
+        let alert = UIAlertController(title: Title, message: Message, preferredStyle: .alert)
         let defaultAction = UIAlertAction(title: actionTitle, style: .cancel, handler: nil)
         alert.addAction(defaultAction)
         return alert
@@ -53,5 +53,33 @@ class Methods{
         let filePath = NSHomeDirectory()+"/Documents/"+fileName
         let exist = fileManager.fileExists(atPath: filePath)
         return exist
+    }
+    
+    func saveToFile(){
+        let homeURL = URL(fileURLWithPath: NSHomeDirectory())
+        let documents = homeURL.appendingPathComponent("Documents")
+        let fileURL = documents.appendingPathComponent("MapData.archive")
+        do{
+            //把[Note]轉乘data刑事
+            let data = try NSKeyedArchiver.archivedData(withRootObject: MapData.shared, requiringSecureCoding: false)
+            //寫到檔案
+            try data.write(to: fileURL, options: [.atomicWrite])
+        }catch{
+            print("error\(error)")
+        }
+        
+    }
+    func loadFromFile(){
+        let homeURL = URL(fileURLWithPath: NSHomeDirectory())
+        let documents = homeURL.appendingPathComponent("Documents")
+        let fileURL = documents.appendingPathComponent("MapData.archive")
+        do{
+            //把檔案轉成Data形式
+            let fileData = try Data(contentsOf: fileURL)
+            //從Data轉回MapData陣列
+            MapData.shared = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(fileData) as! MapData
+        }catch{
+            print("error\(error)")
+        }
     }
 }

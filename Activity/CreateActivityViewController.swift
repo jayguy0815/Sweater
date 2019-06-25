@@ -90,32 +90,32 @@ class CreateActivityViewController: UIViewController,UINavigationControllerDeleg
     
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         guard self.nameTextField.text! != "" else {
-            let alertController = methods.newAlert(errorTitle: self.errorText, errorMessage: "請輸入團名", actionTitle: "OK")
+            let alertController = methods.newAlert(Title: self.errorText, Message: "請輸入團名", actionTitle: "OK")
             present(alertController,animated: true,completion: nil)
             return false
         }
         guard self.nameTextField.text!.count <= 20 else {
-            let alertController = methods.newAlert(errorTitle: self.errorText, errorMessage: "團名須小於20字", actionTitle: "OK")
+            let alertController = methods.newAlert(Title: self.errorText, Message: "團名須小於20字", actionTitle: "OK")
             present(alertController,animated: true,completion: nil)
             return false
         }
         guard self.dateTextField.text! != "" else {
-            let alertController = methods.newAlert(errorTitle: self.errorText, errorMessage: "請選擇日期", actionTitle: "OK")
+            let alertController = methods.newAlert(Title: self.errorText, Message: "請選擇日期", actionTitle: "OK")
             present(alertController,animated: true,completion: nil)
             return false
         }
         guard self.peopleTextfield.text! != "" else {
-            let alertController = methods.newAlert(errorTitle: self.errorText, errorMessage: "請選擇人數限制", actionTitle: "OK")
+            let alertController = methods.newAlert(Title: self.errorText, Message: "請選擇人數限制", actionTitle: "OK")
             present(alertController,animated: true,completion: nil)
             return false
         }
         guard self.contentTextView.text! != "" else {
-            let alertController = methods.newAlert(errorTitle: self.errorText, errorMessage: "請輸入簡介", actionTitle: "OK")
+            let alertController = methods.newAlert(Title: self.errorText, Message: "請輸入簡介", actionTitle: "OK")
             present(alertController,animated: true,completion: nil)
             return false
         }
         guard self.contentTextView.text!.count <= 50 else {
-            let alertController = methods.newAlert(errorTitle: self.errorText, errorMessage: "簡介須小於50字", actionTitle: "OK")
+            let alertController = methods.newAlert(Title: self.errorText, Message: "簡介須小於50字", actionTitle: "OK")
             present(alertController,animated: true,completion: nil)
             return false
         }

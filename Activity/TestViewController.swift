@@ -44,7 +44,7 @@ class TestViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDe
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        print(MapData.shared.addressList.count)
         print(NSHomeDirectory())
         mapView.delegate = self
         mapView.showsUserLocation = true

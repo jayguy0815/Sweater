@@ -29,7 +29,7 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
     var ref : DatabaseReference = Database.database().reference()
     var distList : [String] = []
     var courtList : [String] = []
-    
+    var uid : String?
     
    
     
@@ -40,7 +40,7 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
     var annotationList : [customAnnotation] = []
     var mapData = MapData()
     var annotation : MKPointAnnotation!
-    var name : String!
+    var courtName : String!
     var address : String = ""
     
     @IBAction func segmentChanged(_ sender: Any) {
@@ -59,10 +59,48 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
     }
     
     @IBAction func createActivity(_ sender: Any) {
-        let alert = methods.newAlert(errorTitle: "ok", errorMessage: "dd", actionTitle: "dd")
+        
+        let newActivity = Activity()
+        guard let peopleCounter = self.activity["people"] as? String , let dateString = self.activity["date"] as? String , let activityName = self.activity["name"] as? String , let content = self.activity["content"] as? String else{
+            return
+        }
+//        newActivity.id = UUID().uuidString
+        newActivity.name = activityName
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+        
+        guard let date = dateFormatter.date(from: dateString) else {
+            fatalError("ERROR: Date conversion failed due to mismatched format.")
+        }
+        newActivity.date = date
+        newActivity.creater = self.uid!
+        newActivity.courtName = self.courtName
+       
+        newActivity.peopleCounter = Int(peopleCounter)!
+        newActivity.latitue = self.latitude
+        newActivity.longitue = self.longitude
+        newActivity.address = self.address
+        newActivity.content = content
+        
+        let dic : [String:Any] = ["activityName":newActivity.name,"date": "\(newActivity.date)", "creator":newActivity.creater,"courtName":newActivity.courtName
+            ,"peopleCounter":newActivity.peopleCounter ,"latitude":newActivity.latitue,"longitude":newActivity.longitue,"address":newActivity.address,"content":newActivity.content]
+        
+       
+        
+        let alert = UIAlertController(title: "建立揪團", message: "確認場地？\n\(self.courtName!)\n\(self.address)", preferredStyle: .alert)
+        
+        let okAction = UIAlertAction(title: "確定", style: .default) { (action) in
+             self.ref.child("activities").childByAutoId().setValue(dic)
+        }
+        
+        let cancelAction = UIAlertAction(title: "取消"
+            , style: .cancel, handler: nil)
+        
+        alert.addAction(okAction)
+        alert.addAction(cancelAction)
         present(alert,animated: true,completion: nil)
-        print(self.name)
-        print(self.address)
+       
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -74,7 +112,8 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
     override func viewDidLoad() {
         super.viewDidLoad()
         //print(self.activity)
-        self.loadFromFile()
+        
+        self.uid = Auth.auth().currentUser?.uid
         mapSelectionView.isHidden = true
         
         
@@ -131,7 +170,7 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         if let annotation = view.annotation as? customAnnotation{
-            self.name = annotation.title!
+            self.courtName = annotation.title!
             self.address = annotation.subtitle ?? ""
         }
     }
@@ -159,7 +198,7 @@ extension MapViewController : UIPickerViewDelegate , UIPickerViewDataSource{
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         if pickerView == placePicker{
-            return self.mapData.distList.count
+            return MapData.shared.distList.count
         }else if pickerView == courtPicker{
             return self.courtList.count
         }
@@ -168,11 +207,11 @@ extension MapViewController : UIPickerViewDelegate , UIPickerViewDataSource{
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         if pickerView == placePicker{
-            let text = "\(self.mapData.distList[row])"
+            let text = "\(MapData.shared.distList[row])"
             self.placefield.text = text
-            for i in 0..<self.mapData.courtList.count{
-                if self.mapData.distList[i] == text{
-                    self.courtList.append(self.mapData.courtList[i])
+            for i in 0..<MapData.shared.courtList.count{
+                if MapData.shared.addressList[i].contains(text){
+                    self.courtList.append(MapData.shared.courtList[i])
                 }
             }
             
@@ -181,11 +220,11 @@ extension MapViewController : UIPickerViewDelegate , UIPickerViewDataSource{
             let text = "\(self.courtList[row])"
             self.courtField.text = text
             
-            for i in 0..<self.mapData.latitudeList.count{
-                if self.mapData.courtList[i] == text{
-                    self.latitude = self.mapData.latitudeList[i]
-                    self.longitude = self.mapData.longitudeList[i]
-                    self.address = self.mapData.addressList[i]
+            for i in 0..<MapData.shared.latitudeList.count{
+                if MapData.shared.courtList[i] == text{
+                    self.latitude = MapData.shared.latitudeList[i]
+                    self.longitude = MapData.shared.longitudeList[i]
+                    self.address = MapData.shared.addressList[i]
                 }
             }
             
@@ -224,7 +263,7 @@ extension MapViewController : UIPickerViewDelegate , UIPickerViewDataSource{
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         if pickerView == placePicker{
-            return "\(self.mapData.distList[row])"
+            return "\(MapData.shared.distList[row])"
         }else if pickerView == courtPicker{
             return "\(self.courtList[row])"
         }

@@ -18,6 +18,10 @@
 		2D6E43D022B77D4B0073E56F /* MapSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E43CF22B77D4B0073E56F /* MapSelectionViewController.swift */; };
 		2D6E43F022B8ECD80073E56F /* MapData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E43EF22B8ECD80073E56F /* MapData.swift */; };
 		2D6E43F322B9D42F0073E56F /* CustomAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E43F222B9D42F0073E56F /* CustomAnnotation.swift */; };
+		2D6E441722BB18100073E56F /* ActivityListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E441522BB18100073E56F /* ActivityListCell.swift */; };
+		2D6E441822BB18100073E56F /* ActivityListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D6E441622BB18100073E56F /* ActivityListCell.xib */; };
+		2D6E441A22BB57430073E56F /* ActivityListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E441922BB57430073E56F /* ActivityListViewController.swift */; };
+		2D6E441C22BB5A750073E56F /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E441B22BB5A750073E56F /* Activity.swift */; };
 		2DFD9DCE22A8F7B1006A58E2 /* AuthTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DFD9DCA22A8F7B1006A58E2 /* AuthTestViewController.swift */; };
 		2DFD9DD122A8F7B1006A58E2 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DFD9DCD22A8F7B1006A58E2 /* SignUpViewController.swift */; };
 		2DFD9DD322A8F950006A58E2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DFD9DD222A8F950006A58E2 /* AppDelegate.swift */; };
@@ -49,6 +53,10 @@
 		2D6E43CF22B77D4B0073E56F /* MapSelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSelectionViewController.swift; sourceTree = "<group>"; };
 		2D6E43EF22B8ECD80073E56F /* MapData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapData.swift; sourceTree = "<group>"; };
 		2D6E43F222B9D42F0073E56F /* CustomAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAnnotation.swift; sourceTree = "<group>"; };
+		2D6E441522BB18100073E56F /* ActivityListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityListCell.swift; sourceTree = "<group>"; };
+		2D6E441622BB18100073E56F /* ActivityListCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ActivityListCell.xib; sourceTree = "<group>"; };
+		2D6E441922BB57430073E56F /* ActivityListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityListViewController.swift; sourceTree = "<group>"; };
+		2D6E441B22BB5A750073E56F /* Activity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
 		2DFD9DCA22A8F7B1006A58E2 /* AuthTestViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthTestViewController.swift; sourceTree = "<group>"; };
 		2DFD9DCD22A8F7B1006A58E2 /* SignUpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		2DFD9DD222A8F950006A58E2 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -177,6 +185,10 @@
 			children = (
 				2DFF168022B0AF4F002F4EE9 /* CreateActivityViewController.swift */,
 				2D6E43CD22B774FF0073E56F /* TestViewController.swift */,
+				2D6E441522BB18100073E56F /* ActivityListCell.swift */,
+				2D6E441622BB18100073E56F /* ActivityListCell.xib */,
+				2D6E441922BB57430073E56F /* ActivityListViewController.swift */,
+				2D6E441B22BB5A750073E56F /* Activity.swift */,
 			);
 			path = Activity;
 			sourceTree = "<group>";
@@ -267,6 +279,7 @@
 				2DFD9DDD22A900F6006A58E2 /* Main.storyboard in Resources */,
 				2D204A6C22AFE04200D8749A /* Second.storyboard in Resources */,
 				2DFD9DD522A8F998006A58E2 /* Assets.xcassets in Resources */,
+				2D6E441822BB18100073E56F /* ActivityListCell.xib in Resources */,
 				2D204A7722B0A44A00D8749A /* basketball.png in Resources */,
 				2DFF168522B0C674002F4EE9 /* backArrowIcon_white.png in Resources */,
 			);
@@ -364,10 +377,13 @@
 				2DFF16AD22B259DF002F4EE9 /* TabbarViewController.swift in Sources */,
 				2DFF16AF22B25A61002F4EE9 /* MainNavigationViewController.swift in Sources */,
 				2DFD9DD322A8F950006A58E2 /* AppDelegate.swift in Sources */,
+				2D6E441C22BB5A750073E56F /* Activity.swift in Sources */,
 				2DFF168122B0AF4F002F4EE9 /* CreateActivityViewController.swift in Sources */,
 				2D060E2C22AE0CF300BA34A6 /* Account.swift in Sources */,
 				2DFD9DD122A8F7B1006A58E2 /* SignUpViewController.swift in Sources */,
+				2D6E441A22BB57430073E56F /* ActivityListViewController.swift in Sources */,
 				2D6E43D022B77D4B0073E56F /* MapSelectionViewController.swift in Sources */,
+				2D6E441722BB18100073E56F /* ActivityListCell.swift in Sources */,
 				2DFF16A722B22D77002F4EE9 /* ViewController.swift in Sources */,
 				2D6E43F022B8ECD80073E56F /* MapData.swift in Sources */,
 				2DFD9DCE22A8F7B1006A58E2 /* AuthTestViewController.swift in Sources */,

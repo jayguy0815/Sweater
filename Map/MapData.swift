@@ -13,6 +13,9 @@ import MapKit
 import CoreLocation
 
 class MapData : NSObject,NSCoding {
+    
+    static var shared = MapData()
+    
     required init?(coder aDecoder: NSCoder) {
         self.distList = aDecoder.decodeObject(forKey: "distList") as! [String]
         //noteid必須先有值才能呼叫super

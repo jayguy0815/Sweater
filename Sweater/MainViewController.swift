@@ -44,7 +44,6 @@ class MainViewController: UIViewController,UINavigationControllerDelegate {
     
     @IBAction func check(_ sender: Any) {
         let user = Auth.auth().currentUser
-        
         if (user != nil) {
             print("1")
         } else {
@@ -56,7 +55,7 @@ class MainViewController: UIViewController,UINavigationControllerDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        loadFromFile()
+        
         Auth.auth().addStateDidChangeListener() { auth, user in
             if user == nil {
                 self.switchStoryboard()
@@ -67,62 +66,8 @@ class MainViewController: UIViewController,UINavigationControllerDelegate {
             self.view.backgroundColor = UIColor(patternImage: img)
         }
         
-        guard methods.checkFile(fileName: "mapData.archive") == false else{
-            return
-        }
+       
         ref = Database.database().reference()
-        
-        ref.child("maps_basketball").observeSingleEvent(of: .value) { (snapshot) in
-            for distdata in snapshot.children {
-                guard let distSnapshot = distdata as? DataSnapshot else {
-                    continue
-                }
-                let dist = distSnapshot.key
-                
-                //self.distList.append(dist)
-                self.mapData.distList.append(dist)
-            }
-            for dist in self.mapData.distList{
-                self.ref.child("maps_basketball").child(dist).observeSingleEvent(of: .value) { (snapshot) in
-                    for courtdata in snapshot.children{
-                        guard let courtSnapshot = courtdata as? DataSnapshot else{
-                            continue
-                        }
-                        let court = courtSnapshot.key
-                        //self.courtList.append(court)
-                        self.mapData.courtList.append(court)
-                    }
-                    for court in self.mapData.courtList{
-                        self.ref.child("maps_basketball").child(dist).child(court).child("coordinates").observeSingleEvent(of: .value) { (snapshot) in
-                            
-                            let coordinate = snapshot.value as? [String:Double]
-                            let latitude = coordinate?["latitude"]
-                            if latitude != nil{
-                                //self.latitudeList.append(latitude!)
-                                self.mapData.latitudeList.append(latitude!)
-                            }
-                            let longitude = coordinate?["longitude"]
-                            if longitude != nil{
-                                //self.longitudeList.append(longitude!)
-                                self.mapData.longitudeList.append(longitude!)
-                            }
-                        }
-                        self.ref.child("maps_basketball").child(dist).child(court).observeSingleEvent(of: .value) { (addsnapshot) in
-                            guard addsnapshot.value != nil else {
-                                return
-                            }
-                            let addressData = addsnapshot.value as? [String:Any]
-                            let address = addressData?["address"]
-                            if address != nil{
-                                //self.addressList.append(address! as! String)
-                                self.mapData.addressList.append(address! as! String)
-                            }
-                        self.saveToFile()
-                        }
-                    }
-                }
-            }
-        }
     }
     
     
@@ -157,31 +102,5 @@ class MainViewController: UIViewController,UINavigationControllerDelegate {
         }
     }
     
-    func saveToFile(){
-        let homeURL = URL(fileURLWithPath: NSHomeDirectory())
-        let documents = homeURL.appendingPathComponent("Documents")
-        let fileURL = documents.appendingPathComponent("mapData.archive")
-        do{
-            //把[Note]轉乘data刑事
-            let data = try NSKeyedArchiver.archivedData(withRootObject: self.mapData, requiringSecureCoding: false)
-            //寫到檔案
-            try data.write(to: fileURL, options: [.atomicWrite])
-        }catch{
-            print("error\(error)")
-        }
-        
-    }
-    func loadFromFile(){
-        let homeURL = URL(fileURLWithPath: NSHomeDirectory())
-        let documents = homeURL.appendingPathComponent("Documents")
-        let fileURL = documents.appendingPathComponent("mapData.archive")
-        do{
-            //把檔案轉成Data形式
-            let fileData = try Data(contentsOf: fileURL)
-            //從Data轉回MapData陣列
-            self.mapData = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(fileData) as! MapData
-        }catch{
-            print("error\(error)")
-        }
-    }
+    
 }

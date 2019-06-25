@@ -26,20 +26,20 @@ class MapSelectionViewController: UIViewController,CLLocationManagerDelegate {
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        self.loadFromFile()
+        //self.loadFromFile()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        for i in 0 ..< self.mapData.courtList.count{
+        for i in 0 ..< MapData.shared.courtList.count{
             var annotionCoordinate = CLLocationCoordinate2D()
-            annotionCoordinate.latitude = self.mapData.latitudeList[i]
-            annotionCoordinate.longitude = self.mapData.longitudeList[i]
+            annotionCoordinate.latitude = MapData.shared.latitudeList[i]
+            annotionCoordinate.longitude = MapData.shared.longitudeList[i]
             
             
             let annotation = customAnnotation()
             annotation.coordinate = annotionCoordinate
-            annotation.title = "\(self.mapData.courtList[i])"
-            annotation.subtitle = "\(self.mapData.addressList[i])"
+            annotation.title = "\(MapData.shared.courtList[i])"
+            annotation.subtitle = "\(MapData.shared.addressList[i])"
             
             
             if annotation.Id == "111"{

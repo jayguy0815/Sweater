@@ -343,7 +343,7 @@
         <!--Item-->
         <scene sceneID="CbS-5w-uFt">
             <objects>
-                <navigationController id="2AW-Bx-C1L" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="activityListVC" id="2AW-Bx-C1L" customClass="ActivityNavigationController" customModule="Sweater" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Item" id="027-Zt-m8Z"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="4AU-Qw-UiI">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
@@ -387,11 +387,41 @@
                     <navigationItem key="navigationItem" id="b34-Cy-YQB"/>
                     <connections>
                         <outlet property="activityTableView" destination="y6l-Yp-3gU" id="K8Y-R9-oFO"/>
+                        <segue destination="CSa-8a-GKV" kind="show" identifier="activityDetail" id="gFC-qq-rLL"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BMd-hg-wBG" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="7165.6000000000004" y="-746.17691154422789"/>
+            <point key="canvasLocation" x="7166" y="-746"/>
+        </scene>
+        <!--Activity Detail View Controller-->
+        <scene sceneID="TYX-xO-ozf">
+            <objects>
+                <viewController hidesBottomBarWhenPushed="YES" id="CSa-8a-GKV" customClass="ActivityDetailViewController" customModule="Sweater" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="uFU-Tk-c8X">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2Dm-PU-bwL">
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                            </scrollView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="2Dm-PU-bwL" secondAttribute="bottom" id="EOs-zE-WAZ"/>
+                            <constraint firstItem="2Dm-PU-bwL" firstAttribute="leading" secondItem="Ais-XK-3Uf" secondAttribute="leading" id="Imt-DS-vob"/>
+                            <constraint firstItem="2Dm-PU-bwL" firstAttribute="top" secondItem="Ais-XK-3Uf" secondAttribute="top" id="hbf-bs-7Xa"/>
+                            <constraint firstItem="2Dm-PU-bwL" firstAttribute="trailing" secondItem="Ais-XK-3Uf" secondAttribute="trailing" id="k8M-Qe-j7X"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="Ais-XK-3Uf"/>
+                    </view>
+                    <connections>
+                        <outlet property="scrollView" destination="2Dm-PU-bwL" id="D3R-PT-qOJ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="a1U-BK-sfu" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="8201" y="-746"/>
         </scene>
         <!--Item-->
         <scene sceneID="77R-8u-hKG">
@@ -473,11 +503,12 @@
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="QPd-6g-dh6"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="J9m-Aq-wt6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="8444" y="-788"/>
+            <point key="canvasLocation" x="9033" y="-1856"/>
         </scene>
         <!--Map Selection View Controller-->
         <scene sceneID="meF-UU-Ghz">
@@ -498,6 +529,7 @@
                             <constraint firstAttribute="trailing" secondItem="Bhb-nt-lF5" secondAttribute="trailing" constant="20" id="YeJ-un-6Hz"/>
                             <constraint firstAttribute="bottom" secondItem="Bhb-nt-lF5" secondAttribute="bottom" constant="10" id="bMS-cO-lZF"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="IGE-t9-ljt"/>
                     </view>
                     <connections>
                         <outlet property="mapView" destination="Bhb-nt-lF5" id="QU7-vc-X52"/>

@@ -23,6 +23,8 @@ class MapSelectionViewController: UIViewController,CLLocationManagerDelegate {
     var annotation : MKPointAnnotation!
     var name : String!
     var address : String!
+    var latitude : Double!
+    var longitude : Double!
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -71,6 +73,7 @@ class MapSelectionViewController: UIViewController,CLLocationManagerDelegate {
         self.activity = mapVC!.activity
         print(self.activity)
         
+        
     }
     
     func saveToFile(fileName : String){
@@ -105,22 +108,29 @@ class MapSelectionViewController: UIViewController,CLLocationManagerDelegate {
 extension MapSelectionViewController : MKMapViewDelegate{
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         let currentLocation:CLLocation = locations.last! as CLLocation
-                DispatchQueue.once(token: "MoveRegion") {
-                    let span:MKCoordinateSpan=MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
-                    var region:MKCoordinateRegion=MKCoordinateRegion(center: currentLocation.coordinate, span: span)
-                    region.center=currentLocation.coordinate
-                    self.mapView.setRegion(region, animated: true)
-                }
+        let span:MKCoordinateSpan=MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+        var region:MKCoordinateRegion=MKCoordinateRegion(center: currentLocation.coordinate, span: span)
+        region.center=currentLocation.coordinate
+        self.mapView.setRegion(region, animated: true)
+        
     }
     
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        
         if let annotation = view.annotation as? customAnnotation{
             self.name = annotation.title!
             self.address = annotation.subtitle ?? ""
+            
+            mapVC?.courtName = self.name
+            mapVC?.address = self.address
+            mapVC?.latitude = annotation.coordinate.latitude
+            mapVC?.longitude = annotation.coordinate.longitude
         }
     }
 }
+
+
 
 
 

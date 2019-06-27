@@ -10,8 +10,7 @@ import Foundation
 import Firebase
 
 class Activity {
-    static var shared = Activity()
-    var activities = [Activity]()
+    
     var name : String = ""
     var date : Date = Date()
     var creater : String = ""
@@ -23,12 +22,6 @@ class Activity {
     var peopleCounter : Int = 0
     var content : String = ""
     var participantCounter = 1
+    var postTime : Double = 0.0
     
-    func convertdate(from:String) -> Date {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
-        dateFormatter.timeZone = TimeZone(secondsFromGMT: 28400)
-        let convertedDate = dateFormatter.date(from: from)
-        return convertedDate!
-    }
 }

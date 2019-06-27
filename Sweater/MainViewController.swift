@@ -11,8 +11,9 @@ import Firebase
 import IQKeyboardManagerSwift
 
 
-
-class MainViewController: UIViewController,UINavigationControllerDelegate {
+class MainViewController: UIViewController,UINavigationControllerDelegate{
+    
+    
     
     @IBOutlet weak var logout: UIButton!
 
@@ -26,6 +27,7 @@ class MainViewController: UIViewController,UINavigationControllerDelegate {
     var ref : DatabaseReference!
     var mapData = MapData()
     var mapDataArr : [MapData] = []
+    
     
     @IBAction func logoutBtn(_ sender: Any) {
         if Auth.auth().currentUser != nil{
@@ -43,6 +45,7 @@ class MainViewController: UIViewController,UINavigationControllerDelegate {
     
     
     @IBAction func check(_ sender: Any) {
+        print(Manager.shared.activities.count)
         let user = Auth.auth().currentUser
         if (user != nil) {
             print("1")
@@ -55,6 +58,17 @@ class MainViewController: UIViewController,UINavigationControllerDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+//        ref = Database.database().reference()
+//        ref.child("activities").child("-LiGoSvp1cVttL-u4og8").observe(.value, with: { (snapshot) in
+//            guard let newSnapshot = snapshot.value as? [String:Any] else {
+//                return
+//            }
+//
+//            let postTimestamp = newSnapshot["postTime"] as! Double
+//            var date = Date(timeIntervalSince1970: ((postTimestamp) / 1000))
+//
+//            print(date)
+//        })
         
         Auth.auth().addStateDidChangeListener() { auth, user in
             if user == nil {
@@ -104,3 +118,5 @@ class MainViewController: UIViewController,UINavigationControllerDelegate {
     
     
 }
+
+

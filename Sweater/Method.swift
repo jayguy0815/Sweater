@@ -8,8 +8,11 @@
 
 import Foundation
 import UIKit
+import Firebase
+
 
 class Methods{
+    var ref : DatabaseReference!
     func setNavigationBar() -> UIView {
         //your custom view for back image with custom size
         let view = UIView(frame: CGRect(x: -5, y: 10, width: 50, height: 60))
@@ -82,4 +85,8 @@ class Methods{
             print("error\(error)")
         }
     }
+    
+    
+    
+    
 }

@@ -11,6 +11,10 @@ import MapKit
 import CoreLocation
 import Firebase
 
+protocol MapVCDelegate {
+     func didFinishCreateActivity()
+}
+
 class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapViewDelegate{
     @IBOutlet weak var placeSelectionSegment: UISegmentedControl!
     @IBOutlet weak var createBtn: UIBarButtonItem!
@@ -22,7 +26,7 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
     @IBOutlet weak var listSelectionView: UIStackView!
     @IBOutlet weak var mapSelectionView: UIView!
     
-    //var delegate : MapViewControllerDelegate?
+    var delegate : MapVCDelegate?
     let methods = Methods()
     var activity : [String:Any] = [:]
     var locationManager : CLLocationManager!
@@ -30,8 +34,7 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
     var distList : [String] = []
     var courtList : [String] = []
     var uid : String?
-    
-   
+    let manager = Manager()
     
     var latitude : Double!
     var longitude : Double!
@@ -84,14 +87,26 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
         newActivity.content = content
         
         let dic : [String:Any] = ["activityName":newActivity.name,"date": "\(newActivity.date)", "creator":newActivity.creater,"courtName":newActivity.courtName
-            ,"peopleCounter":newActivity.peopleCounter ,"latitude":newActivity.latitue,"longitude":newActivity.longitue,"address":newActivity.address,"content":newActivity.content]
+            ,"peopleCounter":newActivity.peopleCounter ,"latitude":newActivity.latitue,"longitude":newActivity.longitue,"address":newActivity.address,"content":newActivity.content,"postTime":[".sv":"timestamp"]]
         
        
         
         let alert = UIAlertController(title: "建立揪團", message: "確認場地？\n\(self.courtName!)\n\(self.address)", preferredStyle: .alert)
         
         let okAction = UIAlertAction(title: "確定", style: .default) { (action) in
-             self.ref.child("activities").childByAutoId().setValue(dic)
+            
+            Manager.shared.activities.insert(newActivity, at: 0)
+            self.ref.child("activities").childByAutoId().setValue(dic)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now()+2.0, execute: {
+                let alertController = UIAlertController(title: "成功", message: "揪團成功", preferredStyle:.alert)
+                let backAction = UIAlertAction(title: "返回", style: .default, handler: { (action) in
+                    self.navigationController?.popToRootViewController(animated: true)
+                })
+                alertController.addAction(backAction)
+                self.present(alertController,animated: true,completion: nil)
+            })
+            
         }
         
         let cancelAction = UIAlertAction(title: "取消"
@@ -105,6 +120,7 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        
         // MARK - get district data
         
     }
@@ -253,7 +269,7 @@ extension MapViewController : UIPickerViewDelegate , UIPickerViewDataSource{
                         annotation.title = "711"
                         annotation.subtitle = "222"
                     }
-                    
+            
                     self.mapview.addAnnotation(annotation)
                     self.mapview.selectAnnotation(annotation, animated: true)
 
@@ -270,6 +286,4 @@ extension MapViewController : UIPickerViewDelegate , UIPickerViewDataSource{
         return ""
     }
 }
-
-
 

@@ -38,6 +38,7 @@ class TestViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDe
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        
         //self.loadFromFile()
     }
 

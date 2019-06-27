@@ -18,46 +18,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var ref : DatabaseReference!
-    var methods : Methods!
-   
+    var methods = Methods()
+    let manager = Manager()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
         FirebaseApp.configure()
         IQKeyboardManager.shared.enable = true
         ref = Database.database().reference()
-        
-        ref.child("activities").observe(.value) { (snapshot) in
-            if let activityIDDic = snapshot.value as? [String:Any]{
-                let activityDic = activityIDDic
-                print(activityDic)
-                let array = Array(activityDic.keys)
-                print(array)
-                for i in 0..<array.count {
-                    let dic = activityDic[array[i]] as! [String:Any]
-                    print(dic)
-                    let activity = Activity()
-                    
-                    guard let dateString = dic["date"] as? String else{
-                        continue
-                    }
-                    
-                    let date = Activity.shared.convertdate(from: dateString)
-                    activity.name = dic["activityName"] as! String
-                    activity.date = date
-                    activity.creater = dic["creator"] as! String
-                    activity.content = dic["content"] as! String
-                    activity.address = dic["address"] as! String
-                    activity.courtName = dic["courtName"] as! String
-                    activity.latitue = dic["latitude"] as! Double
-                    activity.longitue = dic["longitude"] as! Double
-                    activity.peopleCounter = dic["peopleCounter"] as! Int
-                    activity.participantCounter = 1
-                    Activity.shared.activities.append(activity)
-                }
-            }
-        }
-        
+
+        Manager.shared.loadActivities()
         
         ref.child("maps_basketball").observeSingleEvent(of: .value) { (snapshot) in
             for distdata in snapshot.children {

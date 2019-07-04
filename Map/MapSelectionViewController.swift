@@ -25,6 +25,7 @@ class MapSelectionViewController: UIViewController,CLLocationManagerDelegate {
     var address : String!
     var latitude : Double!
     var longitude : Double!
+    var flag = true
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -32,16 +33,16 @@ class MapSelectionViewController: UIViewController,CLLocationManagerDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        for i in 0 ..< MapData.shared.courtList.count{
+        for i in 0 ..< Manager.mapData.courtList.count{
             var annotionCoordinate = CLLocationCoordinate2D()
-            annotionCoordinate.latitude = MapData.shared.latitudeList[i]
-            annotionCoordinate.longitude = MapData.shared.longitudeList[i]
+            annotionCoordinate.latitude = Manager.mapData.latitudeList[i]
+            annotionCoordinate.longitude = Manager.mapData.longitudeList[i]
             
             
             let annotation = customAnnotation()
             annotation.coordinate = annotionCoordinate
-            annotation.title = "\(MapData.shared.courtList[i])"
-            annotation.subtitle = "\(MapData.shared.addressList[i])"
+            annotation.title = "\(Manager.mapData.courtList[i])"
+            annotation.subtitle = "\(Manager.mapData.addressList[i])"
             
             
             if annotation.Id == "111"{
@@ -76,42 +77,18 @@ class MapSelectionViewController: UIViewController,CLLocationManagerDelegate {
         
     }
     
-    func saveToFile(fileName : String){
-        let homeURL = URL(fileURLWithPath: NSHomeDirectory())
-        let documents = homeURL.appendingPathComponent("Documents")
-        let fileURL = documents.appendingPathComponent("mapData.archive")
-        do{
-            //把[Note]轉乘data刑事
-            let data = try NSKeyedArchiver.archivedData(withRootObject: self.mapData, requiringSecureCoding: false)
-            //寫到檔案
-            try data.write(to: fileURL, options: [.atomicWrite])
-        }catch{
-            print("error\(error)")
-        }
-        
-    }
-    func loadFromFile(){
-        let homeURL = URL(fileURLWithPath: NSHomeDirectory())
-        let documents = homeURL.appendingPathComponent("Documents")
-        let fileURL = documents.appendingPathComponent("mapData.archive")
-        do{
-            //把檔案轉成Data形式
-            let fileData = try Data(contentsOf: fileURL)
-            //從Data轉回MapData陣列
-            self.mapData = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(fileData) as! MapData
-        }catch{
-            print("error\(error)")
-        }
-    }
 }
 
 extension MapSelectionViewController : MKMapViewDelegate{
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        let currentLocation:CLLocation = locations.last! as CLLocation
-        let span:MKCoordinateSpan=MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
-        var region:MKCoordinateRegion=MKCoordinateRegion(center: currentLocation.coordinate, span: span)
-        region.center=currentLocation.coordinate
-        self.mapView.setRegion(region, animated: true)
+        if flag == true{
+            let currentLocation:CLLocation = locations.last! as CLLocation
+            let span:MKCoordinateSpan=MKCoordinateSpan(latitudeDelta: 0.08, longitudeDelta: 0.08)
+            var region:MKCoordinateRegion=MKCoordinateRegion(center: currentLocation.coordinate, span: span)
+            region.center=currentLocation.coordinate
+            self.mapView.setRegion(region, animated: true)
+            flag = false
+        }
         
     }
     

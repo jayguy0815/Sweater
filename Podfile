@@ -8,6 +8,8 @@ target 'Sweater' do
   pod 'Firebase/Auth'
   pod 'Firebase/Database'
   pod 'IQKeyboardManagerSwift'
+  pod 'MessageKit'
+
 # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
   use_frameworks!
 

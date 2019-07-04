@@ -62,7 +62,13 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
     }
     
     @IBAction func createActivity(_ sender: Any) {
-        
+        guard self.courtName != nil else {
+            let alertController = UIAlertController(title: "錯誤", message: "請選擇地點", preferredStyle: .alert)
+            let action = UIAlertAction(title: "好", style: .cancel, handler: nil)
+            alertController.addAction(action)
+            present(alertController, animated: true, completion: nil)
+            return
+        }
         let newActivity = Activity()
         guard let peopleCounter = self.activity["people"] as? String , let dateString = self.activity["date"] as? String , let activityName = self.activity["name"] as? String , let content = self.activity["content"] as? String else{
             return
@@ -214,7 +220,7 @@ extension MapViewController : UIPickerViewDelegate , UIPickerViewDataSource{
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         if pickerView == placePicker{
-            return MapData.shared.distList.count
+            return Manager.mapData.distList.count
         }else if pickerView == courtPicker{
             return self.courtList.count
         }
@@ -223,11 +229,11 @@ extension MapViewController : UIPickerViewDelegate , UIPickerViewDataSource{
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         if pickerView == placePicker{
-            let text = "\(MapData.shared.distList[row])"
+            let text = "\(Manager.mapData.distList[row])"
             self.placefield.text = text
-            for i in 0..<MapData.shared.courtList.count{
-                if MapData.shared.addressList[i].contains(text){
-                    self.courtList.append(MapData.shared.courtList[i])
+            for i in 0..<Manager.mapData.courtList.count{
+                if Manager.mapData.addressList[i].contains(text){
+                    self.courtList.append(Manager.mapData.courtList[i])
                 }
             }
             
@@ -236,11 +242,11 @@ extension MapViewController : UIPickerViewDelegate , UIPickerViewDataSource{
             let text = "\(self.courtList[row])"
             self.courtField.text = text
             
-            for i in 0..<MapData.shared.latitudeList.count{
-                if MapData.shared.courtList[i] == text{
-                    self.latitude = MapData.shared.latitudeList[i]
-                    self.longitude = MapData.shared.longitudeList[i]
-                    self.address = MapData.shared.addressList[i]
+            for i in 0..<Manager.mapData.latitudeList.count{
+                if Manager.mapData.courtList[i] == text{
+                    self.latitude = Manager.mapData.latitudeList[i]
+                    self.longitude = Manager.mapData.longitudeList[i]
+                    self.address = Manager.mapData.addressList[i]
                 }
             }
             
@@ -264,11 +270,6 @@ extension MapViewController : UIPickerViewDelegate , UIPickerViewDataSource{
                     annotation.title = text
                     annotation.subtitle = "\(self.address)"
                     self.annotationList.append(annotation)
-                    
-                    if annotation.Id == "111"{
-                        annotation.title = "711"
-                        annotation.subtitle = "222"
-                    }
             
                     self.mapview.addAnnotation(annotation)
                     self.mapview.selectAnnotation(annotation, animated: true)
@@ -279,7 +280,7 @@ extension MapViewController : UIPickerViewDelegate , UIPickerViewDataSource{
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         if pickerView == placePicker{
-            return "\(MapData.shared.distList[row])"
+            return "\(Manager.mapData.distList[row])"
         }else if pickerView == courtPicker{
             return "\(self.courtList[row])"
         }

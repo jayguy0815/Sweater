@@ -21,6 +21,7 @@ class ActivityListViewController: UIViewController {
     let manager = Manager()
    // var delegate : ActivityListVCDelegate?
     var reFreshControl : UIRefreshControl!
+    var selectedIndexPath : IndexPath?
     //var ref : DatabaseReference!
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
@@ -55,16 +56,16 @@ class ActivityListViewController: UIViewController {
     }
     
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+        if segue.identifier == "activityDetail" {
+            let DetailVC = segue.destination as! ActivityDetailViewController
+            if let indexPath = self.selectedIndexPath{
+                DetailVC.activity = Manager.shared.activities[indexPath.row]
+            }
+        }
     }
-    */
-
+    
 }
 
 extension ActivityListViewController : UITableViewDelegate, UITableViewDataSource{
@@ -90,13 +91,17 @@ extension ActivityListViewController : UITableViewDelegate, UITableViewDataSourc
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+        //tableView.deselectRow(at: indexPath, animated: true)
+        self.selectedIndexPath = indexPath
         let currentActivity = Manager.shared.activities[indexPath.row]
         if currentActivity.participantCounter < currentActivity.peopleCounter {
             tableView.reloadRows(at: [indexPath], with: .automatic)
             performSegue(withIdentifier: "activityDetail", sender: nil)
         }else{
-            methods.newAlert(Title: "人數已滿", Message: "欲參加的揪團已滿/n請選擇其他揪團", actionTitle: "好")
+            let alertController = UIAlertController(title: "人數已滿", message: "請選擇其他揪團", preferredStyle: .alert)
+            let action = UIAlertAction(title: "好", style: .cancel, handler: nil)
+            alertController.addAction(action)
+            present(alertController,animated: true,completion: nil)
         }
     }
     

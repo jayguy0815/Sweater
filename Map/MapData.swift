@@ -14,7 +14,7 @@ import CoreLocation
 
 class MapData : NSObject,NSCoding {
     
-    static var shared = MapData()
+    
     
     required init?(coder aDecoder: NSCoder) {
         self.distList = aDecoder.decodeObject(forKey: "distList") as! [String]

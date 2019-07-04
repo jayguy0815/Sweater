@@ -64,7 +64,7 @@ class Methods{
         let fileURL = documents.appendingPathComponent("MapData.archive")
         do{
             //把[Note]轉乘data刑事
-            let data = try NSKeyedArchiver.archivedData(withRootObject: MapData.shared, requiringSecureCoding: false)
+            let data = try NSKeyedArchiver.archivedData(withRootObject: Manager.mapData, requiringSecureCoding: false)
             //寫到檔案
             try data.write(to: fileURL, options: [.atomicWrite])
         }catch{
@@ -80,7 +80,7 @@ class Methods{
             //把檔案轉成Data形式
             let fileData = try Data(contentsOf: fileURL)
             //從Data轉回MapData陣列
-            MapData.shared = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(fileData) as! MapData
+            Manager.mapData = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(fileData) as! MapData
         }catch{
             print("error\(error)")
         }

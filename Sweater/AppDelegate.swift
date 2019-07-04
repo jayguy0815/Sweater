@@ -19,67 +19,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var ref : DatabaseReference!
     var methods = Methods()
-    let manager = Manager()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
         FirebaseApp.configure()
         IQKeyboardManager.shared.enable = true
-        ref = Database.database().reference()
-
-        Manager.shared.loadActivities()
+        print(NSHomeDirectory())
         
-        ref.child("maps_basketball").observeSingleEvent(of: .value) { (snapshot) in
-            for distdata in snapshot.children {
-                guard let distSnapshot = distdata as? DataSnapshot else {
-                    continue
-                }
-                let dist = distSnapshot.key
+        Auth.auth().addStateDidChangeListener() { auth, user in
+            if user == nil {
+                return
+            } else {
                 
-                //self.distList.append(dist)
-                MapData.shared.distList.append(dist)
-            }
-            for dist in MapData.shared.distList {
-                self.ref.child("maps_basketball").child(dist).observeSingleEvent(of: .value) { (snapshot) in
-                    for courtdata in snapshot.children{
-                        guard let courtSnapshot = courtdata as? DataSnapshot else{
-                            continue
-                        }
-                        let court = courtSnapshot.key
-                        //self.courtList.append(court)
-                        MapData.shared.courtList.append(court)
-                    }
-                    for court in MapData.shared.courtList{
-                        self.ref.child("maps_basketball").child(dist).child(court).child("coordinates").observeSingleEvent(of: .value) { (snapshot) in
-                            
-                            let coordinate = snapshot.value as? [String:Double]
-                            let latitude = coordinate?["latitude"]
-                            if latitude != nil{
-                                //self.latitudeList.append(latitude!)
-                                MapData.shared.latitudeList.append(latitude!)
-                            }
-                            let longitude = coordinate?["longitude"]
-                            if longitude != nil{
-                                //self.longitudeList.append(longitude!)
-                                MapData.shared.longitudeList.append(longitude!)
-                            }
-                        }
-                        self.ref.child("maps_basketball").child(dist).child(court).observeSingleEvent(of: .value) { (addsnapshot) in
-                            guard addsnapshot.value != nil else {
-                                return
-                            }
-                            let addressData = addsnapshot.value as? [String:Any]
-                            let address = addressData?["address"]
-                            if address != nil{
-                                //self.addressList.append(address! as! String)
-                                MapData.shared.addressList.append(address! as! String)
-                            }
-                            
-                        }
-                    }
+                
+                self.ref = Database.database().reference()
+                if Manager.shared.checkFile(fileName: "mapData.archive") == false {
+                    Manager.shared.loadMapData()
+                } else if Manager.shared.checkFile(fileName: "mapData.archive") == true {
+                    Manager.shared.loadFromFile(fileName: "mapData.archive")
                 }
+                Manager.shared.loadActivities()
             }
         }
-        //methods.saveToFile()
         
         
         return true

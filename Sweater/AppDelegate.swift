@@ -17,28 +17,29 @@ import IQKeyboardManagerSwift
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    var ref : DatabaseReference!
+    
     var methods = Methods()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         FirebaseApp.configure()
         IQKeyboardManager.shared.enable = true
+        
         print(NSHomeDirectory())
         
         Auth.auth().addStateDidChangeListener() { auth, user in
             if user == nil {
                 return
             } else {
+                Manager.shared.loadActivities()
+                Manager.shared.loadUserData()
                 
-                
-                self.ref = Database.database().reference()
                 if Manager.shared.checkFile(fileName: "mapData.archive") == false {
                     Manager.shared.loadMapData()
                 } else if Manager.shared.checkFile(fileName: "mapData.archive") == true {
                     Manager.shared.loadFromFile(fileName: "mapData.archive")
                 }
-                Manager.shared.loadActivities()
+                
             }
         }
         

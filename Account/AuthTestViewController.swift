@@ -22,6 +22,7 @@ class AuthTestViewController: UIViewController,UITextFieldDelegate,SignUpViewCon
         self.passwordTextField.text = password
     }
     
+    @IBOutlet weak var imageView: UIImageView!
     
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
@@ -48,6 +49,46 @@ class AuthTestViewController: UIViewController,UITextFieldDelegate,SignUpViewCon
                     self.present(alertController, animated: true, completion: nil)
                     return
                 }else{
+                    guard let uid = Auth.auth().currentUser?.uid else {
+                        return
+                    }
+                    Storage.storage().reference().child("account").child("\(uid).jpg").getData(maxSize: 1*1024*1024, completion: { (data, error) in
+                        if let error = error {
+                            print("*** ERROR DOWNLOAD IMAGE : \(error)")
+                        } else {
+                            // Success
+                            if let imageData = data {
+                                // 3 - Put the image in imageview
+                                DispatchQueue.main.asyncAfter(deadline: .now()+1, execute: {
+                                    
+                                    UserDefaults.standard.set(imageData, forKey: "userProfileImage")
+                                })
+                            }
+                        }
+                    })
+                    //Database.database().reference().child("user_account").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+//                        if let dic = snapshot.value as? [String:Any]{
+//                            let url = dic["url"] as! String
+//                            // 创建一个会话，这个会话可以复用
+//                            let session = URLSession()
+//                            // 设置URL
+//                            let request = URLRequest(url: URL(string: url)!)
+//                            // 创建一个网络任务
+//                            let task = session.dataTask(with: request) {(data, response, error) in
+//                                do {
+//                                    // 返回的是一个json，将返回的json转成字典r
+//                                    let r = try
+//                                    print(r)
+//                                } catch {
+//                                    // 如果连接失败就...
+//                                    print("无法连接到服务器")
+//                                    return
+//                                }
+//                            }
+//                            // 运行此任务
+//                            task.resume()
+//                        }
+//                    })
                     self.dismiss(animated: true, completion: nil)
                 }
             }
@@ -56,7 +97,8 @@ class AuthTestViewController: UIViewController,UITextFieldDelegate,SignUpViewCon
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        imageView.layer.cornerRadius = 53
+        imageView.image = UIImage(named: "SweaterLogo")
         emailTextField.delegate = self
         emailTextField.backgroundColor = UIColor.white
         emailTextField.placeholder = "E-mail"

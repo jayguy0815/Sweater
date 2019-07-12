@@ -14,7 +14,9 @@ import IQKeyboardManagerSwift
 class MainViewController: UIViewController,UINavigationControllerDelegate{
     
     
+    @IBOutlet weak var IV1: UIImageView!
     
+ 
     @IBOutlet weak var logout: UIButton!
 
     @IBOutlet weak var basketballBtn: UIButton!
@@ -32,6 +34,7 @@ class MainViewController: UIViewController,UINavigationControllerDelegate{
     @IBAction func logoutBtn(_ sender: Any) {
         if Auth.auth().currentUser != nil{
             do{
+                UserDefaults.standard.removeObject(forKey: "userProfilePicture")
                 try Auth.auth().signOut()
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
                 let vc = storyboard.instantiateViewController(withIdentifier: "nav")
@@ -82,6 +85,7 @@ class MainViewController: UIViewController,UINavigationControllerDelegate{
         
        
         ref = Database.database().reference()
+        
     }
     
     
@@ -90,6 +94,11 @@ class MainViewController: UIViewController,UINavigationControllerDelegate{
     @IBOutlet weak var imageView: UIImageView!
     override func viewDidLoad() {
         super.viewDidLoad()
+        if let imgdata = UserDefaults.standard.object(forKey: "userProfileImage") as? Data {
+                 let image = UIImage(data: imgdata)
+                IV1.contentMode = .scaleAspectFill
+                self.IV1.image = image
+        }
         self.navigationController?.navigationBar.topItem?.title = "Sweater"
         print(self.mapData.distList.count)
         self.basketballBtn.setTitle("", for: .normal)

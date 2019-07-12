@@ -108,6 +108,7 @@ open class MessagesCollectionView: UICollectionView {
         }
     }
     
+    
     public func reloadDataAndKeepOffset() {
         // stop scrolling
         setContentOffset(contentOffset, animated: false)

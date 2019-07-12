@@ -11,17 +11,18 @@ import Firebase
 
 class Activity {
     
+    var key : String = ""
     var name : String = ""
     var date : Date = Date()
     var creater : String = ""
-    var participants : [String] = []
+    var participates : [String] = []
     var courtName : String = ""
+    var address : String = ""
+    var content : String = ""
     var latitue : Double = 0.0
     var longitue : Double = 0.0
-    var address : String = ""
     var peopleCounter : Int = 0
-    var content : String = ""
-    var participantCounter = 1
+    var participantCounter : Int = 0
     var postTime : Double = 0.0
     
 }

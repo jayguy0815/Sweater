@@ -10,6 +10,9 @@ import Foundation
 import UIKit
 
 class Account{
-    var email : String?
-    var password : String?
+    var uid : String = ""
+    var nickname : String = ""
+    var email : String = ""
+    var image : UIImage?
+    var url : String = ""
 }

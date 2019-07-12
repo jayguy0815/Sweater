@@ -276,7 +276,7 @@ typedef void (^GMSPlacePhotoImageResultCallback)(UIImage *_Nullable photo,
                                       bounds:(nullable GMSCoordinateBounds *)bounds
                                   boundsMode:(GMSAutocompleteBoundsMode)boundsMode
                                       filter:(nullable GMSAutocompleteFilter *)filter
-                                sessionToken:(GMSAutocompleteSessionToken *)sessionToken
+                                sessionToken:(nullable GMSAutocompleteSessionToken *)sessionToken
                                     callback:(GMSAutocompletePredictionsCallback)callback;
 
 /**

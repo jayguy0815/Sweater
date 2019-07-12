@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<string>zh_TW</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -27,19 +27,19 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Use Camera to take photo/movie</string>
+	<string>Sweater需要取用您的相機來拍照</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>需要您的位置來找尋運動場地</string>
+	<string>Sweater需要您的位置來找尋運動場地</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>需要您的位置來找尋運動場地</string>
+	<string>Sweater需要您的位置來找尋運動場地</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>需要您的位置來找尋運動場地</string>
+	<string>Sweater需要您的位置來找尋運動場地</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Access microphone when take videos.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Add Photo/Movie to library</string>
+	<string>Sweater需要存入照片到您的相簿</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Get Photo/Movie from library</string>
+	<string>Sweater需要取用相簿來選擇圖片</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>HanaMinA.ttf</string>

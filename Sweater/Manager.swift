@@ -11,15 +11,62 @@ import UIKit
 import Firebase
 
 class Manager {
+    var userAccount = Account()
     var activities = [Activity]()
+    var accounts = [Account]()
     static var shared = Manager()
     static var mapData = MapData()
     var ref : DatabaseReference!
     
+    
+    func loadUserData(){
+        let databaseRef = Database.database().reference().child("user_account")
+        let storageRef = Storage.storage().reference().child("account")
+        var userData = [String:Any]()
+        guard let userUid = Auth.auth().currentUser?.uid else {
+            return
+        }
+        databaseRef.observe(.value) { (snapshot) in
+            if let userData = snapshot.value as? [String:Any] {
+                
+                let users = Array(userData.keys)
+                for i in 0..<users.count {
+                    let dic = userData[users[i]] as! [String:Any]
+                    let account = Account()
+                    let uid = dic["uid"] as! String
+                    account.uid = uid
+                    account.email = dic["email"] as! String
+                    account.nickname = dic["nickname"] as! String
+                    if uid == userUid{
+                        UserDefaults.standard.set(account.nickname, forKey: "userNickName")
+                    }
+                    account.url = dic["accountImageUrl"] as! String
+                    storageRef.child("\(uid).jpg").getData(maxSize: 1*1024*1024, completion: { (data, error) in
+                        if let error = error {
+                            print("*** ERROR DOWNLOAD IMAGE : \(error)")
+                        } else {
+                            // Success
+                            if let imageData = data {
+                                // 3 - Put the image in imageview
+                                account.image = UIImage(data: imageData)
+                            }
+                        }
+                    })
+                    self.accounts.append(account)
+                }
+            }
+        }
+    }
+    
+    
+    
     func loadActivities() {
         let manager = Manager()
+        
         var ref : DatabaseReference!
         ref = Database.database().reference()
+        
+        
         
         ref.child("activities").queryOrdered(byChild: "postTime").observe(.value) { (snapshot) in
             self.activities.removeAll()
@@ -28,7 +75,7 @@ class Manager {
                 
                 print("111")
                 let array = Array(activityDic.keys)
-                print(array)
+               
                 for i in 0..<array.count {
                     let dic = activityDic[array[i]] as! [String:Any]
                     //print(dic)
@@ -39,6 +86,7 @@ class Manager {
                     }
                     
                     let date = manager.stringToDate(from: dateString)
+                    activity.key = dic["key"] as! String
                     activity.name = dic["activityName"] as! String
                     activity.date = date
                     activity.creater = dic["creator"] as! String
@@ -48,12 +96,18 @@ class Manager {
                     activity.latitue = dic["latitude"] as! Double
                     activity.longitue = dic["longitude"] as! Double
                     activity.peopleCounter = dic["peopleCounter"] as! Int
-                    activity.participantCounter = 1
+                    activity.participantCounter = dic["participateCounter"] as! Int
+                    guard let array1 = dic["participates"] as? [Any] else{
+                        continue
+                    }
+                    for j in 1..<array1.count{
+                        print(array1[j] as! String)
+                        activity.participates.append(array1[j] as! String)
+                    }
                     activity.postTime = dic["postTime"] as! Double
                     self.activities.append(activity)
                     self.activities.sort(by: { (activity1, activity2) -> Bool in
                         activity1.postTime > activity2.postTime
-                        
                     })
                 }
             }
@@ -119,6 +173,15 @@ class Manager {
         }
     }
     
+    
+    func stringToDate2(from:String) -> Date {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 28400)
+        let convertedDate = dateFormatter.date(from: from)
+        return convertedDate!
+    }
+    
     func stringToDate(from:String) -> Date {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
@@ -127,9 +190,9 @@ class Manager {
         return convertedDate!
     }
     
-    func dateToString(_ date:Date, dateFormat:String = "yyyy-MM-dd HH:mm") -> String {
+    func dateToString(_ date:Date, dateFormat:String = "yyyy-MM-dd HH:mm:ss") -> String {
         let formatter = DateFormatter()
-        formatter.locale = Locale.init(identifier: "zh_CN")
+        formatter.locale = Locale.init(identifier: "zh_TW")
         formatter.dateFormat = dateFormat
         let date = formatter.string(from: date)
         return date
@@ -170,6 +233,7 @@ class Manager {
             print("error\(error)")
         }
     }
-    
-    
+
 }
+
+

@@ -8,6 +8,7 @@
 
 import UIKit
 import MapKit
+import Firebase
 
 class ActivityDetailViewController: UIViewController {
     @IBOutlet weak var scrollView: UIScrollView!
@@ -17,16 +18,54 @@ class ActivityDetailViewController: UIViewController {
     @IBOutlet weak var invitedPeopleLabel: UILabel!
     @IBOutlet weak var courtLabel: UILabel!
     
-    @IBOutlet weak var nameTextView: UITextView!
-    @IBOutlet weak var addressTextView: UITextView!
-    @IBOutlet weak var contentTextView: UITextView!
+    @IBOutlet weak var nameLabel: UILabel!
     
+    @IBOutlet weak var addressLabel: UILabel!
+    
+    @IBOutlet weak var contentLabel: UILabel!
     @IBOutlet weak var mapView: MKMapView!
     var locationManager = CLLocationManager()
     var latitude : Double = 0.0
     var longitude : Double = 0.0
     
     var activity = Activity()
+    
+    var ref : DatabaseReference!
+    
+    @IBAction func participateBtnPressed(_ sender: Any) {
+        for participate in activity.participates {
+            guard participate != Auth.auth().currentUser?.uid else {
+                let alertController = UIAlertController(title: "Oops", message: "您已參加此活動", preferredStyle: .alert)
+                let action = UIAlertAction(title: "好", style: .cancel, handler: nil)
+                alertController.addAction(action)
+                self.present(alertController,animated: true,completion: nil)
+                return
+            }
+        }
+        let alertController = UIAlertController(title: "確認參加活動？", message: "確定要參加此活動?", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "確定", style: .default) { (action) in
+            self.ref = Database.database().reference().child("activities").child(self.activity.key)
+            let count = self.activity.participantCounter + 1
+            self.ref.updateChildValues(["participateCounter":count])
+            self.ref.child("participates").updateChildValues(["\(count)":Auth.auth().currentUser?.uid])
+        
+            DispatchQueue.main.asyncAfter(deadline: .now()+1) {
+                self.currentPeopleLabel.text = "\(count)"
+                let okAlertController = UIAlertController(title: "成功", message: "成功參加活動", preferredStyle: .alert)
+                let okokAction = UIAlertAction(title: "好", style: .default, handler: { (action) in
+                    
+                })
+                okAlertController.addAction(okokAction)
+                self.present(okAlertController,animated: true,completion: nil)
+            }
+        }
+        let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)
+        alertController.addAction(okAction)
+        alertController.addAction(cancelAction)
+        present(alertController,animated: true, completion: nil)
+        
+    }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,32 +76,22 @@ class ActivityDetailViewController: UIViewController {
         scrollView.bounces = true
         scrollView.decelerationRate = .normal
         scrollView.delegate = self
-        nameTextView.isUserInteractionEnabled = false
-        addressTextView.isUserInteractionEnabled = false
-        contentTextView.isUserInteractionEnabled = false
-        nameTextView.backgroundColor = UIColor.white.withAlphaComponent(0)
-        addressTextView.backgroundColor = UIColor.white.withAlphaComponent(0)
-        contentTextView.backgroundColor = UIColor.white.withAlphaComponent(0)
-        adjustUITextViewHeight(arg: nameTextView)
-        adjustUITextViewHeight(arg: addressTextView)
-        adjustUITextViewHeight(arg: contentTextView)
-        // Do any additional setup after loading the view.
         
-        nameTextView.text = activity.name
+        
+        
+        nameLabel.text = activity.name
         let dateString = Manager.shared.dateToString(activity.date)
         dateLabel.text = dateString
         courtLabel.text = activity.courtName
         currentPeopleLabel.text = String(activity.participantCounter)
         invitedPeopleLabel.text = String(activity.peopleCounter)
-        addressTextView.text = activity.address
-        contentTextView.text = activity.content
+        addressLabel.text = activity.address
+        contentLabel.text = activity.content
         latitude = activity.latitue
         longitude = activity.longitue
         
         mapView.delegate = self
         locationManager.delegate = self
-        
-        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
         locationManager.startUpdatingLocation()
         
     }
@@ -82,7 +111,7 @@ extension ActivityDetailViewController : UIScrollViewDelegate {
 extension ActivityDetailViewController : MKMapViewDelegate , CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         let location = CLLocation(latitude: self.latitude, longitude: self.longitude)
-        DispatchQueue.once(token: "MoveRegion") {
+       
             let span:MKCoordinateSpan=MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
             var region:MKCoordinateRegion=MKCoordinateRegion(center: location.coordinate, span: span)
             region.center=location.coordinate
@@ -94,8 +123,8 @@ extension ActivityDetailViewController : MKMapViewDelegate , CLLocationManagerDe
             annotation.subtitle = activity.address
             self.mapView.addAnnotation(annotation)
             self.mapView.selectAnnotation(annotation, animated: true)
-        }
     }
+    
 }
 
 extension UILabel {

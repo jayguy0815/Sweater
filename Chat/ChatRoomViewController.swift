@@ -121,6 +121,7 @@ class ChatRoomViewController: MessagesViewController {
             return
         }
         self.uid = uid
+        let b : String = "bbb"
         let  handle = ref.child(channelID).child("messages").observe(.value) { (snapshot) in
             self.messages.removeAll()
             if let messageIDDic = snapshot.value as? [String:Any]{

@@ -9,7 +9,9 @@
 import UIKit
 import MapKit
 import CoreLocation
+import FirebaseFirestore
 import Firebase
+import CoreData
 
 protocol MapVCDelegate {
      func didFinishCreateActivity()
@@ -36,6 +38,8 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
     var courtList : [String] = []
     var uid : String?
     let manager = Manager()
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    
     
     var latitude : Double!
     var longitude : Double!
@@ -70,12 +74,16 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
             present(alertController, animated: true, completion: nil)
             return
         }
+        guard let uid = Auth.auth().currentUser?.uid else {
+            return
+        }
         let key = ref.child("activities").childByAutoId().key!
-        let newActivity = Activity()
+        let moc = (UIApplication.shared.delegate as! AppDelegate).managedObjectContext()
+        let newActivity = Activity(context: moc)
         guard let peopleCounter = self.activity["people"] as? String , let dateString = self.activity["date"] as? String , let activityName = self.activity["name"] as? String , let content = self.activity["content"] as? String else{
             return
         }
-//        newActivity.id = UUID().uuidString
+        newActivity.key = key
         newActivity.name = activityName
         
         let dateFormatter = DateFormatter()
@@ -87,16 +95,19 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
         newActivity.date = date
         newActivity.creater = self.uid!
         newActivity.courtName = self.courtName
-        let participantCounter : Int = 1
-        newActivity.participantCounter = participantCounter
+        newActivity.participantCounter = 1
+        newActivity.participants = [uid]
         newActivity.peopleCounter = Int(peopleCounter)!
-        newActivity.latitue = self.latitude
-        newActivity.longitue = self.longitude
+        newActivity.latitue = self.latitude!
+        newActivity.longitue = self.longitude!
         newActivity.address = self.address
         newActivity.content = content
+        let timeInterval:TimeInterval = Date().timeIntervalSince1970
+        let postTime = Double(timeInterval)
+        newActivity.postTime = postTime
         
         let dic : [String:Any] = ["key":key,"activityName":newActivity.name,"date": "\(newActivity.date)", "creator":newActivity.creater,"courtName":newActivity.courtName
-            ,"peopleCounter":newActivity.peopleCounter, "participateCounter": newActivity.participantCounter,"participates":["\(newActivity.participantCounter)":Auth.auth().currentUser?.uid] ,"latitude":newActivity.latitue,"longitude":newActivity.longitue,"address":newActivity.address,"content":newActivity.content,"postTime":[".sv":"timestamp"]]
+            ,"peopleCounter":newActivity.peopleCounter, "participateCounter": newActivity.participantCounter,"participates":FieldValue.arrayUnion([uid]) ,"latitude":newActivity.latitue,"longitude":newActivity.longitue,"address":newActivity.address,"content":newActivity.content,"postTime":newActivity.postTime]
         
        
         
@@ -104,10 +115,13 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
         
         let okAction = UIAlertAction(title: "確定", style: .default) { (action) in
             
-            Manager.shared.activities.insert(newActivity, at: 0)
-            self.ref.child("activities").child(key).setValue(dic)
-            let defaultMessage : [String:Any] = ["senderID":"aa","senderName":"aa","content":"aa","sendTime":Manager.shared.dateToString(Date()),"messageId":"aa","postTime":[".sv":"timestamp"]]
-            self.ref.child("channels").child(key).child("messages").childByAutoId().setValue(defaultMessage)
+            //self.appDelegate.saveContext()
+            
+            let fireRef = Firestore.firestore().collection("activities").document(key)
+            fireRef.setData(dic)
+            
+            
+            
             
             
             DispatchQueue.main.asyncAfter(deadline: .now()+2.0, execute: {

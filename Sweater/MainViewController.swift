@@ -61,6 +61,7 @@ class MainViewController: UIViewController,UINavigationControllerDelegate{
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+//        FirebaseApp.configure()
 //        ref = Database.database().reference()
 //        ref.child("activities").child("-LiGoSvp1cVttL-u4og8").observe(.value, with: { (snapshot) in
 //            guard let newSnapshot = snapshot.value as? [String:Any] else {

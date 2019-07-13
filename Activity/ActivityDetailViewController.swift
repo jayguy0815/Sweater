@@ -9,6 +9,11 @@
 import UIKit
 import MapKit
 import Firebase
+import CoreData
+
+protocol ActivityDetailViewControllerDelegate {
+    func didParticipate()
+}
 
 class ActivityDetailViewController: UIViewController {
     @IBOutlet weak var scrollView: UIScrollView!
@@ -27,14 +32,15 @@ class ActivityDetailViewController: UIViewController {
     var locationManager = CLLocationManager()
     var latitude : Double = 0.0
     var longitude : Double = 0.0
-    
-    var activity = Activity()
+    let appdelegate = UIApplication.shared.delegate as! AppDelegate
+    let moc = (UIApplication.shared.delegate as! AppDelegate).managedObjectContext()
+    var activity : Activity!
     
     var ref : DatabaseReference!
-    
+    var delegate : ActivityDetailViewControllerDelegate?
     @IBAction func participateBtnPressed(_ sender: Any) {
-        for participate in activity.participates {
-            guard participate != Auth.auth().currentUser?.uid else {
+        for participate in activity.participants {
+            guard participate != UserDefaults.standard.string(forKey: "uid") else {
                 let alertController = UIAlertController(title: "Oops", message: "您已參加此活動", preferredStyle: .alert)
                 let action = UIAlertAction(title: "好", style: .cancel, handler: nil)
                 alertController.addAction(action)
@@ -44,16 +50,25 @@ class ActivityDetailViewController: UIViewController {
         }
         let alertController = UIAlertController(title: "確認參加活動？", message: "確定要參加此活動?", preferredStyle: .alert)
         let okAction = UIAlertAction(title: "確定", style: .default) { (action) in
-            self.ref = Database.database().reference().child("activities").child(self.activity.key)
             let count = self.activity.participantCounter + 1
-            self.ref.updateChildValues(["participateCounter":count])
-            self.ref.child("participates").updateChildValues(["\(count)":Auth.auth().currentUser?.uid])
-        
+            guard let uid = UserDefaults.standard.string(forKey: "uid") else {
+                return
+            }
+            
+            let timeInterval:TimeInterval = Date().timeIntervalSince1970
+            let lastUpdateActivityTime = Double(timeInterval)
+            
+            let storeRef = Firestore.firestore().collection("activities").document(self.activity.key)
+            storeRef.updateData(["participateCounter": count,"participates": FieldValue.arrayUnion([uid])])
+            
+            
+            
             DispatchQueue.main.asyncAfter(deadline: .now()+1) {
                 self.currentPeopleLabel.text = "\(count)"
                 let okAlertController = UIAlertController(title: "成功", message: "成功參加活動", preferredStyle: .alert)
                 let okokAction = UIAlertAction(title: "好", style: .default, handler: { (action) in
-                    
+                    self.delegate?.didParticipate()
+                    self.navigationController?.popViewController(animated: true)
                 })
                 okAlertController.addAction(okokAction)
                 self.present(okAlertController,animated: true,completion: nil)
@@ -69,6 +84,7 @@ class ActivityDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         scrollView.showsVerticalScrollIndicator = true
         scrollView.indicatorStyle = .black
         scrollView.isScrollEnabled = true

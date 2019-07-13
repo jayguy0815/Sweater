@@ -19,13 +19,8 @@ class ParticipateActivityViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         self.tabBarController?.tabBar.isHidden = false
-        for activity in Manager.shared.activities {
-            for participate in activity.participates {
-                if participate == Auth.auth().currentUser?.uid {
-                    self.activities.append(activity)
-                }
-            }
-        }
+        self.activities = Manager.shared.loadMyActivityFromCoreData()
+        participateActivitiesTableView.reloadData()
     }
     
     override func viewDidLoad() {

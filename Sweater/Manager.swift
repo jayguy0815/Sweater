@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Firebase
+import CoreData
 
 class Manager {
     var userAccount = Account()
@@ -37,9 +38,6 @@ class Manager {
                     account.uid = uid
                     account.email = dic["email"] as! String
                     account.nickname = dic["nickname"] as! String
-                    if uid == userUid{
-                        UserDefaults.standard.set(account.nickname, forKey: "userNickName")
-                    }
                     account.url = dic["accountImageUrl"] as! String
                     storageRef.child("\(uid).jpg").getData(maxSize: 1*1024*1024, completion: { (data, error) in
                         if let error = error {
@@ -61,58 +59,93 @@ class Manager {
     
     
     func loadActivities() {
-        let manager = Manager()
-        
-        var ref : DatabaseReference!
-        ref = Database.database().reference()
-        
-        
-        
-        ref.child("activities").queryOrdered(byChild: "postTime").observe(.value) { (snapshot) in
-            self.activities.removeAll()
-            if let activityIDDic = snapshot.value as? [String:Any]{
-                let activityDic = activityIDDic
-                
-                print("111")
-                let array = Array(activityDic.keys)
-               
-                for i in 0..<array.count {
-                    let dic = activityDic[array[i]] as! [String:Any]
-                    //print(dic)
-                    let activity = Activity()
-                    
-                    guard let dateString = dic["date"] as? String else{
-                        continue
-                    }
-                    
-                    let date = manager.stringToDate(from: dateString)
-                    activity.key = dic["key"] as! String
-                    activity.name = dic["activityName"] as! String
+        let moc = (UIApplication.shared.delegate as! AppDelegate).managedObjectContext()
+        let appdelegate = UIApplication.shared.delegate as! AppDelegate
+        let cloudFireStore = Firestore.firestore()
+        cloudFireStore.collection("activities").order(by: "postTime", descending: true).getDocuments { (snapshot, error) in
+            if let querySnapshot = snapshot {
+                for document in querySnapshot.documents {
+                    let activity = Activity(context: moc)
+                    activity.key = document.get("key") as! String
+                    activity.name = document.get("activityName") as! String
+                    let dateString = document.get("date") as! String
+                    let date = Manager.shared.stringToDate(from: dateString)
                     activity.date = date
-                    activity.creater = dic["creator"] as! String
-                    activity.content = dic["content"] as! String
-                    activity.address = dic["address"] as! String
-                    activity.courtName = dic["courtName"] as! String
-                    activity.latitue = dic["latitude"] as! Double
-                    activity.longitue = dic["longitude"] as! Double
-                    activity.peopleCounter = dic["peopleCounter"] as! Int
-                    activity.participantCounter = dic["participateCounter"] as! Int
-                    guard let array1 = dic["participates"] as? [Any] else{
-                        continue
-                    }
-                    for j in 1..<array1.count{
-                        print(array1[j] as! String)
-                        activity.participates.append(array1[j] as! String)
-                    }
-                    activity.postTime = dic["postTime"] as! Double
-                    self.activities.append(activity)
-                    self.activities.sort(by: { (activity1, activity2) -> Bool in
-                        activity1.postTime > activity2.postTime
-                    })
+                    activity.courtName = document.get("courtName") as! String
+                    activity.latitue = document.get("latitude") as! Double
+                    activity.longitue = document.get("longitude") as! Double
+                    activity.address = document.get("address") as! String
+                    activity.content = document.get("content") as! String
+                    activity.creater = document.get("creator") as! String
+                    activity.participantCounter = document.get("participateCounter") as! Int
+                    activity.peopleCounter = document.get("peopleCounter") as! Int
+                    activity.participants = document.get("participates") as! [String]
+                    activity.postTime = document.get("postTime") as! Double
+                    
+                    appdelegate.saveContext()
                 }
             }
         }
+        UserDefaults.standard.set(Double(Date().timeIntervalSince1970), forKey: "lastUpdated")
+        
     }
+    func loadMoreActivities(){
+        
+        let appdelegate = UIApplication.shared.delegate as! AppDelegate
+        let cloudFireStore = Firestore.firestore()
+    }
+    
+    func coreDataRemoveAll(){
+        // delete
+        let moc = (UIApplication.shared.delegate as! AppDelegate).managedObjectContext()
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Activity")
+        
+        do {
+            let results =
+                try moc.fetch(request)
+                    as! [Activity]
+            
+            for result in results {
+                moc.delete(result)
+                do{
+                    try moc.save()
+                }catch{
+                    fatalError("\(error)")
+                }
+            }
+            
+            
+        } catch {
+            fatalError("\(error)")
+        }
+    }
+        
+        
+//            if let querySnapshot = snapshot {
+//                for document in querySnapshot.documentChanges {
+//
+//                    let activity = Activity(context: moc)
+//                    activity.key = document.document.get("key") as! String
+//                    activity.name = document.document.get("activityName") as! String
+//                    let dateString = document.document.get("date") as! String
+//                    let date = Manager.shared.stringToDate(from: dateString)
+//                    activity.date = date
+//                    activity.courtName = document.document.get("courtName") as! String
+//                    activity.latitue = document.document.get("latitude") as! Double
+//                    activity.longitue = document.document.get("longitude") as! Double
+//                    activity.address = document.document.get("key") as! String
+//                    activity.content = document.document.get("content") as! String
+//                    activity.creater = document.document.get("creator") as! String
+//                    activity.participantCounter = document.document.get("participateCounter") as! Int
+//                    activity.peopleCounter = document.document.get("peopleCounter") as! Int
+//                    activity.participants = document.document.get("participates") as! [String]
+//                    activity.postTime = document.document.get("postTime") as! Double
+//                    print("added")
+//                    appdelegate.saveContext()
+//                }
+//            }
+        
+    
     
     func loadMapData(){
         var ref : DatabaseReference!
@@ -206,6 +239,13 @@ class Manager {
         return exist
     }
     
+    func checkSQLite() -> Bool {
+        let fileManager = FileManager.default
+        let filePath = NSHomeDirectory()+"/Library/Application Support/Sweater.sqlite"
+        let exist = fileManager.fileExists(atPath: filePath)
+        return exist
+    }
+    
     func saveToFile(fileName : String){
         let homeURL = URL(fileURLWithPath: NSHomeDirectory())
         let documents = homeURL.appendingPathComponent("Documents")
@@ -233,7 +273,64 @@ class Manager {
             print("error\(error)")
         }
     }
-
+    
+    func getCurrentUserData(){
+        guard let uid = Auth.auth().currentUser?.uid else {
+            return
+        }
+        UserDefaults.standard.set(uid, forKey: "uid")
+    }
+    
+    
+    func updateActivity (key : String, count : Int, uids : [String]) {
+        let moc = (UIApplication.shared.delegate as! AppDelegate).managedObjectContext()
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Activity")
+        request.predicate = NSPredicate(format:"(key = %@)", (key))
+            
+            do {
+                let results = try moc.fetch(request)  as! [Activity]
+                
+                if results.count > 0 {
+                    
+                    results[0].participantCounter = count
+                    results[0].participants.removeAll()
+                    for uid in uids{
+                        results[0].participants.append(uid)
+                    }
+                    
+                    do {
+                        try moc.save()
+                    }catch  let error as NSError {
+                        print("\(error)")
+                    }
+                    
+                }
+            } catch {
+                fatalError("\(error)")
+            }
+        
+    }
+    
+    func loadMyActivityFromCoreData() -> [Activity]{
+        var activities = [Activity]()
+        let uid = UserDefaults.standard.string(forKey: "uid")!
+        let moc = (UIApplication.shared.delegate as! AppDelegate).managedObjectContext()
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Activity")
+        do{
+            let results = try moc.fetch(request) as! [Activity]
+            if results.count > 0 {
+                for result in results{
+                    if result.participants.contains(uid){
+                        activities.append(result)
+                    }
+                }
+            }
+        }catch{
+            fatalError()
+        }
+        return activities
+    }
+    
 }
 
 

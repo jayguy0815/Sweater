@@ -26,6 +26,7 @@
 		2D204A7322B0A13300D8749A /* mainBackground.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2D204A7222B0A13300D8749A /* mainBackground.jpg */; };
 		2D204A7722B0A44A00D8749A /* basketball.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D204A7622B0A44A00D8749A /* basketball.png */; };
 		2D204A7B22B0A75400D8749A /* badminton.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D204A7A22B0A75400D8749A /* badminton.png */; };
+		2D5F5FF122D97E9C00F09543 /* Sweater.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2D5F5FEF22D97E9B00F09543 /* Sweater.xcdatamodeld */; };
 		2D6E43CE22B774FF0073E56F /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E43CD22B774FF0073E56F /* TestViewController.swift */; };
 		2D6E43D022B77D4B0073E56F /* MapSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E43CF22B77D4B0073E56F /* MapSelectionViewController.swift */; };
 		2D6E43F022B8ECD80073E56F /* MapData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E43EF22B8ECD80073E56F /* MapData.swift */; };
@@ -52,7 +53,8 @@
 		2D915F9222D75E67009DD06B /* 29*29.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2D915F9122D75E66009DD06B /* 29*29.jpg */; };
 		2D915F9422D75E6D009DD06B /* 167*167.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2D915F9322D75E6D009DD06B /* 167*167.jpg */; };
 		2D915F9722D824BD009DD06B /* infoUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D915F9622D824BD009DD06B /* infoUIView.swift */; };
-		2D98A61722C1CBD700437774 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2D98A61622C1CBD600437774 /* GoogleService-Info.plist */; };
+		2D915F9E22D85B44009DD06B /* CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D915F9D22D85B43009DD06B /* CoreDataHelper.swift */; };
+		2DB96BE422D873A9001C1AE6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2DB96BE322D873A8001C1AE6 /* GoogleService-Info.plist */; };
 		2DFD9DCE22A8F7B1006A58E2 /* AuthTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DFD9DCA22A8F7B1006A58E2 /* AuthTestViewController.swift */; };
 		2DFD9DD122A8F7B1006A58E2 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DFD9DCD22A8F7B1006A58E2 /* SignUpViewController.swift */; };
 		2DFD9DD322A8F950006A58E2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DFD9DD222A8F950006A58E2 /* AppDelegate.swift */; };
@@ -91,6 +93,7 @@
 		2D204A7A22B0A75400D8749A /* badminton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = badminton.png; sourceTree = "<group>"; };
 		2D3F3FC4226F15360098B414 /* Sweater.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sweater.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D3F3FD5226F15370098B414 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2D5F5FF022D97E9B00F09543 /* Sweater.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Sweater.xcdatamodel; sourceTree = "<group>"; };
 		2D6E43CD22B774FF0073E56F /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
 		2D6E43CF22B77D4B0073E56F /* MapSelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSelectionViewController.swift; sourceTree = "<group>"; };
 		2D6E43EF22B8ECD80073E56F /* MapData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapData.swift; sourceTree = "<group>"; };
@@ -117,7 +120,8 @@
 		2D915F9122D75E66009DD06B /* 29*29.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "29*29.jpg"; sourceTree = "<group>"; };
 		2D915F9322D75E6D009DD06B /* 167*167.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "167*167.jpg"; sourceTree = "<group>"; };
 		2D915F9622D824BD009DD06B /* infoUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = infoUIView.swift; sourceTree = "<group>"; };
-		2D98A61622C1CBD600437774 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "plist/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		2D915F9D22D85B43009DD06B /* CoreDataHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CoreDataHelper.swift; path = ../../MAPD25_NoteApp/NoteApp_beforeTest/NoteApp_beforeTest/CoreDataHelper.swift; sourceTree = "<group>"; };
+		2DB96BE322D873A8001C1AE6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		2DFD9DCA22A8F7B1006A58E2 /* AuthTestViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthTestViewController.swift; sourceTree = "<group>"; };
 		2DFD9DCD22A8F7B1006A58E2 /* SignUpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		2DFD9DD222A8F950006A58E2 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -231,10 +235,11 @@
 		2D3F3FBB226F15360098B414 = {
 			isa = PBXGroup;
 			children = (
+				2D5F5FEF22D97E9B00F09543 /* Sweater.xcdatamodeld */,
 				2D08B38022D48F06004D1007 /* Setting */,
 				2D08B37122CF2C3D004D1007 /* Addons */,
-				2D98A61622C1CBD600437774 /* GoogleService-Info.plist */,
 				2DFD9DD822A8FAA1006A58E2 /* Launch Screen.storyboard */,
+				2DB96BE322D873A8001C1AE6 /* GoogleService-Info.plist */,
 				2D204A6F22B08D0E00D8749A /* Image */,
 				2D060E2D22AE39D600BA34A6 /* Account */,
 				2D3F3FC6226F15360098B414 /* Sweater */,
@@ -267,6 +272,7 @@
 				2DFF16AE22B25A61002F4EE9 /* MainNavigationViewController.swift */,
 				2DFF16F422B52A15002F4EE9 /* Method.swift */,
 				2D017B2622C33F22004E5C00 /* Manager.swift */,
+				2D915F9D22D85B43009DD06B /* CoreDataHelper.swift */,
 			);
 			path = Sweater;
 			sourceTree = "<group>";
@@ -406,6 +412,7 @@
 				2D915F6822D5BA79009DD06B /* kSCTAd.jpg in Resources */,
 				2D08B37F22D46636004D1007 /* send.png in Resources */,
 				2D915F7F22D75AF9009DD06B /* 58*58.jpg in Resources */,
+				2DB96BE422D873A9001C1AE6 /* GoogleService-Info.plist in Resources */,
 				2D915F8022D75AF9009DD06B /* 76*76.jpg in Resources */,
 				2D08B37D22D44540004D1007 /* picture.png in Resources */,
 				2D204A7322B0A13300D8749A /* mainBackground.jpg in Resources */,
@@ -413,7 +420,6 @@
 				2DFD9DD922A8FAA1006A58E2 /* Launch Screen.storyboard in Resources */,
 				2D915F8822D75CF8009DD06B /* 60*60.jpg in Resources */,
 				2DFD9DDD22A900F6006A58E2 /* Main.storyboard in Resources */,
-				2D98A61722C1CBD700437774 /* GoogleService-Info.plist in Resources */,
 				2D915F8C22D75D9E009DD06B /* 80*80.jpg in Resources */,
 				2D204A6C22AFE04200D8749A /* Second.storyboard in Resources */,
 				2D6E441822BB18100073E56F /* ActivityListCell.xib in Resources */,
@@ -535,6 +541,7 @@
 				2DFF16AD22B259DF002F4EE9 /* TabbarViewController.swift in Sources */,
 				2D017B2722C33F22004E5C00 /* Manager.swift in Sources */,
 				2DFF16AF22B25A61002F4EE9 /* MainNavigationViewController.swift in Sources */,
+				2D5F5FF122D97E9C00F09543 /* Sweater.xcdatamodeld in Sources */,
 				2D08B37522D3036E004D1007 /* Channel.swift in Sources */,
 				2D08B36F22CF239B004D1007 /* UICollectionView+Additions.swift in Sources */,
 				2DFD9DD322A8F950006A58E2 /* AppDelegate.swift in Sources */,
@@ -555,6 +562,7 @@
 				2D08B37722D304A7004D1007 /* DatabaseRepresentation.swift in Sources */,
 				2D08B36D22CDC411004D1007 /* ParticipateActivityViewController.swift in Sources */,
 				2D6E46E422C1B50D0073E56F /* ActivityDetailViewController.swift in Sources */,
+				2D915F9E22D85B44009DD06B /* CoreDataHelper.swift in Sources */,
 				2D204A6E22AFF8F600D8749A /* MainViewController.swift in Sources */,
 				2D08B36922CDAD64004D1007 /* ChatRoomViewController.swift in Sources */,
 			);
@@ -741,6 +749,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		2D5F5FEF22D97E9B00F09543 /* Sweater.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				2D5F5FF022D97E9B00F09543 /* Sweater.xcdatamodel */,
+			);
+			currentVersion = 2D5F5FF022D97E9B00F09543 /* Sweater.xcdatamodel */;
+			path = Sweater.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 2D3F3FBC226F15360098B414 /* Project object */;
 }

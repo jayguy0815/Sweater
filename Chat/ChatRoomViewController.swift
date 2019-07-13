@@ -121,7 +121,7 @@ class ChatRoomViewController: MessagesViewController {
             return
         }
         self.uid = uid
-        let b : String = "bbb"
+        
         let  handle = ref.child(channelID).child("messages").observe(.value) { (snapshot) in
             self.messages.removeAll()
             if let messageIDDic = snapshot.value as? [String:Any]{
@@ -132,11 +132,11 @@ class ChatRoomViewController: MessagesViewController {
                     let dic = messageDic[array[i]] as! [String:Any]
                     //print(dic)
                     
-                    let message = Message(senderID: dic["senderID"] as! String, senderName: dic["senderName"] as! String, text: dic["content"] as! String, sendTime: Manager.shared.stringToDate2(from: dic["sendTime"] as! String), messageId: dic["messageId"] as! String,postTime: dic["postTime"] as! Double)
+//                    let message = Message(senderID: dic["senderID"] as! String, senderName: dic["senderName"] as! String, text: dic["content"] as! String, sendTime: Manager.shared.stringToDate2(from: dic["sendTime"] as! String), messageId: dic["messageId"] as! String,postTime: dic["postTime"] as! Double)
                 
-                    self.messages.append(message)
+                    //self.messages.append(message)
                     self.messages.sort { (m1, m2) -> Bool in
-                        m1.postTime<m2.postTime
+                        m1.postTime!<m2.postTime!
                     }
                     DispatchQueue.main.asyncAfter(deadline: .now()+1.5, execute: {
                         //self.messagesCollectionView.collectionViewLayout.invalidateLayout()
@@ -334,7 +334,7 @@ extension ChatRoomViewController : MessagesDataSource {
         var attributes = [NSAttributedString.Key: AnyObject]()
         attributes[.foregroundColor] = UIColor.lightGray.withAlphaComponent(0.6)
         attributes[.font] =  UIFont.systemFont(ofSize: 10)
-        var dateText = Manager.shared.dateToString(messages[indexPath.section].sendTime)
+        let dateText = Manager.shared.dateToString(messages[indexPath.section].sendTime!)
         return NSAttributedString(string: dateText , attributes: attributes)
     }
     
@@ -350,15 +350,15 @@ extension ChatRoomViewController : MessageInputBarDelegate {
         guard let nickName = UserDefaults.standard.string(forKey: "userNickName") else {
             return
         }
-        let newMessage = Message(senderID: uid, senderName: nickName , text: text, sendTime: Date(), messageId: UUID().uuidString, postTime: Date().timeIntervalSince1970)
+//        let newMessage = Message(senderID: uid, senderName: nickName , text: text, sendTime: Date(), messageId: UUID().uuidString, postTime: Date().timeIntervalSince1970)
         
         
         
         inputBar.inputTextView.text = ""
 //        self.messageInputBar.inputTextView.resignFirstResponder()
         DispatchQueue.main.asyncAfter(deadline: .now()+0.3) {
-            self.save(newMessage)
-            self.insertNewMessage(newMessage)
+//            self.save(newMessage)
+//            self.insertNewMessage(newMessage)
             
         }
     }

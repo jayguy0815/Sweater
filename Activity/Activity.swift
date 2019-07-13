@@ -8,21 +8,22 @@
 
 import Foundation
 import Firebase
+import CoreData
 
-class Activity {
+class Activity : NSManagedObject{
     
-    var key : String = ""
-    var name : String = ""
-    var date : Date = Date()
-    var creater : String = ""
-    var participates : [String] = []
-    var courtName : String = ""
-    var address : String = ""
-    var content : String = ""
-    var latitue : Double = 0.0
-    var longitue : Double = 0.0
-    var peopleCounter : Int = 0
-    var participantCounter : Int = 0
-    var postTime : Double = 0.0
+    @NSManaged var key : String
+    @NSManaged var name : String
+    @NSManaged var date : Date
+    @NSManaged var creater : String
+    @NSManaged var participants : [String]
+    @NSManaged var courtName : String
+    @NSManaged var address : String
+    @NSManaged var content : String
+    @NSManaged var latitue : Double
+    @NSManaged var longitue : Double
+    @NSManaged var peopleCounter : Int
+    @NSManaged var participantCounter : Int
+    @NSManaged var postTime : Double
     
 }

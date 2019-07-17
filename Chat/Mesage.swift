@@ -16,6 +16,8 @@ import CoreData
 class Message : NSObject, NSCoding, Comparable , MessageType{
     
     
+    
+    
     func encode(with aCoder: NSCoder) {
         aCoder.encode(self.text, forKey: "text")
         aCoder.encode(self.senderID, forKey: "senderID")
@@ -64,7 +66,7 @@ class Message : NSObject, NSCoding, Comparable , MessageType{
     }
 
     var sentDate: Date {
-        return Date()
+        return sendTime!
     }
     
     var kind: MessageKind {
@@ -74,16 +76,4 @@ class Message : NSObject, NSCoding, Comparable , MessageType{
 
     }
 }
-//
-//extension Message: DatabaseRepresentation {
-//
-//    var representation: [String : Any] {
-//        var rep: [String : Any] = [
-//            "created": sentDate,
-//            "senderID": sender.senderId,
-//            "senderName": sender.displayName
-//        ]
-//        return rep
-//    }
-//
-//}
+

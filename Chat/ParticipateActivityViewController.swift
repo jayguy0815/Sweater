@@ -25,7 +25,8 @@ class ParticipateActivityViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.navigationController?.navigationBar.topItem?.title = "已參加活動"
+        self.participateActivitiesTableView.backgroundColor = UIColor(named: "backGreen")
         self.participateActivitiesTableView.register(UINib(nibName: "ActivityListCell", bundle: nil), forCellReuseIdentifier: "activity")
         participateActivitiesTableView.delegate = self
         participateActivitiesTableView.dataSource = self
@@ -44,7 +45,7 @@ class ParticipateActivityViewController: UIViewController {
         guard let indexPath = self.participateActivitiesTableView.indexPathForSelectedRow else {
             return
         }
-        channelVC.channelID = self.activities[indexPath.row].key
+        channelVC.activity = activities[indexPath.row]
     }
    
 
@@ -58,9 +59,14 @@ extension ParticipateActivityViewController : UITableViewDelegate, UITableViewDa
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "activity") as! ActivityListCell
         
-        cell.activityNameLabel.text = activities[indexPath.row].name
+        cell.activityNameLabel.text = "\(activities[indexPath.row].name)(\(activities[indexPath.row].participantCounter))"
         cell.courtNameLabel.text = activities[indexPath.row].courtName
-        cell.peopleCountLabel.text = "人數  \(activities[indexPath.row].participantCounter)/ \(activities[indexPath.row].peopleCounter)"
+        let df = DateFormatter()
+        df.dateFormat = "MM/dd HH:mm"
+        let dateString = df.string(from: activities[indexPath.row].date)
+        cell.peopleCountLabel.text = dateString
+        cell.sportTypeImageView.image = UIImage(named: "basketballCellIcon")
+        cell.backgroundColor = UIColor(named: "backGreen")
         return cell
     }
     
@@ -69,6 +75,6 @@ extension ParticipateActivityViewController : UITableViewDelegate, UITableViewDa
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
+        return 65
     }
 }

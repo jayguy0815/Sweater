@@ -18,15 +18,15 @@ class ActivityListViewController: UIViewController, NSFetchRequestResult ,Activi
 
     
     @IBOutlet weak var activityTableView: UITableView!
-    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    //let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var activities = [Activity]()
     let methods = Methods()
     let manager = Manager()
    // var delegate : ActivityListVCDelegate?
 
     var selectedIndexPath : IndexPath?
-    let moc = (UIApplication.shared.delegate as! AppDelegate).managedObjectContext()
-    var listener : ListenerRegistration?
+    //let moc = (UIApplication.shared.delegate as! AppDelegate).managedObjectContext()
+    //var listener : ListenerRegistration?
     var flag = true
     var refreshControl = UIRefreshControl()
     
@@ -56,6 +56,9 @@ class ActivityListViewController: UIViewController, NSFetchRequestResult ,Activi
         
         
         
+        
+        self.navigationController?.navigationBar.topItem?.title = "活動列表"
+        self.activityTableView.backgroundColor = UIColor(named: "backGreen")
         self.activityTableView.register(UINib(nibName: "ActivityListCell", bundle: nil), forCellReuseIdentifier: "activity")
         activityTableView.delegate = self
         activityTableView.dataSource = self
@@ -77,10 +80,10 @@ class ActivityListViewController: UIViewController, NSFetchRequestResult ,Activi
     
     @objc func reloadActivities(){
 //        Manager.shared.loadMoreActivities()
-        
+            self.queryFromCoredata()
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             // 停止 refreshControl 動畫
-            self.queryFromCoredata()
+            
             self.refreshControl.endRefreshing()
             self.activityTableView.reloadData()
         }
@@ -115,6 +118,8 @@ extension ActivityListViewController : UITableViewDelegate, UITableViewDataSourc
         cell.activityNameLabel.text = self.activities[indexPath.row].name
         cell.courtNameLabel.text = self.activities[indexPath.row].courtName
         cell.peopleCountLabel.text = "人數  \(self.activities[indexPath.row].participantCounter)/ \(self.activities[indexPath.row].peopleCounter)"
+        cell.sportTypeImageView.image = UIImage(named: "basketballCellIcon")
+        cell.backgroundColor = UIColor(named: "backGreen")
         return cell
     }
     
@@ -138,8 +143,8 @@ extension ActivityListViewController : UITableViewDelegate, UITableViewDataSourc
     }
     
     func queryFromCoredata(){
-        self.activities = []
-        let moc = appDelegate.managedObjectContext()
+        
+        let moc = CoreDataHelper.shared.managedObjectContext()
         let request = NSFetchRequest<Activity>(entityName: "Activity")
         //排序,ascending true由小到大排序，false:由大到小
         let sort = NSSortDescriptor(key: "postTime", ascending: false)

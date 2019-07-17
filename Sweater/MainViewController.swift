@@ -14,6 +14,7 @@ import IQKeyboardManagerSwift
 class MainViewController: UIViewController,UINavigationControllerDelegate{
     
     
+    @IBOutlet weak var chooseTableView: UITableView!
     @IBOutlet weak var IV1: UIImageView!
     
  
@@ -29,7 +30,7 @@ class MainViewController: UIViewController,UINavigationControllerDelegate{
     var ref : DatabaseReference!
     var mapData = MapData()
     var mapDataArr : [MapData] = []
-    
+    var typeArr : [String] = ["basketball","workout","baseball","swim","tennis","vollyball","soccer","badminton"]
     
     @IBAction func logoutBtn(_ sender: Any) {
         if Auth.auth().currentUser != nil{
@@ -61,28 +62,13 @@ class MainViewController: UIViewController,UINavigationControllerDelegate{
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-//        FirebaseApp.configure()
-//        ref = Database.database().reference()
-//        ref.child("activities").child("-LiGoSvp1cVttL-u4og8").observe(.value, with: { (snapshot) in
-//            guard let newSnapshot = snapshot.value as? [String:Any] else {
-//                return
-//            }
-//
-//            let postTimestamp = newSnapshot["postTime"] as! Double
-//            var date = Date(timeIntervalSince1970: ((postTimestamp) / 1000))
-//
-//            print(date)
-//        })
-        
+        self.chooseTableView.backgroundColor = UIColor(named: "backGreen")
         Auth.auth().addStateDidChangeListener() { auth, user in
             if user == nil {
                 self.switchStoryboard()
             }
         }
         
-        if let img = UIImage(named: "background"){
-            self.view.backgroundColor = UIColor(patternImage: img)
-        }
         
        
         ref = Database.database().reference()
@@ -95,14 +81,18 @@ class MainViewController: UIViewController,UINavigationControllerDelegate{
     @IBOutlet weak var imageView: UIImageView!
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let imgdata = UserDefaults.standard.object(forKey: "userProfileImage") as? Data {
-                 let image = UIImage(data: imgdata)
-                IV1.contentMode = .scaleAspectFill
-                self.IV1.image = image
-        }
+        
+        
+        self.chooseTableView.dataSource = self
+        self.chooseTableView.delegate = self
+//        if let imgdata = UserDefaults.standard.object(forKey: "userProfileImage") as? Data {
+//                 let image = UIImage(data: imgdata)
+//                IV1.contentMode = .scaleAspectFill
+//                self.IV1.image = image
+//        }
         self.navigationController?.navigationBar.topItem?.title = "Sweater"
         print(self.mapData.distList.count)
-        self.basketballBtn.setTitle("", for: .normal)
+        //self.basketballBtn.setTitle("", for: .normal)
         
         // Do any additional setup after loading the view.
     }
@@ -120,12 +110,96 @@ class MainViewController: UIViewController,UINavigationControllerDelegate{
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "basketball"{
-            let createVC = segue.destination as! CreateActivityViewController
-            createVC.sportType = "籃球"
+        let createVC = segue.destination as! CreateActivityViewController
+        if let indexPath = chooseTableView.indexPathForSelectedRow{
+            if indexPath.section == 0{
+                createVC.sportType = "籃球"
+            }else if indexPath.section == 1{
+                createVC.sportType = "健身"
+            }else if indexPath.section == 2{
+                createVC.sportType = "棒球"
+            }else if indexPath.section == 3{
+                createVC.sportType = "游泳"
+            }else if indexPath.section == 4{
+                createVC.sportType = "排球"
+            }else if  indexPath.section == 5{
+                createVC.sportType = "羽球"
+            }else if indexPath.section == 6{
+                createVC.sportType = "網球"
+            }else if indexPath.section == 7{
+                createVC.sportType = "足球"
+            }
         }
+        
+        
     }
     
+    
+}
+
+extension MainViewController : UITableViewDataSource,UITableViewDelegate{
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return typeArr.count
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "basketball") as! BasketballTableViewCell
+        
+        if indexPath.section == 0{
+            cell.basketballImageView.image = UIImage(named: "basketballBack")
+            return cell
+        }else if indexPath.section == 1{
+            cell.basketballImageView.image = UIImage(named: "workoutBack")
+            return cell
+        }else if indexPath.section == 2{
+            cell.basketballImageView.image = UIImage(named: "baseballBack")
+            return cell
+        }else if indexPath.section == 3{
+            cell.basketballImageView.image = UIImage(named: "swimBack")
+            return cell
+        }else if indexPath.section == 4{
+            cell.basketballImageView.image = UIImage(named: "volleyballBack")
+            return cell
+        }else if  indexPath.section == 5{
+            cell.basketballImageView.image = UIImage(named: "badmintonBack")
+            return cell
+        }else if indexPath.section == 6{
+            cell.basketballImageView.image = UIImage(named: "tennisBack")
+            return cell
+        }else if indexPath.section == 7{
+            cell.basketballImageView.image = UIImage(named: "soccerBack")
+            return cell
+        }
+       
+        
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return CGFloat(integerLiteral: 2)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 220
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+//        performSegue(withIdentifier: "basketball", sender: nil)
+        
+    }
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if section == 0{
+           let imageview = UIImageView()
+            imageview.backgroundColor = .black
+            return imageview
+        }
+        return nil
+    }
     
 }
 

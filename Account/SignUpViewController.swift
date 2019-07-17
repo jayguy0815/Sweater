@@ -38,6 +38,7 @@ class SignUpViewController: UIViewController,UIPickerViewDelegate,UIPickerViewDa
     var storageRef = Storage.storage().reference()
     var url : String = ""
     
+    
     @IBAction func signUp(_ sender: UIButton) {
         if emailTextField.text == ""{
             let alert = UIAlertController(title: "error", message: "請輸入電子郵件", preferredStyle: .alert)
@@ -266,7 +267,9 @@ extension SignUpViewController: UIImagePickerControllerDelegate, UINavigationCon
             imageCropVC.avoidEmptySpaceAroundImage = true
             imageCropVC.alwaysBounceHorizontal = true
             imageCropVC.alwaysBounceVertical = true
+        
             picker.pushViewController(imageCropVC, animated: true)
+        
         
     }
 }
@@ -292,7 +295,7 @@ extension SignUpViewController: RSKImageCropViewControllerDelegate, RSKImageCrop
     }
     
     func imageCropViewControllerDidCancelCrop(_ controller: RSKImageCropViewController) {
-        self.navigationController?.popViewController(animated: true)
+        controller.dismiss(animated: true, completion: nil)
     }
     
     func imageCropViewController(_ controller: RSKImageCropViewController, didCropImage croppedImage: UIImage, usingCropRect cropRect: CGRect, rotationAngle: CGFloat) {

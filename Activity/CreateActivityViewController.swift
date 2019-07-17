@@ -31,7 +31,7 @@ class CreateActivityViewController: UIViewController,UINavigationControllerDeleg
         self.view.backgroundColor = UIColor(named: "backGreen")
         // MARK - Navigation Item
         self.navigationItem.title = "建立揪團"
-        let customBackButton = methods.setNavigationBar()
+        let customBackButton = Manager.shared.setNavigationBar()
         self.view.addSubview(customBackButton)
         self.navigationItem.setHidesBackButton(true, animated:false)
         let backTap = UITapGestureRecognizer(target: self, action: #selector(back))

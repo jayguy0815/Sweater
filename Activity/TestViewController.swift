@@ -14,6 +14,7 @@ import CoreLocation
 
 
 class TestViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegate,UIGestureRecognizerDelegate {
+    
     var ref : DatabaseReference!
     var distList : [String] = []
     var courtList : [String] = []
@@ -27,24 +28,51 @@ class TestViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDe
     var mapData = MapData()
     var mapDataArr : [MapData] = []
 
-
+    var array = ["籃球","健身","棒球","游泳","排球","羽球","網球","足球"]
     var locationManager : CLLocationManager!
 
-
+    @IBOutlet weak var pickerView: UIPickerView!
+    
     @IBOutlet weak var mapView: MKMapView!
 
-
+    @IBOutlet weak var textField: UITextField!
+    
 
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        
+        for i in 0 ..< Manager.mapData.courtList.count{
+            var annotionCoordinate = CLLocationCoordinate2D()
+            annotionCoordinate.latitude = Manager.mapData.latitudeList[i]
+            annotionCoordinate.longitude = Manager.mapData.longitudeList[i]
+            
+            
+            let annotation = customAnnotation()
+            annotation.coordinate = annotionCoordinate
+            annotation.title = "\(Manager.mapData.courtList[i])"
+            annotation.subtitle = "\(Manager.mapData.addressList[i])"
+            
+            
+            if annotation.Id == "111"{
+                annotation.title = "711"
+                annotation.subtitle = "222"
+            }
+            
+            self.mapView.addAnnotation(annotation)
+        }
         //self.loadFromFile()
     }
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        textField.delegate = self
+        textField.placeholder = "請選擇一種運動類型"
+        pickerView.dataSource = self
+        pickerView.delegate = self
+        pickerView.removeFromSuperview()
+        textField.inputView = pickerView
+        self.navigationItem.title = "球場地圖"
         print(Manager.mapData.addressList.count)
         print(NSHomeDirectory())
         mapView.delegate = self
@@ -59,11 +87,15 @@ class TestViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDe
         gestureRecognizer.delegate = self
         self.mapView.addGestureRecognizer(gestureRecognizer)
         self.mapView.reloadInputViews()
+        
+        
+        
+        
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         let currentLocation:CLLocation = locations.last! as CLLocation
-        let span:MKCoordinateSpan=MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+        let span:MKCoordinateSpan=MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
         var region:MKCoordinateRegion=MKCoordinateRegion(center: currentLocation.coordinate, span: span)
         region.center=currentLocation.coordinate
         self.mapView.setRegion(region, animated: true)
@@ -97,20 +129,42 @@ class TestViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDe
         annotation.title = self.name
         mapView.addAnnotation(annotation)
     }
-
-
-
-    //MARK: func - check file in app.
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    
+    func loadFromFile(){
+        let homeURL = URL(fileURLWithPath: NSHomeDirectory())
+        let documents = homeURL.appendingPathComponent("Documents")
+        let fileURL = documents.appendingPathComponent("mapData.archive")
+        do{
+            //把檔案轉成Data形式
+            let fileData = try Data(contentsOf: fileURL)
+            //從Data轉回MapData陣列
+            self.mapData = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(fileData) as! MapData
+        }catch{
+            print("error\(error)")
+        }
     }
-    */
 
 }
 
+extension TestViewController : UIPickerViewDelegate,UIPickerViewDataSource{
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return array.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return array[row]
+    }
+    
+    func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        let text = "\(self.array[row])"
+        self.textField.text = text
+    }
+}
+
+extension TestViewController : UITextFieldDelegate {
+    
+}

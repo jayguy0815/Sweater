@@ -22,22 +22,28 @@ class ActivityDetailViewController: UIViewController {
     @IBOutlet weak var currentPeopleLabel: UILabel!
     @IBOutlet weak var invitedPeopleLabel: UILabel!
     @IBOutlet weak var courtLabel: UILabel!
-    
     @IBOutlet weak var nameLabel: UILabel!
-    
     @IBOutlet weak var addressLabel: UILabel!
-    
     @IBOutlet weak var contentLabel: UILabel!
     @IBOutlet weak var mapView: MKMapView!
+    
+   
     var locationManager = CLLocationManager()
     var latitude : Double = 0.0
     var longitude : Double = 0.0
     let appdelegate = UIApplication.shared.delegate as! AppDelegate
-    let moc = (UIApplication.shared.delegate as! AppDelegate).managedObjectContext()
+    let moc = CoreDataHelper.shared.managedObjectContext()
     var activity : Activity!
-    
     var ref : DatabaseReference!
     var delegate : ActivityDetailViewControllerDelegate?
+    var flag = false
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+    
+    
     @IBAction func participateBtnPressed(_ sender: Any) {
         for participate in activity.participants {
             guard participate != UserDefaults.standard.string(forKey: "uid") else {
@@ -48,43 +54,68 @@ class ActivityDetailViewController: UIViewController {
                 return
             }
         }
-        let alertController = UIAlertController(title: "確認參加活動？", message: "確定要參加此活動?", preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "確定", style: .default) { (action) in
-            let count = self.activity.participantCounter + 1
-            guard let uid = UserDefaults.standard.string(forKey: "uid") else {
+        
+        Firestore.firestore().collection("activities").document("\(activity.key)").getDocument { (snap, err) in
+            
+            guard let doc = snap else{
                 return
             }
-            
-            let timeInterval:TimeInterval = Date().timeIntervalSince1970
-            let lastUpdateActivityTime = Double(timeInterval)
-            
-            let storeRef = Firestore.firestore().collection("activities").document(self.activity.key)
-            storeRef.updateData(["participateCounter": count,"participates": FieldValue.arrayUnion([uid])])
-            
-            
-            
-            DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-                self.currentPeopleLabel.text = "\(count)"
-                let okAlertController = UIAlertController(title: "成功", message: "成功參加活動", preferredStyle: .alert)
-                let okokAction = UIAlertAction(title: "好", style: .default, handler: { (action) in
-                    self.delegate?.didParticipate()
-                    self.navigationController?.popViewController(animated: true)
-                })
-                okAlertController.addAction(okokAction)
-                self.present(okAlertController,animated: true,completion: nil)
+            let part = doc.get("participateCounter") as! Int
+            let invited = doc.get("peopleCounter") as! Int
+            guard part != invited else {
+                let alertController = UIAlertController(title: "Oops", message: "人數已滿", preferredStyle: .alert)
+                let action = UIAlertAction(title: "好", style: .cancel, handler: nil)
+                alertController.addAction(action)
+                self.present(alertController,animated: true,completion: nil)
+                return
             }
+            let alertController = UIAlertController(title: "確認參加活動？", message: "確定要參加此活動?", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "確定", style: .default) { (action) in
+                let count = self.activity.participantCounter + 1
+                guard let uid = UserDefaults.standard.string(forKey: "uid") else {
+                    return
+                }
+                
+                let timeInterval:TimeInterval = Date().timeIntervalSince1970
+                let lastUpdateActivityTime = Double(timeInterval)
+                
+                let storeRef = Firestore.firestore().collection("activities").document(self.activity.key)
+                storeRef.updateData(["participateCounter": count,"participates": FieldValue.arrayUnion([uid]),"modifiedTime":lastUpdateActivityTime])
+                let uuid = UUID().uuidString
+                let messageRef = Firestore.firestore().collection("channels").document(self.activity.key).collection("messages").document(uuid)
+                guard let nickName = UserDefaults.standard.string(forKey: "userNickName") else {
+                    return
+                }
+                let defaultMessage : [String:Any] = ["senderID":uid,"senderName":nickName ,"content":"\(nickName)加入活動","sendDate":Date(),"messageId":uuid,"postTime":Double(Date().timeIntervalSince1970)]
+                messageRef.setData(defaultMessage)
+                
+                DispatchQueue.main.asyncAfter(deadline: .now()+1) {
+                    self.currentPeopleLabel.text = "\(count)"
+                    let okAlertController = UIAlertController(title: "成功", message: "成功參加活動", preferredStyle: .alert)
+                    let okokAction = UIAlertAction(title: "好", style: .default, handler: { (action) in
+                        self.delegate?.didParticipate()
+                        self.navigationController?.popViewController(animated: true)
+                    })
+                    okAlertController.addAction(okokAction)
+                    self.present(okAlertController,animated: true,completion: nil)
+                }
+            }
+            let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)
+            alertController.addAction(okAction)
+            alertController.addAction(cancelAction)
+            self.present(alertController,animated: true, completion: nil)
+            
         }
-        let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)
-        alertController.addAction(okAction)
-        alertController.addAction(cancelAction)
-        present(alertController,animated: true, completion: nil)
+        
+            
+        
         
     }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.navigationItem.title = "活動資訊"
         scrollView.showsVerticalScrollIndicator = true
         scrollView.indicatorStyle = .black
         scrollView.isScrollEnabled = true
@@ -117,6 +148,7 @@ class ActivityDetailViewController: UIViewController {
         arg.translatesAutoresizingMaskIntoConstraints = true
         arg.sizeToFit()
     }
+    
     
 }
 

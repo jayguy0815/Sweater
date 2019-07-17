@@ -28,25 +28,20 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
     @IBOutlet weak var listSelectionView: UIStackView!
     @IBOutlet weak var mapSelectionView: UIView!
     
-    var delegate : MapVCDelegate?
-    let methods = Methods()
+    
+    
     var activity : [String:Any] = [:]
     var locationManager : CLLocationManager!
-    var ref : DatabaseReference = Database.database().reference()
-    var storeRef = Firestore.firestore().collection("channels")
+    var ref : DatabaseReference!
+    var storeRef : DatabaseReference!
     var distList : [String] = []
     var courtList : [String] = []
     var uid : String?
-    let manager = Manager()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    
-    
     var latitude : Double!
     var longitude : Double!
-    
-    
     var annotationList : [customAnnotation] = []
-    var mapData = MapData()
+    var mapData : MapData?
     var annotation : MKPointAnnotation!
     var courtName : String!
     var address : String = ""
@@ -59,7 +54,6 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
         case 1:
             listSelectionView.isHidden = true
             mapSelectionView.isHidden = false
-            //self.delegate?.passActivityData(activityArray: self.activity)
             
         default:
             break
@@ -77,37 +71,22 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
         guard let uid = Auth.auth().currentUser?.uid else {
             return
         }
-        let key = ref.child("activities").childByAutoId().key!
-        let moc = (UIApplication.shared.delegate as! AppDelegate).managedObjectContext()
-        let newActivity = Activity(context: moc)
+        self.ref = Database.database().reference()
+        let key = ref.childByAutoId().key!
         guard let peopleCounter = self.activity["people"] as? String , let dateString = self.activity["date"] as? String , let activityName = self.activity["name"] as? String , let content = self.activity["content"] as? String else{
             return
         }
-        newActivity.key = key
-        newActivity.name = activityName
-        
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
         
         guard let date = dateFormatter.date(from: dateString) else {
             fatalError("ERROR: Date conversion failed due to mismatched format.")
         }
-        newActivity.date = date
-        newActivity.creater = self.uid!
-        newActivity.courtName = self.courtName
-        newActivity.participantCounter = 1
-        newActivity.participants = [uid]
-        newActivity.peopleCounter = Int(peopleCounter)!
-        newActivity.latitue = self.latitude!
-        newActivity.longitue = self.longitude!
-        newActivity.address = self.address
-        newActivity.content = content
-        let timeInterval:TimeInterval = Date().timeIntervalSince1970
-        let postTime = Double(timeInterval)
-        newActivity.postTime = postTime
+        let postTime = Double(Date().timeIntervalSince1970)
         
-        let dic : [String:Any] = ["key":key,"activityName":newActivity.name,"date": "\(newActivity.date)", "creator":newActivity.creater,"courtName":newActivity.courtName
-            ,"peopleCounter":newActivity.peopleCounter, "participateCounter": newActivity.participantCounter,"participates":FieldValue.arrayUnion([uid]) ,"latitude":newActivity.latitue,"longitude":newActivity.longitue,"address":newActivity.address,"content":newActivity.content,"postTime":newActivity.postTime]
+        let dic : [String:Any] = ["key":key,"activityName":activityName,"date": "\(date)", "creator":uid,"courtName":self.courtName!
+            ,"peopleCounter":Int(peopleCounter)!, "participateCounter": 1,"participates":FieldValue.arrayUnion([uid]) ,"latitude":self.latitude!,"longitude":self.longitude!,"address":self.address,"content":content,"postTime":postTime,"modifiedTime":postTime]
+        
         
        
         
@@ -115,13 +94,20 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
         
         let okAction = UIAlertAction(title: "確定", style: .default) { (action) in
             
-            //self.appDelegate.saveContext()
+            
             
             let fireRef = Firestore.firestore().collection("activities").document(key)
             fireRef.setData(dic)
             
+            let uuid = UUID().uuidString
             
+            let messageRef = Firestore.firestore().collection("channels").document(key).collection("messages").document(uuid)
+            guard let nickName = UserDefaults.standard.string(forKey: "userNickName") else {
+                return
+            }
             
+            let defaulMessage : [String:Any] = ["senderID":uid,"senderName":nickName ,"content":"\(nickName)已創立活動","sendDate":Date(),"messageId":uuid,"postTime":Double(Date().timeIntervalSince1970)]
+            messageRef.setData(defaulMessage)
             
             
             DispatchQueue.main.asyncAfter(deadline: .now()+2.0, execute: {
@@ -162,7 +148,7 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
         // MARK - Navigation Item
         self.view.backgroundColor = UIColor(named: "backGreen")
         self.navigationItem.title = "選擇地點"
-        let customBackButton = methods.setNavigationBar()
+        let customBackButton = Manager.shared.setNavigationBar()
         self.view.addSubview(customBackButton)
         self.navigationItem.setHidesBackButton(true, animated:false)
         let backTap = UITapGestureRecognizer(target: self, action: #selector(back))
@@ -229,6 +215,10 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
         }catch{
             print("error\(error)")
         }
+    }
+    
+    deinit {
+        print("MapVC released")
     }
 
 }

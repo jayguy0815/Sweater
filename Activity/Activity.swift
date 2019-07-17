@@ -25,5 +25,6 @@ class Activity : NSManagedObject{
     @NSManaged var peopleCounter : Int
     @NSManaged var participantCounter : Int
     @NSManaged var postTime : Double
+    @NSManaged var modifiedTime : Double
     
 }

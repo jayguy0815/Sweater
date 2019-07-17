@@ -13,23 +13,7 @@ import Firebase
 
 class Methods{
     var ref : DatabaseReference!
-    func setNavigationBar() -> UIView {
-        //your custom view for back image with custom size
-        let view = UIView(frame: CGRect(x: -5, y: 10, width: 50, height: 60))
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 11, width: 20, height: 20))
-        if let imgBackArrow = UIImage(named: "backArrowIcon") {
-            imageView.image = imgBackArrow
-        }
-        view.addSubview(imageView)
-        let text = UILabel(frame: CGRect(x: 20, y: 1, width: 60, height: 40))
-        text.text = "返回"
-        text.font = text.font.withSize(17)
-        //        text.font = text.font.withSize(20)
-        text.textColor = UIColor.white
-        view.addSubview(text)
-        
-        return view
-    }
+    
     
     func newAlert(Title : String, Message : String, actionTitle : String) -> UIAlertController{
         let alert = UIAlertController(title: Title, message: Message, preferredStyle: .alert)

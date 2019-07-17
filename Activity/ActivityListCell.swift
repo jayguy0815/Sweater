@@ -17,6 +17,7 @@ class ActivityListCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         sportTypeImageView.layer.cornerRadius = 5
+        sportTypeImageView.clipsToBounds = true
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

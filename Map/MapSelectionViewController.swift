@@ -16,9 +16,7 @@ class MapSelectionViewController: UIViewController,CLLocationManagerDelegate {
     
     var activity : [String:Any] = [:]
     var mapVC : MapViewController?
-    var ref = Database.database().reference()
     var locationManager : CLLocationManager!
-    var methoeds = Methods()
     var mapData = MapData()
     var annotation : MKPointAnnotation!
     var name : String!
@@ -43,6 +41,7 @@ class MapSelectionViewController: UIViewController,CLLocationManagerDelegate {
             annotation.coordinate = annotionCoordinate
             annotation.title = "\(Manager.mapData.courtList[i])"
             annotation.subtitle = "\(Manager.mapData.addressList[i])"
+            
             
             
             if annotation.Id == "111"{

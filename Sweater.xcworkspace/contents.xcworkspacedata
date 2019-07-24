@@ -62,9 +62,6 @@
          location = "group:Chat"
          name = "Chat">
          <FileRef
-            location = "group:ChatRoomViewController.swift">
-         </FileRef>
-         <FileRef
             location = "group:Channel.swift">
          </FileRef>
          <FileRef

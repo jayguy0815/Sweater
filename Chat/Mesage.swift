@@ -12,7 +12,6 @@ import MessageKit
 import Firebase
 import CoreData
 
-
 class Message : NSObject, NSCoding, Comparable , MessageType{
     
     

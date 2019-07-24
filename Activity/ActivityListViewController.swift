@@ -22,7 +22,8 @@ class ActivityListViewController: UIViewController, NSFetchRequestResult ,Activi
     var activities = [Activity]()
     let methods = Methods()
     let manager = Manager()
-   // var delegate : ActivityListVCDelegate?
+    
+   
 
     var selectedIndexPath : IndexPath?
     //let moc = (UIApplication.shared.delegate as! AppDelegate).managedObjectContext()
@@ -50,7 +51,11 @@ class ActivityListViewController: UIViewController, NSFetchRequestResult ,Activi
         
         
     }
-    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.activities.removeAll()
+        queryFromCoredata()
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -128,7 +133,7 @@ extension ActivityListViewController : UITableViewDelegate, UITableViewDataSourc
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //tableView.deselectRow(at: indexPath, animated: true)
+        tableView.deselectRow(at: indexPath, animated: true)
         self.selectedIndexPath = indexPath
         let currentActivity = self.activities[indexPath.row]
         if currentActivity.participantCounter < currentActivity.peopleCounter {

@@ -95,6 +95,9 @@
                                             <action selector="signUp:" destination="AIE-Kb-lJU" eventType="touchUpInside" id="JTO-rD-0mn"/>
                                         </connections>
                                     </button>
+                                    <pickerView hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bWE-O7-TLu">
+                                        <rect key="frame" x="0.0" y="340.5" width="275" height="0.0"/>
+                                    </pickerView>
                                     <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2CJ-K9-PM8">
                                         <rect key="frame" x="0.0" y="362" width="275" height="30"/>
                                         <constraints>
@@ -113,10 +116,6 @@
                                     <constraint firstAttribute="width" constant="275" id="VFr-UU-hQL"/>
                                 </constraints>
                             </stackView>
-                            <pickerView hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bWE-O7-TLu">
-                                <rect key="frame" x="0.0" y="451" width="375" height="216"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </pickerView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="0Ms-QT-usz">
                                 <rect key="frame" x="247.5" y="185" width="40" height="40"/>
                                 <constraints>

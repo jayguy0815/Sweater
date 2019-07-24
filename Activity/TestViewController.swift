@@ -159,8 +159,8 @@ extension TestViewController : UIPickerViewDelegate,UIPickerViewDataSource{
         return array[row]
     }
     
-    func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        let text = "\(self.array[row])"
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        let text = "\(array[row])"
         self.textField.text = text
     }
 }

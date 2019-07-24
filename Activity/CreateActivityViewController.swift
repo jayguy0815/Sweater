@@ -41,12 +41,16 @@ class CreateActivityViewController: UIViewController,UINavigationControllerDeleg
         
         // MARK - Form
         self.sportlabel.text = sportType
-        self.nameTextField.placeholder = "團名須小於20字"
+        self.nameTextField.placeholder = "團名須小於10字"
         self.dateTextField.placeholder = "請選擇日期"
         self.peopleTextfield.placeholder = "請選擇人數上限"
         
         // MARK - TextView
         contentTextView.delegate = self
+        let alpha = UIColor.lightGray.withAlphaComponent(0.5)
+        contentTextView.layer.borderColor = alpha.cgColor
+        contentTextView.layer.borderWidth = 0.5
+        contentTextView.layer.cornerRadius = contentTextView.frame.height*0.1
         self.contentTextView.textColor = UIColor.lightGray
         self.contentTextView.text = "必填，須小於50字"
         
@@ -94,8 +98,8 @@ class CreateActivityViewController: UIViewController,UINavigationControllerDeleg
             present(alertController,animated: true,completion: nil)
             return false
         }
-        guard self.nameTextField.text!.count <= 20 else {
-            let alertController = methods.newAlert(Title: self.errorText, Message: "團名須小於20字", actionTitle: "OK")
+        guard self.nameTextField.text!.count <= 10 else {
+            let alertController = methods.newAlert(Title: self.errorText, Message: "團名須小於10字", actionTitle: "OK")
             present(alertController,animated: true,completion: nil)
             return false
         }

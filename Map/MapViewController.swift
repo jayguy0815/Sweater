@@ -102,7 +102,7 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
             let uuid = UUID().uuidString
             
             let messageRef = Firestore.firestore().collection("channels").document(key).collection("messages").document(uuid)
-            guard let nickName = UserDefaults.standard.string(forKey: "userNickName") else {
+            guard let nickName = UserDefaults.standard.string(forKey: "nickname") else {
                 return
             }
             
@@ -110,7 +110,7 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
             messageRef.setData(defaulMessage)
             
             
-            DispatchQueue.main.asyncAfter(deadline: .now()+2.0, execute: {
+            DispatchQueue.main.asyncAfter(deadline: .now()+1.0, execute: {
                 let alertController = UIAlertController(title: "成功", message: "揪團成功", preferredStyle:.alert)
                 let backAction = UIAlertAction(title: "返回", style: .default, handler: { (action) in
                     self.navigationController?.popToRootViewController(animated: true)

@@ -31,39 +31,91 @@ class ChatRoomViewController: MessagesViewController {
     
     var isAtForeground = false
     
+    var account : [Account] = []
+    
     var activity : Activity!
     
     var offset = CGPoint(x: 0, y: 0)
+    
+    var tapGestureRecognizer : UITapGestureRecognizer!
+    
+    var titletapped = false
+    
+    var collectionView : UICollectionView!
+    @IBOutlet weak var collectionViewHeightCons: NSLayoutConstraint!
+    
+    @IBOutlet weak var peopleCollectionView: UICollectionView!
     
     @IBOutlet weak var infoView: infoUIView!
     
     @IBOutlet weak var infoBtn: UIBarButtonItem!
     
     @IBAction func InfoBtnPressed(_ sender: UIBarButtonItem) {
-        if !isAtForeground {
-            infoView.isHidden = false
-            self.messagesCollectionView.isUserInteractionEnabled = false
-            isAtForeground = true
-        } else {
-            infoView.isHidden = true
-            self.messagesCollectionView.isUserInteractionEnabled = true
-            isAtForeground = false
-        }
+        performSegue(withIdentifier: "detailSegue", sender: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        IQKeyboardManager.shared.enable = false
+        tapGestureRecognizer = UITapGestureRecognizer(target:self, action: #selector(self.navBarTapped(_:)))
         
+        self.navigationController?.navigationBar.addGestureRecognizer(tapGestureRecognizer)
+
+        IQKeyboardManager.shared.enable = false
+        messagesCollectionView.scrollToBottom(animated: false)
        
+    }
+    
+    @objc func navBarTapped(_ theObject: AnyObject){
+        
+        print("Hey there")
+
+        if self.titletapped == false{
+            self.view.bringSubviewToFront(peopleCollectionView)
+            let ds = DS(activity: self.activity,participates: account)
+            self.peopleCollectionView.dataSource = ds
+            self.peopleCollectionView.delegate = ds
+            self.peopleCollectionView.backgroundColor = UIColor(named: "barGreen")
+            UIView.animate(withDuration: 0.3, animations: {
+                self.collectionViewHeightCons.constant = 40
+                self.view.layoutIfNeeded()
+            }) { (success) in
+                if success == true{
+                }
+            }
+           
+            
+           
+            self.titletapped = true
+        }else{
+            UIView.animate(withDuration: 0.3) {
+                self.collectionViewHeightCons.constant = 0
+                self.view.layoutIfNeeded()
+                self.peopleCollectionView.layoutSubviews()
+            }
+            self.titletapped = false
+        }
+    }
+    @objc func removeFromSuper(){
+        self.collectionView.removeFromSuperview()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        self.navigationItem.title = "\(self.activity.name)(\(self.activity.participantCounter))"
+        
+        
+        
+        
        
-        Manager.shared.setNavigationBar()
         messagesCollectionView.addSubview(infoView)
         infoView.isHidden = true
+        
+        self.collectionView = UICollectionView(frame: CGRect(x: 0, y: (self.navigationController?.navigationBar.frame.height)!, width: UIScreen.main.bounds.width, height: 50), collectionViewLayout: UICollectionViewLayout())
+        self.collectionView.backgroundColor = .lightGray
+       
+        
+//        messagesCollectionView.setContentOffset(CGPoint(x: 0, y: messagesCollectionView.contentSize.height), animated: false)
+        
         //self.messagesCollectionView.scrollToBottom()
 //        if UserDefaults.standard.bool(forKey: "\(activity.key)") == true{
 //           let x = CGFloat(UserDefaults.standard.float(forKey: "\(activity.key).x)"))
@@ -87,9 +139,6 @@ class ChatRoomViewController: MessagesViewController {
         messagesCollectionView.scrollToItem(at: indexPath, at: .bottom, animated: true)
 
     }
-        
-        
-        //print((notification.userInfo?["UIKeyboardBoundsUserInfoKey"] as! CGRect).height)
     
     @objc func keyBoardDidHide(_ notification:Notification) {
         guard messagesCollectionView.numberOfSections > 0 else { return }
@@ -102,9 +151,26 @@ class ChatRoomViewController: MessagesViewController {
         self.messageInputBar.inputTextView.resignFirstResponder()
     }
     
+    @objc func didTapOnCollectionView (recognizer: UITapGestureRecognizer) {
+        performSegue(withIdentifier: "memberSegue", sender: nil)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let ds = DS(activity: self.activity, participates: self.account)
+       
+        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapOnCollectionView(recognizer:)))
+        tap.numberOfTapsRequired = 1
+        self.peopleCollectionView.addGestureRecognizer(tap)
+        self.collectionViewHeightCons.constant = 0
+        let users = Manager.shared.queryAccountFromCoreData()
+        for i in 0..<users.count{
+            if self.activity.participants.contains(users[i].uid){
+                self.account.append(users[i])
+            }
+        }
+        
         //self.navigationItem.rightBarButtonItem.fr
         guard let userid = Auth.auth().currentUser?.uid else {
             return
@@ -125,18 +191,50 @@ class ChatRoomViewController: MessagesViewController {
                 guard let fetchedMessages = snapshot?.documents else {
                     return
                 }
-                
-                for message in fetchedMessages{
+
+                for i in 0..<fetchedMessages.count{
                     let newMessage = Message()
-                    newMessage.senderID = message.get("senderID") as! String
-                    newMessage.senderName = message.get("senderName") as! String
-                    
-                    newMessage.postTime = message.get("postTime") as! Double
+                    newMessage.senderID = fetchedMessages[i].get("senderID") as! String
+                    newMessage.senderName = fetchedMessages[i].get("senderName") as! String
+
+                    newMessage.postTime = fetchedMessages[i].get("postTime") as! Double
                     let timeInterval64 = Int64(exactly: newMessage.postTime!.rounded())
                     newMessage.sendTime = Date(timeIntervalSince1970: TimeInterval(exactly: timeInterval64!)!)
-                    newMessage.messageId = message.documentID
-                    newMessage.text = message.get("content") as! String
+                    newMessage.messageId = fetchedMessages[i].documentID
+                    newMessage.text = fetchedMessages[i].get("content") as! String
                     self.messages.append(newMessage)
+                    if i == fetchedMessages.count - 1 {
+                        UserDefaults.standard.set(self.messages.last?.postTime!, forKey: "\(self.activity.key)updated")
+                        self.listener = self.ref.document("\(self.activity.key)").collection("messages").whereField("postTime", isGreaterThan: UserDefaults.standard.double(forKey: "\(self.activity.key)updated")).addSnapshotListener({ (snapshot, error) in
+                            print("start listen")
+                            if error != nil {
+                                print(error)
+                            }
+                            guard let querySnapshot = snapshot else {
+                                return
+                            }
+                            querySnapshot.documentChanges.forEach({ (diff) in
+                                if diff.type == .added{
+                                    let newMessage = Message()
+                                    newMessage.senderID = diff.document.get("senderID") as? String
+                                    newMessage.senderName = diff.document.get("senderName") as? String
+                                    newMessage.sendTime = diff.document.get("SendDate") as? Date
+                                    newMessage.postTime = diff.document.get("postTime") as? Double
+                                    newMessage.messageId = diff.document.documentID
+                                    newMessage.text = diff.document.get("content") as? String
+                                    self.messages.append(newMessage)
+                                    Manager.shared.saveMessage(key: self.activity.key, messages: self.messages)
+                                    self.messages.sort(by: { (m1, m2)-> Bool in
+                                        m1.postTime!<m2.postTime!
+                                    })
+                                    DispatchQueue.main.asyncAfter(deadline: .now()+1.0, execute: {
+                                        self.messagesCollectionView.reloadData()
+                                        self.messagesCollectionView.scrollToBottom(animated: true)
+                                    })
+                                }
+                            })
+                        })
+                    }
                 }
                 Manager.shared.saveMessage(key: self.activity.key, messages: self.messages)
                 self.messages.sort(by: { (m1, m2)-> Bool in
@@ -145,9 +243,8 @@ class ChatRoomViewController: MessagesViewController {
                 self.messagesCollectionView.reloadData()
                 self.messagesCollectionView.scrollToBottom()
             }
-            
+           
             UserDefaults.standard.set(true, forKey: "\(activity.key)")
-            UserDefaults.standard.set(self.messages.last?.postTime!, forKey: "\(activity.key)updated")
         }else if UserDefaults.standard.bool(forKey: "\(activity.key)") == true{
             self.messages = Manager.shared.loadMessage(key: activity.key)
             self.messages.sort(by: { (m1, m2)-> Bool in
@@ -155,7 +252,36 @@ class ChatRoomViewController: MessagesViewController {
             })
             self.messagesCollectionView.reloadData()
             self.messagesCollectionView.scrollToBottom()
-            UserDefaults.standard.set(self.messages.last?.postTime!, forKey: "\(activity.key)updated")
+            self.listener = ref.document("\(activity.key)").collection("messages").whereField("postTime", isGreaterThan: UserDefaults.standard.double(forKey: "\(activity.key)updated")).addSnapshotListener({ (snapshot, error) in
+                print("start listen")
+                if error != nil {
+                    print(error)
+                }
+                guard let querySnapshot = snapshot else {
+                    return
+                }
+                querySnapshot.documentChanges.forEach({ (diff) in
+                    if diff.type == .added{
+                        let newMessage = Message()
+                        newMessage.senderID = diff.document.get("senderID") as? String
+                        newMessage.senderName = diff.document.get("senderName") as? String
+                        newMessage.sendTime = diff.document.get("SendDate") as? Date
+                        newMessage.postTime = diff.document.get("postTime") as? Double
+                        newMessage.messageId = diff.document.documentID
+                        newMessage.text = diff.document.get("content") as? String
+                        
+                        self.messages.append(newMessage)
+                        Manager.shared.saveMessage(key: self.activity.key, messages: self.messages)
+                        self.messages.sort(by: { (m1, m2)-> Bool in
+                            m1.postTime!<m2.postTime!
+                        })
+                        DispatchQueue.main.asyncAfter(deadline: .now()+1.0, execute: {
+                            self.messagesCollectionView.reloadData()
+                            self.messagesCollectionView.scrollToBottom(animated: true)
+                        })
+                    }
+                })
+            })
         }
         
         
@@ -167,9 +293,8 @@ class ChatRoomViewController: MessagesViewController {
         messageInputBar.inputTextView.layer.cornerRadius = 20
         messageInputBar.inputTextView.backgroundColor = UIColor.lightGray.withAlphaComponent(0.6)
         
-        let textAttributes = [NSAttributedString.Key.foregroundColor:UIColor.white,NSAttributedString.Key.font: UIFont(name: "Helvetica", size: 21)!]
-        navigationController?.navigationBar.titleTextAttributes = textAttributes
-        self.navigationItem.title = "\(activity.name)(\(activity.participantCounter))"
+        
+       
         
         
         let cameraItem = InputBarButtonItem(type: .system)
@@ -199,35 +324,7 @@ class ChatRoomViewController: MessagesViewController {
         
         
         
-        self.listener = ref.document("\(activity.key)").collection("messages").whereField("postTime", isGreaterThan: UserDefaults.standard.double(forKey: "\(activity.key)updated")).addSnapshotListener({ (snapshot, error) in
-            print("start listen")
-            if error != nil {
-                print(error)
-            }
-            guard let querySnapshot = snapshot else {
-                return
-            }
-            querySnapshot.documentChanges.forEach({ (diff) in
-                if diff.type == .added{
-                    let newMessage = Message()
-                    newMessage.senderID = diff.document.get("senderID") as? String
-                    newMessage.senderName = diff.document.get("senderName") as? String
-                    newMessage.sendTime = diff.document.get("SendDate") as? Date
-                    newMessage.postTime = diff.document.get("postTime") as? Double
-                    newMessage.messageId = diff.document.documentID
-                    newMessage.text = diff.document.get("content") as? String
-                    self.messages.append(newMessage)
-                    Manager.shared.saveMessage(key: self.activity.key, messages: self.messages)
-                    self.messages.sort(by: { (m1, m2)-> Bool in
-                        m1.postTime!<m2.postTime!
-                    })
-                    DispatchQueue.main.asyncAfter(deadline: .now()+1.0, execute: {
-                        self.messagesCollectionView.reloadData()
-                        self.messagesCollectionView.scrollToBottom(animated: true)
-                    })
-                }
-            })
-        })
+       
         
         self.navigationController?.tabBarController?.tabBar.isHidden = true
         
@@ -238,10 +335,12 @@ class ChatRoomViewController: MessagesViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-    
+        self.navigationController?.navigationBar.removeGestureRecognizer(tapGestureRecognizer)
         IQKeyboardManager.shared.enable = true
         NotificationCenter.default.removeObserver(self)
         self.listener?.remove()
+        UserDefaults.standard.set(self.messages.last?.postTime!, forKey: "\(self.activity.key)updated")
+        
         
     }
     
@@ -270,11 +369,20 @@ class ChatRoomViewController: MessagesViewController {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if self.messagesCollectionView.visibleCells.count > 0{
-//            UserDefaults.standard.set(messagesCollectionView.contentOffset, forKey: "\(activity.key)offset)")
             let x = Float(messagesCollectionView.contentOffset.x)
             let y = Float(messagesCollectionView.contentOffset.y)
             UserDefaults.standard.set(x, forKey: "\(activity.key).x)")
             UserDefaults.standard.set(y, forKey: "\(activity.key).y)")
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "detailSegue" {
+            let detailVC = segue.destination as! DetailViewController
+            detailVC.activity = self.activity
+        }else if segue.identifier == "memberSegue"{
+            let memberVC = segue.destination as! MemberViewController
+            memberVC.members = self.account
         }
     }
 
@@ -289,25 +397,23 @@ extension ChatRoomViewController : MessagesDisplayDelegate{
         at indexPath: IndexPath,
         in messagesCollectionView: MessagesCollectionView) {
         
-//        let message = messages[indexPath.section]
-//        let color = message.member.color
-//        avatarView.backgroundColor = color
-        if isFromCurrentSender(message: message) {
-            if let imagedata = UserDefaults.standard.object(forKey: "userProfileImage") as? Data {
-                guard let image = UIImage(data: imagedata) else {
-                    return
-                }
-                avatarView.image = image.resizeImageWith(newSize: CGSize(width: 30, height: 30))
-            }
-            
-        } else {
-            for account in Manager.shared.accounts {
+        if self.activity.participants.contains(message.sender.senderId){
+            for account in self.account{
                 if account.uid == message.sender.senderId{
-                    let image = account.image?.resizeImageWith(newSize: CGSize(width: 30, height: 30))
-                    avatarView.image = image
+                    let imageData = account.image
+                    let image = UIImage(data: imageData)
+                    if let img = image{
+                        avatarView.image = img.resizeImageWith(newSize: CGSize(width: 30, height: 30))
+                    }
                 }
             }
+           
+        }else{
+            avatarView.image = UIImage(named: "defaultAccountImage")
         }
+        
+        
+        
     }
     
     func backgroundColor(for message: MessageType, at indexPath: IndexPath,
@@ -328,7 +434,7 @@ extension ChatRoomViewController : MessagesDisplayDelegate{
     func messageStyle(for message: MessageType, at indexPath: IndexPath,
                       in messagesCollectionView: MessagesCollectionView) -> MessageStyle {
         
-        let corner: MessageStyle.TailCorner = isFromCurrentSender(message: message) ? .topRight : .topLeft
+        let corner: MessageStyle.TailCorner = isFromCurrentSender(message: message) ? .bottomRight : .bottomLeft
         
         // 3
         return .bubbleTail(corner, .curved)
@@ -357,22 +463,42 @@ extension ChatRoomViewController : MessagesLayoutDelegate{
     func avatarPosition(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> AvatarPosition {
         return AvatarPosition(horizontal: .cellLeading, vertical: .messageLabelTop)
     }
+    
+    
 }
+
+
+
 
 extension ChatRoomViewController : MessagesDataSource {
     
-   
+//    func numberOfSections(in collectionView: UICollectionView) -> Int {
+//        <#code#>
+//    }
+//
     func currentSender() -> SenderType {
-        
-        
-        return Sender(id: self.uid, displayName: Manager.shared.userAccount.nickname)
+        var name : String = ""
+        for user in Manager.accounts{
+            if user.uid == self.uid{
+                name = user.nickname
+            }
+        }
+        return Sender(id: self.uid, displayName: name)
     }
 
     func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
         return messages[indexPath.section]
     }
 
+//    func numberOfSections(in collectionView: UICollectionView) -> Int {
+//        <#code#>
+//    }
+    
+    
     func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
+//        if self.collectionView != messagesCollectionView{
+//            return self.activity.participantCounter
+//        }
         return messages.count
     }
     
@@ -391,9 +517,19 @@ extension ChatRoomViewController : MessagesDataSource {
     func messageTopLabelAttributedText(
         for message: MessageType,
         at indexPath: IndexPath) -> NSAttributedString? {
-        let nSAttributedString = NSAttributedString(
-            string: message.sender.displayName,
-            attributes: [.font: UIFont.systemFont(ofSize: 12)])
+        var nSAttributedString = NSAttributedString(
+            string: "使用者",
+            attributes: [.font: UIFont.systemFont(ofSize: 10)])
+        for user in account {
+            if message.sender.senderId == user.uid{
+                nSAttributedString = NSAttributedString(
+                    string: user.nickname,
+                    attributes: [.font: UIFont.systemFont(ofSize: 10)])
+            }
+        }
+        
+        
+        
         return nSAttributedString
     }
   
@@ -409,11 +545,7 @@ extension ChatRoomViewController : MessagesDataSource {
         attributes[.foregroundColor] = UIColor.lightGray.withAlphaComponent(0.6)
         attributes[.font] =  UIFont.systemFont(ofSize: 10)
         let timeInterval = messages[indexPath.section].postTime! as! TimeInterval
-        let d = Date(timeIntervalSince1970: timeInterval)
-        
-        let df = DateFormatter()
-        df.dateFormat = "HH-mm"
-        let dateText = df.string(from: d)
+        let dateText = Manager.shared.timeIntervaltoDatetoString(timeInterval: timeInterval, format: "HH:mm")
         return NSAttributedString(string: dateText , attributes: attributes)
     }
     
@@ -426,13 +558,15 @@ extension ChatRoomViewController : MessageInputBarDelegate {
         guard let uid = Auth.auth().currentUser?.uid else {
             return
         }
-        guard let nickName = UserDefaults.standard.string(forKey: "userNickName") else {
-            return
+        var name : String = ""
+        for user in Manager.accounts{
+            if user.uid == self.uid{
+                name = user.nickname
+            }
         }
-
         let newMessage = Message()
         newMessage.senderID = uid
-        newMessage.senderName = nickName
+        newMessage.senderName = name
         newMessage.sendTime = Date()
         newMessage.postTime = Date().timeIntervalSince1970
         newMessage.messageId = UUID().uuidString
@@ -455,6 +589,26 @@ extension ChatRoomViewController : MessageInputBarDelegate {
 extension ChatRoomViewController : MessageCellDelegate{
     
 }
+
+extension UIView{
+    func fadeTo(_ alpha: CGFloat, duration: TimeInterval = 1) {
+        DispatchQueue.main.async {
+            UIView.animate(withDuration: duration) {
+                self.alpha = alpha
+            }
+        }
+    }
+    
+    func fadeIn(_ duration: TimeInterval = 1) {
+        fadeTo(1.0, duration: duration)
+    }
+    
+    func fadeOut(_ duration: TimeInterval = 0.3) {
+        fadeTo(0.0, duration: duration)
+    }
+}
+
+
 
 
 

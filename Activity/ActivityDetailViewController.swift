@@ -45,71 +45,71 @@ class ActivityDetailViewController: UIViewController {
     
     
     @IBAction func participateBtnPressed(_ sender: Any) {
-        for participate in activity.participants {
-            guard participate != UserDefaults.standard.string(forKey: "uid") else {
-                let alertController = UIAlertController(title: "Oops", message: "您已參加此活動", preferredStyle: .alert)
-                let action = UIAlertAction(title: "好", style: .cancel, handler: nil)
-                alertController.addAction(action)
-                self.present(alertController,animated: true,completion: nil)
-                return
-            }
-        }
-        
-        Firestore.firestore().collection("activities").document("\(activity.key)").getDocument { (snap, err) in
-            
-            guard let doc = snap else{
-                return
-            }
-            let part = doc.get("participateCounter") as! Int
-            let invited = doc.get("peopleCounter") as! Int
-            guard part != invited else {
-                let alertController = UIAlertController(title: "Oops", message: "人數已滿", preferredStyle: .alert)
-                let action = UIAlertAction(title: "好", style: .cancel, handler: nil)
-                alertController.addAction(action)
-                self.present(alertController,animated: true,completion: nil)
-                return
-            }
-            let alertController = UIAlertController(title: "確認參加活動？", message: "確定要參加此活動?", preferredStyle: .alert)
-            let okAction = UIAlertAction(title: "確定", style: .default) { (action) in
-                let count = self.activity.participantCounter + 1
+        let partAlertCon = UIAlertController(title: "參加活動", message: "確定要參加此活動?", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "確定", style: .default) { (_) in
+            Firestore.firestore().collection("activities").document(self.activity.key).getDocument { (snapshot, error) in
+                if error != nil{
+                    print(error)
+                    return
+                }
+                guard let act = snapshot?.data() else {
+                    return
+                }
                 guard let uid = UserDefaults.standard.string(forKey: "uid") else {
                     return
                 }
-                
-                let timeInterval:TimeInterval = Date().timeIntervalSince1970
-                let lastUpdateActivityTime = Double(timeInterval)
-                
-                let storeRef = Firestore.firestore().collection("activities").document(self.activity.key)
-                storeRef.updateData(["participateCounter": count,"participates": FieldValue.arrayUnion([uid]),"modifiedTime":lastUpdateActivityTime])
-                let uuid = UUID().uuidString
-                let messageRef = Firestore.firestore().collection("channels").document(self.activity.key).collection("messages").document(uuid)
-                guard let nickName = UserDefaults.standard.string(forKey: "userNickName") else {
+                let part = act["participateCounter"] as! Int
+                let limit = act["peopleCounter"] as! Int
+                let partarray = act["participates"] as? Array ?? [""]
+                let key = act["key"] as! String
+                if partarray.contains(uid){
+                    let alertController = UIAlertController(title: "Oops", message: "您已參加此活動", preferredStyle: .alert)
+                    let action = UIAlertAction(title: "好", style: .cancel, handler: nil)
+                    alertController.addAction(action)
+                    self.present(alertController,animated: true,completion: nil)
                     return
                 }
-                let defaultMessage : [String:Any] = ["senderID":uid,"senderName":nickName ,"content":"\(nickName)加入活動","sendDate":Date(),"messageId":uuid,"postTime":Double(Date().timeIntervalSince1970)]
-                messageRef.setData(defaultMessage)
-                
-                DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-                    self.currentPeopleLabel.text = "\(count)"
-                    let okAlertController = UIAlertController(title: "成功", message: "成功參加活動", preferredStyle: .alert)
-                    let okokAction = UIAlertAction(title: "好", style: .default, handler: { (action) in
-                        self.delegate?.didParticipate()
-                        self.navigationController?.popViewController(animated: true)
-                    })
-                    okAlertController.addAction(okokAction)
-                    self.present(okAlertController,animated: true,completion: nil)
+                guard part != limit else{
+                    let alertController = UIAlertController(title: "Oops", message: "人數已滿", preferredStyle: .alert)
+                    let action = UIAlertAction(title: "好", style: .cancel, handler: nil)
+                    alertController.addAction(action)
+                    self.present(alertController,animated: true,completion: nil)
+                    return
                 }
+                let count = part+1
+                let timeInterval:TimeInterval = Date().timeIntervalSince1970
+                let lastUpdateActivityTime = Double(timeInterval)
+                Firestore.firestore().collection("activities").document(self.activity.key).updateData(["participateCounter": count,"participates": FieldValue.arrayUnion([uid]),"modifiedTime":lastUpdateActivityTime], completion: { (error) in
+                    if let err = error{
+                        print(err)
+                        return
+                    }
+                    let uuid = UUID().uuidString
+                    guard let nickname = UserDefaults.standard.string(forKey: "nickname") else {
+                        return
+                    }
+                    let defaultMessage : [String:Any] = ["senderID":uid,"senderName":nickname ,"content":"\(nickname)加入活動","sendDate":Date(),"messageId":uuid,"postTime":Double(Date().timeIntervalSince1970)]
+                    Firestore.firestore().collection("channels").document(key).collection("messages").document(uuid).setData(defaultMessage, completion: { (error) in
+                        if error != nil {
+                            print(error)
+                            return
+                        }
+                        let alert = UIAlertController(title: "成功", message: "您已成功參加活動", preferredStyle: .alert)
+                        let okAction = UIAlertAction(title: "好", style: .default, handler: { (_) in
+                            self.navigationController?.popViewController(animated: true)
+                        })
+                        alert.addAction(okAction)
+                        self.present(alert, animated: true, completion:  nil)
+                        
+                    })
+                    
+                })
             }
-            let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)
-            alertController.addAction(okAction)
-            alertController.addAction(cancelAction)
-            self.present(alertController,animated: true, completion: nil)
-            
         }
-        
-            
-        
-        
+        let cancelAction = UIAlertAction(title: "再看看", style: .cancel, handler: nil)
+        partAlertCon.addAction(okAction)
+        partAlertCon.addAction(cancelAction)
+        self.present(partAlertCon, animated: true, completion:  nil)
     }
     
     

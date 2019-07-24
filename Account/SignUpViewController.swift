@@ -85,61 +85,73 @@ class SignUpViewController: UIViewController,UIPickerViewDelegate,UIPickerViewDa
         }else if emailTextField.text != "" && nickNameTextField.text != "" && comfirmPasswordTextField.text != "" && nameTextField.text != "" && passwordTextField.text != "" && hobbyPickerTxt.text != ""{
             Auth.auth().createUser(withEmail: emailTextField.text!, password: passwordTextField.text!){(user , error) in
                 if error == nil{
-                    
-                    
-                    let uid = Auth.auth().currentUser!.uid
-                    //upload picture
-                    let storage = self.storageRef.child("account").child("\(uid).jpg")
-                    
-                    guard let uploadImage = self.accountImageView.image else {
+                    guard let uid = Auth.auth().currentUser?.uid else{
                         return
                     }
-                    if let uploadData = uploadImage.jpegData(compressionQuality: 0.5) {
-                        storage.putData(uploadData, metadata: nil, completion: { (data, error) in
+                    guard let nickname = self.nickNameTextField.text else{
+                        return
+                    }
+                    guard let hobby = self.hobbyPickerTxt.text else {
+                        return
+                    }
+                    guard let image = self.accountImageView.image else {
+                        return
+                    }
+                    guard let data = image.jpegData(compressionQuality: 0.5) else{
+                        return
+                    }
+                    UserDefaults.standard.set(uid, forKey: "uid")
+                    UserDefaults.standard.set(nickname, forKey: "nickname")
+                    UserDefaults.standard.set(data, forKey: "profileImageData")
+                    UserDefaults.standard.set(hobby, forKey: "hobby")
+                    
+                    if let uploadData = self.accountImageView.image!.jpegData(compressionQuality: 0.5){
+                        Storage.storage().reference().child("account").child("\(uid).jpg").putData(uploadData, metadata: nil, completion: { (data, error) in
                             if error != nil {
                                 print("Error: \(error!.localizedDescription)")
                                 return
                             }
-                            if error == nil {
-                                storage.downloadURL(completion: { (url, error) in
-                                    guard let downloadURL = url else {
-                                        return
-                                    }
-                                    self.url = downloadURL.absoluteString
-                                    print(downloadURL.absoluteString)
+                            
+                            Storage.storage().reference().child("account").child("\(uid).jpg").downloadURL(completion: { (url, error) in
+                                if let err = error{
+                                    print(err)
+                                }
+                                guard let newurl = url else{
+                                    return
+                                }
+                                self.url = newurl.absoluteString
+                                let time = Double(Date().timeIntervalSince1970)
+                                
+                               
+                                if Auth.auth().currentUser != nil{
+                                    try? Auth.auth().signOut()
+                                }
+                                let alertController = UIAlertController(title: "Success", message: "註冊成功", preferredStyle: .alert)
+                                let alertAction = UIAlertAction(title: "返回", style: .default, handler: { (action) in
+                                    let accountArr : [String:Any] = ["uid":uid,"username":self.nameTextField.text!,"email":self.emailTextField.text!,"nickname":self.nickNameTextField.text!,"hobby":self.hobbyPickerTxt.text!,"accountImageURL":self.url,"postTime":time,"modifiedTime":time,"issignin":false]
                                     
-                                    let accountRef = self.ref.child("user_account").child("\(uid)")
-                                    let accountArr = ["uid":uid,"username":self.nameTextField.text!,"email":self.emailTextField.text!,"password":self.passwordTextField.text!,"nickname":self.nickNameTextField.text!,"hobby":self.hobbyPickerTxt.text!,"accountImageUrl":self.url]
-                                    accountRef.setValue(accountArr)
-                                    UserDefaults.standard.set(uid, forKey: "uid")
-                                    //finish write data then logout
-                                    if Auth.auth().currentUser != nil{
-                                        try? Auth.auth().signOut()
-                                    }
+                                    Firestore.firestore().collection("user_data").document(uid).setData(accountArr)
+                                    let email = self.emailTextField.text
+                                    let password = self.passwordTextField.text
+                                    guard let vc = self.navigationController?.viewControllers[0] as? UIViewController else{return}
+                                    self.delegate = vc as? SignUpViewControllerDelegate
+                                    self.delegate.returnInfo(email!, password!)
+                                    self.navigationController?.popToViewController(vc, animated: true)
                                 })
-                            }
-                            
-                            
+                                alertController.addAction(alertAction)
+                                self.present(alertController,animated: true,completion: nil)
+                                print("You have successfully signed up")
+                            })
                         })
+                        
                     }
                     
-                    // add account data to firebase
                     
                     
-                    let alertController = UIAlertController(title: "Success", message: "註冊成功", preferredStyle: .alert)
-                    let alertAction = UIAlertAction(title: "返回", style: .default, handler: { (action) in
-                        let email = self.emailTextField.text
-                        let password = self.passwordTextField.text
-                        guard let vc = self.navigationController?.viewControllers[0] as? UIViewController else{return}
-                        self.delegate = vc as? SignUpViewControllerDelegate
-                        self.delegate.returnInfo(email!, password!)
-                        self.navigationController?.popToViewController(vc, animated: true)
-                    })
-                    alertController.addAction(alertAction)
-                    self.present(alertController,animated: true,completion: nil)
-                    print("You have successfully signed up")
-
-                } else {
+                   
+                }
+                // add account data to firebase
+                else {
                     let alertController = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: .alert)
                     
                     let defaultAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)

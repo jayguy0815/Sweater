@@ -19,8 +19,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     var activities : [Activity] = []
+    var accounts : [Account] = []
     var activityListener : ListenerRegistration?
-    var modifiedListner : ListenerRegistration?
+    var accountListner : ListenerRegistration?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
@@ -31,23 +32,45 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         print(NSHomeDirectory())
         //let moc = CoreDataHelper.shared.managedObjectContext()
-        Auth.auth().addStateDidChangeListener() { auth, user in
-            if user == nil {
-                return
-            } else {
-                Manager.shared.getCurrentUserData()
+//        Auth.auth().addStateDidChangeListener() { auth, user in
+//            if user == nil {
+//                return
+//            } else {
+        Auth.auth().addStateDidChangeListener { (auth, user) in
+            if user != nil{
+                 Manager.shared.getCurrentUserData()
+            }
+        }
+        
                 let launchedBefore = UserDefaults.standard.bool(forKey: "launchedBefore")
-                if launchedBefore == false {
+                if launchedBefore == false{
+                
+                    if let uid = Auth.auth().currentUser?.uid {
+                        Firestore.firestore().collection("user_data").document(uid).updateData(["issignin":false]) { (error) in
+                            if let err = error{
+                                print(err)
+                            }
+                            do{
+                                try Auth.auth().signOut()
+                            }catch{
+                                print(error)
+                            }
+                        }
+                       
+                    }
+
                     Manager.shared.loadActivities()
+                    Manager.shared.loadUserData()
                     UserDefaults.standard.set(true, forKey: "launchedBefore")
                     UserDefaults.standard.set(Double(Date().timeIntervalSince1970)+Double(2), forKey: "lastLoadModifiedTime")
                 }
                 
-                self.activities = Manager.shared.queryFromCoreData()
-                
+                self.activities = Manager.shared.queryActivityFromCoreData()
+                self.accounts = Manager.shared.queryAccountFromCoreData()
                 self.activityListener = Manager.shared.activityListener()
+                self.accountListner = Manager.shared.accountListener()
                 
-                Manager.shared.loadUserData()
+        
                 
                 if Manager.shared.checkFile(fileName: "mapData.archive") == false {
                     Manager.shared.loadMapData()
@@ -57,8 +80,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
                 }
                 
-            }
-        }
+        
+        
         return true
     }
     func applicationWillResignActive(_ application: UIApplication) {
@@ -76,11 +99,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //self.activityListener?.remove()
         //UserDefaults.standard.set(true, forKey: "isFirstLoadModified")
         self.activityListener?.remove()
+        self.accountListner?.remove()
         UserDefaults.standard.set(Double(Date().timeIntervalSince1970), forKey: "lastLoadModifiedTime")
+//        do{
+//            try Auth.auth().signOut()
+//        }catch{
+//            print(error)
+//        }
+        
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         self.activityListener = Manager.shared.activityListener()
+        self.accountListner = Manager.shared.accountListener()
     }
         
         

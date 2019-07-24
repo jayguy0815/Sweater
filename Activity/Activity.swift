@@ -26,5 +26,7 @@ class Activity : NSManagedObject{
     @NSManaged var participantCounter : Int
     @NSManaged var postTime : Double
     @NSManaged var modifiedTime : Double
-    
+    @NSManaged var latestPost : String
+    @NSManaged var latestPostTime : Double
+    @NSManaged var unread : Int
 }

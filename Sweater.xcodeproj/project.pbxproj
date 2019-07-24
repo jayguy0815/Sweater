@@ -7,8 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2D017B2522C1F1ED004E5C00 /* ActivityNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D017B2422C1F1ED004E5C00 /* ActivityNavigationController.swift */; };
 		2D017B2722C33F22004E5C00 /* Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D017B2622C33F22004E5C00 /* Manager.swift */; };
+		2D04F38622E431EF004CE074 /* EditPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D04F38522E431EF004CE074 /* EditPasswordViewController.swift */; };
+		2D04F38822E433DF004CE074 /* EditPasswordCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D04F38722E433DF004CE074 /* EditPasswordCell.swift */; };
+		2D04F38B22E55948004CE074 /* ForgotPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D04F38A22E55948004CE074 /* ForgotPasswordViewController.swift */; };
+		2D04F38D22E55CDD004CE074 /* EmailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D04F38C22E55CDD004CE074 /* EmailCell.swift */; };
+		2D04F38F22E6A64B004CE074 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D04F38E22E6A64B004CE074 /* DetailViewController.swift */; };
+		2D04F39122E6A6F2004CE074 /* DetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D04F39022E6A6F2004CE074 /* DetailCell.swift */; };
 		2D060E2C22AE0CF300BA34A6 /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D060E2B22AE0CF300BA34A6 /* Account.swift */; };
 		2D08B36922CDAD64004D1007 /* ChatRoomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D08B36822CDAD64004D1007 /* ChatRoomViewController.swift */; };
 		2D08B36B22CDB50A004D1007 /* Mesage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D08B36A22CDB50A004D1007 /* Mesage.swift */; };
@@ -21,6 +26,11 @@
 		2D08B37D22D44540004D1007 /* picture.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D08B37C22D44540004D1007 /* picture.png */; };
 		2D08B37F22D46636004D1007 /* send.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D08B37E22D46636004D1007 /* send.png */; };
 		2D08B38222D48F2D004D1007 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D08B38122D48F2D004D1007 /* SettingViewController.swift */; };
+		2D08EB5722E16484008F10C2 /* PActivityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D08EB5622E16484008F10C2 /* PActivityCell.swift */; };
+		2D0A463A22E3141E0096DA3C /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A463922E3141E0096DA3C /* EditProfileViewController.swift */; };
+		2D0A463D22E31F9B0096DA3C /* ProfileImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A463C22E31F9B0096DA3C /* ProfileImageCell.swift */; };
+		2D0A463F22E328180096DA3C /* NicknameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A463E22E328180096DA3C /* NicknameCell.swift */; };
+		2D0A464122E328650096DA3C /* HobbyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A464022E328650096DA3C /* HobbyCell.swift */; };
 		2D204A6C22AFE04200D8749A /* Second.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D204A6B22AFE04200D8749A /* Second.storyboard */; };
 		2D204A6E22AFF8F600D8749A /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D204A6D22AFF8F600D8749A /* MainViewController.swift */; };
 		2D204A7322B0A13300D8749A /* mainBackground.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2D204A7222B0A13300D8749A /* mainBackground.jpg */; };
@@ -36,6 +46,12 @@
 		2D6E441A22BB57430073E56F /* ActivityListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E441922BB57430073E56F /* ActivityListViewController.swift */; };
 		2D6E441C22BB5A750073E56F /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E441B22BB5A750073E56F /* Activity.swift */; };
 		2D6E46E422C1B50D0073E56F /* ActivityDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E46E322C1B50D0073E56F /* ActivityDetailViewController.swift */; };
+		2D89142F22E6B10C0041410E /* DS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D89142E22E6B10C0041410E /* DS.swift */; };
+		2D89143122E6C1070041410E /* PeopleCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D89143022E6C1070041410E /* PeopleCollectionViewCell.swift */; };
+		2D89143322E6F1F60041410E /* MapCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D89143222E6F1F60041410E /* MapCell.swift */; };
+		2D89143522E706560041410E /* navigation-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D89143422E706550041410E /* navigation-2.png */; };
+		2D89143722E71D170041410E /* MemberViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D89143622E71D170041410E /* MemberViewController.swift */; };
+		2D89143922E71D9B0041410E /* MemberCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D89143822E71D9B0041410E /* MemberCell.swift */; };
 		2D915F6822D5BA79009DD06B /* kSCTAd.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2D915F6722D5BA78009DD06B /* kSCTAd.jpg */; };
 		2D915F7022D5C28F009DD06B /* photo-camera-edited_opt-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D915F6F22D5C28F009DD06B /* photo-camera-edited_opt-2.png */; };
 		2D915F7222D6E27E009DD06B /* UIImage+Addon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D915F7122D6E27E009DD06B /* UIImage+Addon.swift */; };
@@ -97,8 +113,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		2D017B2422C1F1ED004E5C00 /* ActivityNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityNavigationController.swift; sourceTree = "<group>"; };
 		2D017B2622C33F22004E5C00 /* Manager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Manager.swift; sourceTree = "<group>"; };
+		2D04F38522E431EF004CE074 /* EditPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPasswordViewController.swift; sourceTree = "<group>"; };
+		2D04F38722E433DF004CE074 /* EditPasswordCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPasswordCell.swift; sourceTree = "<group>"; };
+		2D04F38A22E55948004CE074 /* ForgotPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewController.swift; sourceTree = "<group>"; };
+		2D04F38C22E55CDD004CE074 /* EmailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailCell.swift; sourceTree = "<group>"; };
+		2D04F38E22E6A64B004CE074 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		2D04F39022E6A6F2004CE074 /* DetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCell.swift; sourceTree = "<group>"; };
 		2D060E2B22AE0CF300BA34A6 /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
 		2D08B36822CDAD64004D1007 /* ChatRoomViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoomViewController.swift; sourceTree = "<group>"; };
 		2D08B36A22CDB50A004D1007 /* Mesage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mesage.swift; sourceTree = "<group>"; };
@@ -111,6 +132,11 @@
 		2D08B37C22D44540004D1007 /* picture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picture.png; sourceTree = "<group>"; };
 		2D08B37E22D46636004D1007 /* send.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = send.png; sourceTree = "<group>"; };
 		2D08B38122D48F2D004D1007 /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
+		2D08EB5622E16484008F10C2 /* PActivityCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PActivityCell.swift; sourceTree = "<group>"; };
+		2D0A463922E3141E0096DA3C /* EditProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
+		2D0A463C22E31F9B0096DA3C /* ProfileImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageCell.swift; sourceTree = "<group>"; };
+		2D0A463E22E328180096DA3C /* NicknameCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameCell.swift; sourceTree = "<group>"; };
+		2D0A464022E328650096DA3C /* HobbyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HobbyCell.swift; sourceTree = "<group>"; };
 		2D204A6B22AFE04200D8749A /* Second.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Second.storyboard; sourceTree = "<group>"; };
 		2D204A6D22AFF8F600D8749A /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		2D204A7222B0A13300D8749A /* mainBackground.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = mainBackground.jpg; sourceTree = "<group>"; };
@@ -128,6 +154,12 @@
 		2D6E441922BB57430073E56F /* ActivityListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityListViewController.swift; sourceTree = "<group>"; };
 		2D6E441B22BB5A750073E56F /* Activity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
 		2D6E46E322C1B50D0073E56F /* ActivityDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityDetailViewController.swift; sourceTree = "<group>"; };
+		2D89142E22E6B10C0041410E /* DS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DS.swift; sourceTree = "<group>"; };
+		2D89143022E6C1070041410E /* PeopleCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleCollectionViewCell.swift; sourceTree = "<group>"; };
+		2D89143222E6F1F60041410E /* MapCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapCell.swift; sourceTree = "<group>"; };
+		2D89143422E706550041410E /* navigation-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "navigation-2.png"; sourceTree = "<group>"; };
+		2D89143622E71D170041410E /* MemberViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberViewController.swift; sourceTree = "<group>"; };
+		2D89143822E71D9B0041410E /* MemberCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberCell.swift; sourceTree = "<group>"; };
 		2D915F6722D5BA78009DD06B /* kSCTAd.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = kSCTAd.jpg; sourceTree = "<group>"; };
 		2D915F6F22D5C28F009DD06B /* photo-camera-edited_opt-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "photo-camera-edited_opt-2.png"; sourceTree = "<group>"; };
 		2D915F7122D6E27E009DD06B /* UIImage+Addon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Addon.swift"; sourceTree = "<group>"; };
@@ -203,6 +235,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2D04F38422E431C5004CE074 /* EditPassword */ = {
+			isa = PBXGroup;
+			children = (
+				2D04F38522E431EF004CE074 /* EditPasswordViewController.swift */,
+				2D04F38722E433DF004CE074 /* EditPasswordCell.swift */,
+				2D04F38A22E55948004CE074 /* ForgotPasswordViewController.swift */,
+				2D04F38C22E55CDD004CE074 /* EmailCell.swift */,
+			);
+			path = EditPassword;
+			sourceTree = "<group>";
+		};
 		2D060E2D22AE39D600BA34A6 /* Account */ = {
 			isa = PBXGroup;
 			children = (
@@ -213,6 +256,8 @@
 				2DFF16A622B22D77002F4EE9 /* ViewController.swift */,
 				2DF7CA8B22DE262E00A93AA8 /* MemberCenterViewController.swift */,
 				2DF7CA8D22DE270300A93AA8 /* MemberDetailCell.swift */,
+				2D0A463B22E31F5D0096DA3C /* EditProfile */,
+				2D04F38422E431C5004CE074 /* EditPassword */,
 			);
 			path = Account;
 			sourceTree = "<group>";
@@ -242,6 +287,13 @@
 				2D08B37422D3036E004D1007 /* Channel.swift */,
 				2D08B37622D304A7004D1007 /* DatabaseRepresentation.swift */,
 				2D915F9622D824BD009DD06B /* infoUIView.swift */,
+				2D04F38E22E6A64B004CE074 /* DetailViewController.swift */,
+				2D04F39022E6A6F2004CE074 /* DetailCell.swift */,
+				2D89142E22E6B10C0041410E /* DS.swift */,
+				2D89143022E6C1070041410E /* PeopleCollectionViewCell.swift */,
+				2D89143222E6F1F60041410E /* MapCell.swift */,
+				2D89143622E71D170041410E /* MemberViewController.swift */,
+				2D89143822E71D9B0041410E /* MemberCell.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -264,6 +316,17 @@
 			path = Setting;
 			sourceTree = "<group>";
 		};
+		2D0A463B22E31F5D0096DA3C /* EditProfile */ = {
+			isa = PBXGroup;
+			children = (
+				2D0A463922E3141E0096DA3C /* EditProfileViewController.swift */,
+				2D0A463C22E31F9B0096DA3C /* ProfileImageCell.swift */,
+				2D0A463E22E328180096DA3C /* NicknameCell.swift */,
+				2D0A464022E328650096DA3C /* HobbyCell.swift */,
+			);
+			path = EditProfile;
+			sourceTree = "<group>";
+		};
 		2D204A6F22B08D0E00D8749A /* Image */ = {
 			isa = PBXGroup;
 			children = (
@@ -278,6 +341,7 @@
 				2DF7CA3422DDB3B100A93AA8 /* basketballCellIcon.png */,
 				2DF7CA7722DDF21A00A93AA8 /* Icon-App-29x29@2x.png */,
 				2DF7CA3622DDB6B400A93AA8 /* basketballCellIcon (1).png */,
+				2D89143422E706550041410E /* navigation-2.png */,
 				2DF7CA7922DDF29C00A93AA8 /* respect-2.png */,
 				2D08B37E22D46636004D1007 /* send.png */,
 				2D08B37A22D44495004D1007 /* photo-camera-2.png */,
@@ -300,8 +364,8 @@
 		2D3F3FBB226F15360098B414 = {
 			isa = PBXGroup;
 			children = (
-				2D5F5FEF22D97E9B00F09543 /* Sweater.xcdatamodeld */,
 				2D08B38022D48F06004D1007 /* Setting */,
+				2D5F5FEF22D97E9B00F09543 /* Sweater.xcdatamodeld */,
 				2D08B37122CF2C3D004D1007 /* Addons */,
 				2DFD9DD822A8FAA1006A58E2 /* Launch Screen.storyboard */,
 				2DB96BE322D873A8001C1AE6 /* GoogleService-Info.plist */,
@@ -399,7 +463,7 @@
 				2D6E441922BB57430073E56F /* ActivityListViewController.swift */,
 				2D6E441B22BB5A750073E56F /* Activity.swift */,
 				2D6E46E322C1B50D0073E56F /* ActivityDetailViewController.swift */,
-				2D017B2422C1F1ED004E5C00 /* ActivityNavigationController.swift */,
+				2D08EB5622E16484008F10C2 /* PActivityCell.swift */,
 			);
 			path = Activity;
 			sourceTree = "<group>";
@@ -523,6 +587,7 @@
 				2DFD9DD922A8FAA1006A58E2 /* Launch Screen.storyboard in Resources */,
 				2DF7CA8822DE1C3000A93AA8 /* info-2.png in Resources */,
 				2DF7CA4B22DDCB2200A93AA8 /* soccerBack.jpg in Resources */,
+				2D89143522E706560041410E /* navigation-2.png in Resources */,
 				2DF7CA7422DDE32100A93AA8 /* 152*152.jpg in Resources */,
 				2DFD9DDD22A900F6006A58E2 /* Main.storyboard in Resources */,
 				2D204A6C22AFE04200D8749A /* Second.storyboard in Resources */,
@@ -642,6 +707,7 @@
 				2DFF16F722B60F2B002F4EE9 /* MapViewController.swift in Sources */,
 				2D08B37322CF2C58004D1007 /* UIColor+Additions.swift in Sources */,
 				2DFF16F522B52A15002F4EE9 /* Method.swift in Sources */,
+				2D0A463D22E31F9B0096DA3C /* ProfileImageCell.swift in Sources */,
 				2D6E43F322B9D42F0073E56F /* CustomAnnotation.swift in Sources */,
 				2DFF16AD22B259DF002F4EE9 /* TabbarViewController.swift in Sources */,
 				2DF7CA8C22DE262E00A93AA8 /* MemberCenterViewController.swift in Sources */,
@@ -650,28 +716,42 @@
 				2DFF16AF22B25A61002F4EE9 /* MainNavigationViewController.swift in Sources */,
 				2D5F5FF122D97E9C00F09543 /* Sweater.xcdatamodeld in Sources */,
 				2D08B37522D3036E004D1007 /* Channel.swift in Sources */,
+				2D89143322E6F1F60041410E /* MapCell.swift in Sources */,
 				2D08B36F22CF239B004D1007 /* UICollectionView+Additions.swift in Sources */,
 				2DFD9DD322A8F950006A58E2 /* AppDelegate.swift in Sources */,
 				2D6E441C22BB5A750073E56F /* Activity.swift in Sources */,
 				2DFF168122B0AF4F002F4EE9 /* CreateActivityViewController.swift in Sources */,
 				2D915F9722D824BD009DD06B /* infoUIView.swift in Sources */,
+				2D0A463F22E328180096DA3C /* NicknameCell.swift in Sources */,
 				2D060E2C22AE0CF300BA34A6 /* Account.swift in Sources */,
 				2DFD9DD122A8F7B1006A58E2 /* SignUpViewController.swift in Sources */,
-				2D017B2522C1F1ED004E5C00 /* ActivityNavigationController.swift in Sources */,
 				2D6E441A22BB57430073E56F /* ActivityListViewController.swift in Sources */,
+				2D89143122E6C1070041410E /* PeopleCollectionViewCell.swift in Sources */,
+				2D04F38B22E55948004CE074 /* ForgotPasswordViewController.swift in Sources */,
+				2D04F38F22E6A64B004CE074 /* DetailViewController.swift in Sources */,
+				2D89142F22E6B10C0041410E /* DS.swift in Sources */,
 				2D08B36B22CDB50A004D1007 /* Mesage.swift in Sources */,
 				2D6E43D022B77D4B0073E56F /* MapSelectionViewController.swift in Sources */,
 				2D6E441722BB18100073E56F /* ActivityListCell.swift in Sources */,
+				2D04F39122E6A6F2004CE074 /* DetailCell.swift in Sources */,
 				2DFF16A722B22D77002F4EE9 /* ViewController.swift in Sources */,
+				2D04F38622E431EF004CE074 /* EditPasswordViewController.swift in Sources */,
+				2D0A463A22E3141E0096DA3C /* EditProfileViewController.swift in Sources */,
 				2D6E43F022B8ECD80073E56F /* MapData.swift in Sources */,
 				2DFD9DCE22A8F7B1006A58E2 /* AuthTestViewController.swift in Sources */,
 				2D6E43CE22B774FF0073E56F /* TestViewController.swift in Sources */,
 				2D08B37722D304A7004D1007 /* DatabaseRepresentation.swift in Sources */,
 				2D08B36D22CDC411004D1007 /* ParticipateActivityViewController.swift in Sources */,
+				2D04F38822E433DF004CE074 /* EditPasswordCell.swift in Sources */,
+				2D89143722E71D170041410E /* MemberViewController.swift in Sources */,
+				2D08EB5722E16484008F10C2 /* PActivityCell.swift in Sources */,
 				2D6E46E422C1B50D0073E56F /* ActivityDetailViewController.swift in Sources */,
 				2DF7CA3A22DDC03B00A93AA8 /* BasketballTableViewCell.swift in Sources */,
 				2D915F9E22D85B44009DD06B /* CoreDataHelper.swift in Sources */,
+				2D89143922E71D9B0041410E /* MemberCell.swift in Sources */,
+				2D0A464122E328650096DA3C /* HobbyCell.swift in Sources */,
 				2D204A6E22AFF8F600D8749A /* MainViewController.swift in Sources */,
+				2D04F38D22E55CDD004CE074 /* EmailCell.swift in Sources */,
 				2D08B36922CDAD64004D1007 /* ChatRoomViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

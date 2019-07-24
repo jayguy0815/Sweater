@@ -45,6 +45,7 @@ class ParticipateActivityViewController: UIViewController {
         guard let indexPath = self.participateActivitiesTableView.indexPathForSelectedRow else {
             return
         }
+        
         channelVC.activity = activities[indexPath.row]
     }
    

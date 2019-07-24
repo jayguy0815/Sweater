@@ -14,58 +14,130 @@ import CoreData
 class Manager {
     var userAccount = Account()
     var activities = [Activity]()
-    var accounts = [Account]()
+    static var accounts = [Account]()
     static var shared = Manager()
     static var mapData = MapData()
     var ref : DatabaseReference!
     
+    func loadImage(ref : StorageReference , imageName : String) -> Data{
+        
+        var newData = UIImage(named: "defaultAccountImage")!.jpegData(compressionQuality: 1)!
+        ref.child("\(imageName).jpg").getData(maxSize: 1*1024*1024, completion: { (data, error) in
+            if let error = error {
+                print("*** ERROR DOWNLOAD IMAGE : \(error)")
+            } else {
+                
+                    if let imageData = data {
+                        newData = imageData
+                    }
+                
+            }
+        })
+        return newData
+    }
+    
+    func timeIntervaltoDatetoString(timeInterval : TimeInterval, format : String) -> String{
+        let date = Date(timeIntervalSince1970: timeInterval)
+        let df = DateFormatter()
+        df.dateFormat = format
+        let dateString = df.string(from: date)
+        return dateString
+    }
+    
+    
+    func checkAuthState(uid:String, vc : AuthTestViewController){
+        Firestore.firestore().collection("user_data").document(uid).getDocument { (snapshot, error) in
+            if let err = error{
+                print(err)
+            }
+            guard let userData = snapshot?.data() else{
+                return
+            }
+            let state = userData["issignin"] as! Bool
+            if state == true{
+                let alert =  UIAlertController(title: "Oops", message: "您已重複登入", preferredStyle: .alert)
+                let action = UIAlertAction(title: "好", style: .default, handler: { (_) in
+                    do{
+                       try Auth.auth().signOut()
+                    }catch{
+                        fatalError()
+                    }
+                })
+                alert.addAction(action)
+                vc.present(alert,animated: true, completion: nil)
+            }else{
+               
+                let nickname = userData["nickname"] as! String
+                let hobby = userData["hobby"] as! String
+                Storage.storage().reference().child("account").child("\(uid).jpg").getData(maxSize: 1*800*800, completion: { (data, error) in
+                    if let err = error{
+                        print(err)
+                    }
+                    guard let imagedata = data else{
+                        return
+                    }
+                    UserDefaults.standard.set(imagedata, forKey: "profileImageData")
+                })
+                UserDefaults.standard.set(uid, forKey: "uid")
+                UserDefaults.standard.set(nickname, forKey: "nickname")
+                
+                UserDefaults.standard.set(hobby, forKey: "hobby")
+                Firestore.firestore().collection("user_data").document(uid).updateData(["issignin" : true])
+                let alert =  UIAlertController(title: "成功", message: "登入成功", preferredStyle: .alert)
+                let action = UIAlertAction(title: "好", style: .default, handler: { (_) in
+                    vc.dismiss(animated: true, completion: nil)
+                })
+                alert.addAction(action)
+                vc.present(alert,animated: true, completion: nil)
+            }
+        }
+    }
+    
     
     func loadUserData(){
-        let databaseRef = Database.database().reference().child("user_account")
+        let fireRef = Firestore.firestore().collection("user_data")
         let storageRef = Storage.storage().reference().child("account")
-        var userData = [String:Any]()
-        guard let userUid = Auth.auth().currentUser?.uid else {
-            return
-        }
-        databaseRef.observe(.value) { (snapshot) in
-            if let userData = snapshot.value as? [String:Any] {
-                
-                let users = Array(userData.keys)
-                for i in 0..<users.count {
-                    
-                    let dic = userData[users[i]] as! [String:Any]
-                    let account = Account()
-                    let uid = dic["uid"] as! String
-                    
-                    account.uid = uid
-                    account.email = dic["email"] as! String
-                    account.nickname = dic["nickname"] as! String
-                    account.url = dic["accountImageUrl"] as! String
-                    if userUid == uid{
-                        UserDefaults.standard.set(account.nickname, forKey: "userNickName")
-                    }
-                    storageRef.child("\(uid).jpg").getData(maxSize: 1*1024*1024, completion: { (data, error) in
-                        if let error = error {
-                            print("*** ERROR DOWNLOAD IMAGE : \(error)")
-                        } else {
-                            // Success
-                            if let imageData = data {
-                                // 3 - Put the image in imageview
-                                account.image = UIImage(data: imageData)
-                            }
-                        }
-                    })
-                    self.accounts.append(account)
-                }
+        
+        fireRef.getDocuments { (snapshot, error) in
+            if let error = error {
+                print(error)
             }
+            guard let users = snapshot?.documents else{
+                print("failed to get user documents!")
+                return
+            }
+            for user in users{
+                
+                Storage.storage().reference().child("account").child("\(user.data()["uid"] as! String).jpg").getData(maxSize: 1*800*800, completion: { (data, error) in
+                    if let error = error {
+                        print("*** ERROR DOWNLOAD IMAGE : \(error)")
+                    } else {
+                        let account = Account(context: CoreDataHelper.shared.managedObjectContext())
+                        account.uid = user.data()["uid"] as! String
+                        account.name = user.data()["username"] as! String
+                        account.nickname = user.data()["nickname"] as! String
+                        account.hobby = user.data()["hobby"] as! String
+                        account.email = user.data()["email"] as! String
+                        account.accountImageURL = user.data()["accountImageURL"] as! String
+                        if let imageData = data {
+                            account.image = imageData
+                        }
+//                        account.image = Manager.shared.loadImage(ref: storageRef, imageName: user.documentID)
+                        account.postTime = user.data()["postTime"] as! Double
+                        account.modifiedTime = user.data()["modifiedTime"] as! Double
+                        print("account saved")
+                        CoreDataHelper.shared.saveContext()
+                    }
+                })
+                
+            }
+            Manager.accounts = Manager.shared.queryAccountFromCoreData()
         }
     }
     
     
     
     func loadActivities() {
-        //let moc = CoreDataHelper.shared.managedObjectContext()
-        //let appdelegate = UIApplication.shared.delegate as! AppDelegate
         let cloudFireStore = Firestore.firestore()
         cloudFireStore.collection("activities").order(by: "postTime", descending: true).getDocuments { (snapshot, error) in
             if let querySnapshot = snapshot {
@@ -92,7 +164,6 @@ class Manager {
             }
         }
         UserDefaults.standard.set(Double(Date().timeIntervalSince1970), forKey: "lastUpdated")
-        
     }
    
     func coreDataRemoveAll(){
@@ -113,8 +184,6 @@ class Manager {
                     fatalError("\(error)")
                 }
             }
-            
-            
         } catch {
             fatalError("\(error)")
         }
@@ -241,6 +310,7 @@ class Manager {
         }
         
     }
+    
     func loadFromFile(fileName:String){
         let homeURL = URL(fileURLWithPath: NSHomeDirectory())
         let documents = homeURL.appendingPathComponent("Documents")
@@ -262,6 +332,29 @@ class Manager {
         UserDefaults.standard.set(uid, forKey: "uid")
     }
     
+    func addAccount(diff : DocumentChange){
+        Storage.storage().reference().child("account").child("\(diff.document.documentID).jpg").getData(maxSize: 1*800*800, completion: { (data, error) in
+            if let error = error {
+                print("*** ERROR DOWNLOAD IMAGE : \(error)")
+            } else {
+                let account = Account(context: CoreDataHelper.shared.managedObjectContext())
+                account.uid = diff.document.data()["uid"] as! String
+                account.name = diff.document.data()["username"] as! String
+                account.nickname = diff.document.data()["nickname"] as! String
+                account.hobby = diff.document.data()["hobby"] as! String
+                account.email = diff.document.data()["email"] as! String
+                account.accountImageURL = diff.document.data()["accountImageURL"] as! String
+                if let imageData = data {
+                    account.image = imageData
+                }
+                account.postTime = diff.document.data()["postTime"] as! Double
+                account.modifiedTime = diff.document.data()["modifiedTime"] as! Double
+                print("account saved")
+                CoreDataHelper.shared.saveContext()
+            }
+        })
+    }
+    
     func addActivity(diff : DocumentChange){
         let activity = Activity(context: CoreDataHelper.shared.managedObjectContext())
         activity.key = diff.document.get("key") as! String
@@ -280,6 +373,41 @@ class Manager {
         activity.participants = diff.document.get("participates") as! [String]
         activity.postTime = diff.document.get("postTime") as! Double
         CoreDataHelper.shared.saveContext()
+    }
+    
+    func updateAccount(uid : String, nickname : String, hobby : String, url : String){
+        
+        let storageRef = Storage.storage().reference().child("account")
+        storageRef.child("\(uid).jpg").getData(maxSize: 1*800*800) { (data, error) in
+            if let err = error{
+                print(err)
+            }
+            if let imgdata = data{
+                let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Account")
+                request.predicate = NSPredicate(format:"(uid = %@)", (uid))
+                
+                do {
+                    let results = try CoreDataHelper.shared.managedObjectContext().fetch(request)  as! [Account]
+                    
+                    if results.count > 0 {
+                        results[0].nickname = nickname
+                        results[0].hobby = hobby
+                        if url != results[0].accountImageURL{
+                            results[0].image = imgdata
+                            results[0].accountImageURL = url
+                        }
+                        CoreDataHelper.shared.saveContext()
+                    }
+                } catch {
+                    fatalError("\(error)")
+                }
+            }
+            
+        }
+        
+        
+       
+        
     }
     
     func updateActivity (key : String, count : Int, uids : [String]) {
@@ -323,7 +451,7 @@ class Manager {
     }
     
     func dailyRemove(){
-        let currentActivities = Manager.shared.queryFromCoreData()
+        let currentActivities = Manager.shared.queryActivityFromCoreData()
         for activity in currentActivities{
             let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: activity.date)
             if tomorrow! < Date(){
@@ -340,15 +468,18 @@ class Manager {
     
     func loadMyActivityFromCoreData() -> [Activity]{
         var activities = [Activity]()
-        let uid = UserDefaults.standard.string(forKey: "uid")!
+        let uid = Auth.auth().currentUser?.uid
         let moc = CoreDataHelper.shared.managedObjectContext()
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Activity")
         do{
             let results = try moc.fetch(request) as! [Activity]
             if results.count > 0 {
                 for result in results{
-                    if result.participants.contains(uid){
+                    if result.participants.contains(uid!){
                         activities.append(result)
+                        activities.sort { (a1, a2) -> Bool in
+                            a1.postTime>a2.postTime
+                        }
                     }
                 }
             }
@@ -376,10 +507,58 @@ class Manager {
         return view
     }
     
-    func activityListener()->ListenerRegistration{
+    func accountListener() -> ListenerRegistration{
+        let listener = Firestore.firestore().collection("user_data").whereField("modifiedTime", isGreaterThan: UserDefaults.standard.double(forKey: "lastLoadModifiedTime")).addSnapshotListener { (snapshot, error) in
+            let accounts = Manager.shared.queryAccountFromCoreData()
+            if let err = error {
+                print(err)
+            }
+            guard let documents = snapshot else {
+                return
+            }
+            documents.documentChanges.forEach({ (diff) in
+                if diff.type == .added{
+                    let postTime = diff.document.get("postTime") as! Double
+                    let updateTime = UserDefaults.standard.double(forKey: "lastLoadModifiedTime")
+                    let id = diff.document.documentID
+                    for account in accounts{
+                        if id == account.uid{
+                            let modTime = diff.document.get("modifiedTime") as! Double
+                            if updateTime < modTime{
+                                let url = diff.document.get("accountImageURL") as! String
+                                let nickname = diff.document.get("nickname") as! String
+                                let hobby = diff.document.get("hobby") as! String
+                                DispatchQueue.main.asyncAfter(deadline: .now()+1, execute: {
+                                    Manager.shared.updateAccount(uid: id, nickname: nickname, hobby: hobby, url: url)
+                                })
+                                print("user: \(id) modified")
+                                
+                            }
+                        }
+                    }
+                    if postTime > updateTime {
+                        print("user:\(id) added")
+                        Manager.shared.addAccount(diff: diff)
+                    }
+                }
+                else if diff.type == .modified{
+                    let url = diff.document.get("accountImageURL") as! String
+                    let nickname = diff.document.get("nickname") as! String
+                    let hobby = diff.document.get("hobby") as! String
+                    Manager.shared.updateAccount(uid: diff.document.documentID, nickname: nickname, hobby: hobby, url: url)
+                    print("user: \(diff.document.documentID) modified")
+                }
+            })
+            Manager.accounts = Manager.shared.queryAccountFromCoreData()
+        }
+        return listener
+    }
+    
+    func activityListener() -> ListenerRegistration{
        
         let listener = Firestore.firestore().collection("activities").whereField("modifiedTime", isGreaterThan: UserDefaults.standard.double(forKey: "lastLoadModifiedTime")).addSnapshotListener({ (snapshot, error) in
-            let activities = Manager.shared.queryFromCoreData()
+            print("activity listening")
+            let activities = Manager.shared.queryActivityFromCoreData()
             
             if let err = error {
                 print(err)
@@ -448,7 +627,7 @@ class Manager {
         return listener
     }
     
-    func queryFromCoreData()->[Activity]{
+    func queryActivityFromCoreData()->[Activity]{
         var activities = [Activity]()
         let moc = CoreDataHelper.shared.managedObjectContext()
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Activity")
@@ -463,7 +642,23 @@ class Manager {
             fatalError()
         }
         return activities
-        
+    }
+    
+    func queryAccountFromCoreData()->[Account]{
+        var accounts = [Account]()
+        let moc = CoreDataHelper.shared.managedObjectContext()
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Account")
+        do{
+            let results = try moc.fetch(request) as! [Account]
+            if results.count > 0 {
+                for result in results{
+                    accounts.append(result)
+                }
+            }
+        }catch{
+            fatalError()
+        }
+        return accounts
     }
     
     func saveMessage(key : String , messages : [Message]){

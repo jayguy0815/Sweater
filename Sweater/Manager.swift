@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Firebase
 import CoreData
+import CoreLocation
 
 class Manager {
     var userAccount = Account()
@@ -34,6 +35,74 @@ class Manager {
             }
         })
         return newData
+    
+    }
+    
+    func fireStoreMap(){
+        let moc = CoreDataHelper.shared.managedObjectContext()
+        Firestore.firestore().collection("map").getDocuments { (snapshot, error) in
+            if let err = error{
+                print(err)
+            }
+            guard let querymaps = snapshot?.documents else {
+                return
+            }
+            for map in querymaps{
+                let maps = Maps(context: moc)
+                maps.name = map.data()["name"] as! String
+                maps.type = map.data()["type"] as! String
+                maps.dist = map.data()["dist"] as! String
+                maps.address = map.data()["address"] as! String
+                let point = map.data()["coordinate"] as! GeoPoint
+                maps.latitude = point.latitude
+                maps.longitude = point.longitude
+                do {
+                    try moc.save()
+                }catch{
+                    print(error)
+                }
+            }
+        }
+    }
+    
+    func queryMapsFromCoreDataDisted(type : String, dist : String) -> [Maps]{
+        var maps = [Maps]()
+        let moc = CoreDataHelper.shared.managedObjectContext()
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Maps")
+        let predicate = NSPredicate(format: "type = %@", type)
+        let p2 = NSPredicate(format: "dist = %@", dist)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate,p2])
+        do{
+            let results = try moc.fetch(request) as! [Maps]
+            if results.count > 0 {
+                for result in results{
+                    maps.append(result)
+                }
+            }
+        }catch{
+            fatalError()
+        }
+        return maps
+    }
+    
+    func queryMapsFromCoreData(type : String) -> [Maps]{
+        
+        var maps = [Maps]()
+        let moc = CoreDataHelper.shared.managedObjectContext()
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Maps")
+        let predicate = NSPredicate(format: "type = %@", type)
+        request.predicate = predicate
+        do{
+            let results = try moc.fetch(request) as! [Maps]
+            if results.count > 0 {
+                for result in results{
+                    maps.append(result)
+                }
+            }
+        }catch{
+            fatalError()
+        }
+        return maps
     }
     
     func timeIntervaltoDatetoString(timeInterval : TimeInterval, format : String) -> String{

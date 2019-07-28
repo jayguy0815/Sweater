@@ -22,6 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var accounts : [Account] = []
     var activityListener : ListenerRegistration?
     var accountListner : ListenerRegistration?
+    var maplistener : ListenerRegistration?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
@@ -41,47 +42,57 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                  Manager.shared.getCurrentUserData()
             }
         }
-        
-                let launchedBefore = UserDefaults.standard.bool(forKey: "launchedBefore")
-                if launchedBefore == false{
-                
-                    if let uid = Auth.auth().currentUser?.uid {
-                        Firestore.firestore().collection("user_data").document(uid).updateData(["issignin":false]) { (error) in
-                            if let err = error{
-                                print(err)
-                            }
-                            do{
-                                try Auth.auth().signOut()
-                            }catch{
-                                print(error)
-                            }
-                        }
-                       
-                    }
 
-                    Manager.shared.loadActivities()
-                    Manager.shared.loadUserData()
-                    UserDefaults.standard.set(true, forKey: "launchedBefore")
-                    UserDefaults.standard.set(Double(Date().timeIntervalSince1970)+Double(2), forKey: "lastLoadModifiedTime")
+        let launchedBefore = UserDefaults.standard.bool(forKey: "launchedBefore")
+        if launchedBefore == false{
+            Manager.shared.fireStoreMap()
+            Database.database().reference().child("mapdata").observeSingleEvent(of: .value) { (snapshot) in
+                guard let mapdata = snapshot.value else {
+                    return
                 }
-                
-                self.activities = Manager.shared.queryActivityFromCoreData()
-                self.accounts = Manager.shared.queryAccountFromCoreData()
-                self.activityListener = Manager.shared.activityListener()
-                self.accountListner = Manager.shared.accountListener()
-                
-        
-                
-                if Manager.shared.checkFile(fileName: "mapData.archive") == false {
-                    Manager.shared.loadMapData()
-                } else if Manager.shared.checkFile(fileName: "mapData.archive") == true {
-                    Manager.shared.loadFromFile(fileName: "mapData.archive")
-                
-                
+            }
+            if let uid = Auth.auth().currentUser?.uid {
+                Firestore.firestore().collection("user_data").document(uid).updateData(["issignin":false]) { (error) in
+                    if let err = error{
+                        print(err)
+                    }
+                    do{
+                        try Auth.auth().signOut()
+                    }catch{
+                        print(error)
+                    }
                 }
-                
+               
+            }
+
+            Manager.shared.loadActivities()
+            Manager.shared.loadUserData()
+            UserDefaults.standard.set(true, forKey: "launchedBefore")
+            UserDefaults.standard.set(Double(Date().timeIntervalSince1970)+Double(2), forKey: "lastLoadModifiedTime")
+        }
+        
+        self.activities = Manager.shared.queryActivityFromCoreData()
+        self.accounts = Manager.shared.queryAccountFromCoreData()
+        self.activityListener = Manager.shared.activityListener()
+        self.accountListner = Manager.shared.accountListener()
         
         
+        
+       
+//        self.maplistener = Database.database().reference().child("mapdata")
+
+
+        
+        if Manager.shared.checkFile(fileName: "mapData.archive") == false {
+            Manager.shared.loadMapData()
+        } else if Manager.shared.checkFile(fileName: "mapData.archive") == true {
+            Manager.shared.loadFromFile(fileName: "mapData.archive")
+        
+        
+        }
+        
+
+
         return true
     }
     func applicationWillResignActive(_ application: UIApplication) {

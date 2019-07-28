@@ -31,6 +31,7 @@
 		2D0A463D22E31F9B0096DA3C /* ProfileImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A463C22E31F9B0096DA3C /* ProfileImageCell.swift */; };
 		2D0A463F22E328180096DA3C /* NicknameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A463E22E328180096DA3C /* NicknameCell.swift */; };
 		2D0A464122E328650096DA3C /* HobbyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A464022E328650096DA3C /* HobbyCell.swift */; };
+		2D0DF85822E99669006AED65 /* Maps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D0DF85722E99669006AED65 /* Maps.swift */; };
 		2D204A6C22AFE04200D8749A /* Second.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D204A6B22AFE04200D8749A /* Second.storyboard */; };
 		2D204A6E22AFF8F600D8749A /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D204A6D22AFF8F600D8749A /* MainViewController.swift */; };
 		2D204A7322B0A13300D8749A /* mainBackground.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2D204A7222B0A13300D8749A /* mainBackground.jpg */; };
@@ -137,6 +138,7 @@
 		2D0A463C22E31F9B0096DA3C /* ProfileImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageCell.swift; sourceTree = "<group>"; };
 		2D0A463E22E328180096DA3C /* NicknameCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameCell.swift; sourceTree = "<group>"; };
 		2D0A464022E328650096DA3C /* HobbyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HobbyCell.swift; sourceTree = "<group>"; };
+		2D0DF85722E99669006AED65 /* Maps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Maps.swift; sourceTree = "<group>"; };
 		2D204A6B22AFE04200D8749A /* Second.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Second.storyboard; sourceTree = "<group>"; };
 		2D204A6D22AFF8F600D8749A /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		2D204A7222B0A13300D8749A /* mainBackground.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = mainBackground.jpg; sourceTree = "<group>"; };
@@ -327,6 +329,14 @@
 			path = EditProfile;
 			sourceTree = "<group>";
 		};
+		2D0DF85622E9960A006AED65 /* MapData */ = {
+			isa = PBXGroup;
+			children = (
+				2D0DF85722E99669006AED65 /* Maps.swift */,
+			);
+			name = MapData;
+			sourceTree = "<group>";
+		};
 		2D204A6F22B08D0E00D8749A /* Image */ = {
 			isa = PBXGroup;
 			children = (
@@ -364,6 +374,7 @@
 		2D3F3FBB226F15360098B414 = {
 			isa = PBXGroup;
 			children = (
+				2D0DF85622E9960A006AED65 /* MapData */,
 				2D08B38022D48F06004D1007 /* Setting */,
 				2D5F5FEF22D97E9B00F09543 /* Sweater.xcdatamodeld */,
 				2D08B37122CF2C3D004D1007 /* Addons */,
@@ -704,6 +715,7 @@
 			files = (
 				2D915F7222D6E27E009DD06B /* UIImage+Addon.swift in Sources */,
 				2D08B38222D48F2D004D1007 /* SettingViewController.swift in Sources */,
+				2D0DF85822E99669006AED65 /* Maps.swift in Sources */,
 				2DFF16F722B60F2B002F4EE9 /* MapViewController.swift in Sources */,
 				2D08B37322CF2C58004D1007 /* UIColor+Additions.swift in Sources */,
 				2DFF16F522B52A15002F4EE9 /* Method.swift in Sources */,

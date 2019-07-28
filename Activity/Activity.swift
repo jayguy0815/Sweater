@@ -29,4 +29,5 @@ class Activity : NSManagedObject{
     @NSManaged var latestPost : String
     @NSManaged var latestPostTime : Double
     @NSManaged var unread : Int
+    @NSManaged var type : String
 }

@@ -21,6 +21,9 @@ class TestViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDe
     var latitudeList : [Double] = []
     var longitudeList : [Double] = []
     var addressList : [String] = []
+    var address : String = ""
+    var lat : Double = 0.0
+    var long : Double = 0.0
     
     var name : String?
     var touchPoint : CGPoint?
@@ -37,33 +40,43 @@ class TestViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDe
 
     @IBOutlet weak var textField: UITextField!
     
-
+    @IBOutlet weak var navBtn: UIBarButtonItem!
+    
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        for i in 0 ..< Manager.mapData.courtList.count{
-            var annotionCoordinate = CLLocationCoordinate2D()
-            annotionCoordinate.latitude = Manager.mapData.latitudeList[i]
-            annotionCoordinate.longitude = Manager.mapData.longitudeList[i]
-            
-            
-            let annotation = customAnnotation()
-            annotation.coordinate = annotionCoordinate
-            annotation.title = "\(Manager.mapData.courtList[i])"
-            annotation.subtitle = "\(Manager.mapData.addressList[i])"
-            
-            
-            if annotation.Id == "111"{
-                annotation.title = "711"
-                annotation.subtitle = "222"
-            }
-            
-            self.mapView.addAnnotation(annotation)
-        }
+       
         //self.loadFromFile()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
+        self.navBtn.isEnabled = false
+    }
 
-
+    @IBAction func navBtnPressed(_ sender: Any) {
+        if (UIApplication.shared.canOpenURL(URL(string:"comgooglemaps://")!)) {
+            let address = self.address
+            let urlString = "comgooglemaps://?daddr=\(address)&directionsmode=driving"
+            guard let url = URL(string: urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!) else{
+                assertionFailure("Fail to get comgooglemaps url.")
+                return
+            }
+            UIApplication.shared.open(url, options: [:]) { (success) in
+                self.mapView.deselectAnnotation(self.mapView.selectedAnnotations[0], animated: true)
+            }
+            
+            
+        } else {
+            let sourceCoordinate = CLLocationCoordinate2D(latitude: self.lat, longitude: self.long)
+            let sourcePlace = MKPlacemark(coordinate: sourceCoordinate, addressDictionary: nil)
+            let targetMapItem = MKMapItem(placemark: sourcePlace)
+            let options = [MKLaunchOptionsDirectionsModeKey:MKLaunchOptionsDirectionsModeWalking]
+            targetMapItem.openInMaps(launchOptions: options)
+            self.mapView.deselectAnnotation(self.mapView.selectedAnnotations[0], animated: true)
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         textField.delegate = self
@@ -87,10 +100,7 @@ class TestViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDe
         gestureRecognizer.delegate = self
         self.mapView.addGestureRecognizer(gestureRecognizer)
         self.mapView.reloadInputViews()
-        
-        
-        
-        
+
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -160,11 +170,44 @@ extension TestViewController : UIPickerViewDelegate,UIPickerViewDataSource{
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        if self.mapView.annotations.count != 0{
+            self.mapView.removeAnnotations(self.mapView.annotations)
+        }
         let text = "\(array[row])"
         self.textField.text = text
-    }
-}
+        let maps = Manager.shared.queryMapsFromCoreData(type: text)
+        for i in 0 ..< maps.count{
+            var annotionCoordinate = CLLocationCoordinate2D()
+            annotionCoordinate.latitude = maps[i].latitude
+            annotionCoordinate.longitude = maps[i].longitude
+            
+            
+            let annotation = customAnnotation()
+            annotation.coordinate = annotionCoordinate
+            annotation.title = "\(maps[i].name)"
+            annotation.subtitle = "\(maps[i].address)"
 
-extension TestViewController : UITextFieldDelegate {
+            self.mapView.addAnnotation(annotation)
+        }
+    }
+    
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        let ann = view.annotation as! customAnnotation
+        self.address = ann.subtitle!
+        self.lat = ann.coordinate.latitude
+        self.long = ann.coordinate.longitude
+        self.navBtn.isEnabled = true
+        
+    }
+    
+    func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
+        self.navBtn.isEnabled = false
+    }
     
 }
+
+extension TestViewController : UITextFieldDelegate{
+    
+}
+
+

@@ -19,7 +19,7 @@ class CreateActivityViewController: UIViewController,UINavigationControllerDeleg
     @IBOutlet weak var datePicker: UIDatePicker!
     @IBOutlet weak var peoplePicker: UIPickerView!
     
-    var sportType : String?
+    var sportType : String!
     let errorText : String = "錯誤"
     let pleaseEnter : String = "請輸入"
     let methods = Methods()
@@ -90,6 +90,7 @@ class CreateActivityViewController: UIViewController,UINavigationControllerDeleg
             return
         }
         mapVC.activity = self.activity
+        mapVC.sportType = self.sportType
     }
     
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {

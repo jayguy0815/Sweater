@@ -45,6 +45,10 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
     var annotation : MKPointAnnotation!
     var courtName : String!
     var address : String = ""
+    var sportType : String!
+    var maps : [Maps] = []
+    var distedMap = [Maps]()
+    var dists = ["松山區","信義區","南港區","內湖區","中山區","中正區","士林區","北投區","大安區","文山區","大同區","萬華區"]
     
     @IBAction func segmentChanged(_ sender: Any) {
         switch placeSelectionSegment.selectedSegmentIndex {
@@ -54,13 +58,13 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
         case 1:
             listSelectionView.isHidden = true
             mapSelectionView.isHidden = false
-            
         default:
             break
         }
     }
     
     @IBAction func createActivity(_ sender: Any) {
+
         guard self.courtName != nil else {
             let alertController = UIAlertController(title: "錯誤", message: "請選擇地點", preferredStyle: .alert)
             let action = UIAlertAction(title: "好", style: .cancel, handler: nil)
@@ -83,9 +87,11 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
             fatalError("ERROR: Date conversion failed due to mismatched format.")
         }
         let postTime = Double(Date().timeIntervalSince1970)
-        
+        guard let nickName = UserDefaults.standard.string(forKey: "nickname") else {
+            return
+        }
         let dic : [String:Any] = ["key":key,"activityName":activityName,"date": "\(date)", "creator":uid,"courtName":self.courtName!
-            ,"peopleCounter":Int(peopleCounter)!, "participateCounter": 1,"participates":FieldValue.arrayUnion([uid]) ,"latitude":self.latitude!,"longitude":self.longitude!,"address":self.address,"content":content,"postTime":postTime,"modifiedTime":postTime]
+            ,"peopleCounter":Int(peopleCounter)!, "participateCounter": 1,"participates":FieldValue.arrayUnion([uid]) ,"latitude":self.latitude!,"longitude":self.longitude!,"address":self.address,"content":content,"postTime":postTime,"modifiedTime":postTime, "type" : self.sportType, "lastMessageTime": postTime,"lastMessage":"\(nickName)已創立活動"]
         
         
        
@@ -140,7 +146,7 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
     override func viewDidLoad() {
         super.viewDidLoad()
         //print(self.activity)
-        
+        self.maps = Manager.shared.queryMapsFromCoreData(type: self.sportType)
         self.uid = Auth.auth().currentUser?.uid
         mapSelectionView.isHidden = true
         
@@ -230,42 +236,38 @@ extension MapViewController : UIPickerViewDelegate , UIPickerViewDataSource{
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         if pickerView == placePicker{
-            return Manager.mapData.distList.count
+            return self.dists.count
         }else if pickerView == courtPicker{
-            return self.courtList.count
+            return self.distedMap.count
         }
         return 0
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         if pickerView == placePicker{
-            courtField.text = ""
-            courtPicker.reloadAllComponents()
+            if self.distedMap.count != 0{
+                self.distedMap.removeAll()
+            }
+            
             if mapview.annotations.count == 2{
                 self.mapview.removeAnnotation(annotationList[0])
             }
-            let text = "\(Manager.mapData.distList[row])"
+            let text = self.dists[row]
+            self.distedMap = Manager.shared.queryMapsFromCoreDataDisted(type: self.sportType, dist: text)
             self.placefield.text = text
-            self.courtList.removeAll()
-            for i in 0..<Manager.mapData.courtList.count{
-                if Manager.mapData.addressList[i].contains(text){
-                    self.courtList.append(Manager.mapData.courtList[i])
-                }
-            }
+            courtField.text = ""
+            courtPicker.reloadAllComponents()
+            
             
         }else if pickerView == courtPicker{
            
-            let text = "\(self.courtList[row])"
+            let text = self.distedMap[row].name
             self.courtField.text = text
             
-            for i in 0..<Manager.mapData.latitudeList.count{
-                if Manager.mapData.courtList[i] == text{
-                    self.latitude = Manager.mapData.latitudeList[i]
-                    self.longitude = Manager.mapData.longitudeList[i]
-                    self.address = Manager.mapData.addressList[i]
-                }
-            }
-            
+            self.latitude = self.distedMap[row].latitude
+            self.longitude = self.distedMap[row].longitude
+            self.address = self.distedMap[row].address
+           
             if self.annotationList.count != 0 {
                 self.mapview.removeAnnotation(annotationList[0])
             }
@@ -296,9 +298,9 @@ extension MapViewController : UIPickerViewDelegate , UIPickerViewDataSource{
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         if pickerView == placePicker{
-            return "\(Manager.mapData.distList[row])"
+            return dists[row]
         }else if pickerView == courtPicker{
-            return "\(self.courtList[row])"
+            return self.distedMap[row].name
         }
         return ""
     }

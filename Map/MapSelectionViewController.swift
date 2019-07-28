@@ -23,6 +23,8 @@ class MapSelectionViewController: UIViewController,CLLocationManagerDelegate {
     var address : String!
     var latitude : Double!
     var longitude : Double!
+    var maps = [Maps]()
+    var sportType : String!
     var flag = true
     
     required init?(coder aDecoder: NSCoder) {
@@ -31,26 +33,8 @@ class MapSelectionViewController: UIViewController,CLLocationManagerDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        for i in 0 ..< Manager.mapData.courtList.count{
-            var annotionCoordinate = CLLocationCoordinate2D()
-            annotionCoordinate.latitude = Manager.mapData.latitudeList[i]
-            annotionCoordinate.longitude = Manager.mapData.longitudeList[i]
-            
-            
-            let annotation = customAnnotation()
-            annotation.coordinate = annotionCoordinate
-            annotation.title = "\(Manager.mapData.courtList[i])"
-            annotation.subtitle = "\(Manager.mapData.addressList[i])"
-            
-            
-            
-            if annotation.Id == "111"{
-                annotation.title = "711"
-                annotation.subtitle = "222"
-            }
-            
-            self.mapView.addAnnotation(annotation)
-        }
+
+        
     }
     
     override func viewDidLoad() {
@@ -65,14 +49,32 @@ class MapSelectionViewController: UIViewController,CLLocationManagerDelegate {
         locationManager.requestAlwaysAuthorization()
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
         locationManager.startUpdatingLocation()
+
         // Do any additional setup after loading the view.
     }
+    
+   
     
     override func didMove(toParent parent: UIViewController?) {
         mapVC = parent as! MapViewController
         self.activity = mapVC!.activity
+        self.sportType = mapVC!.sportType
         print(self.activity)
-        
+        self.maps = Manager.shared.queryMapsFromCoreData(type: self.sportType)
+        for i in 0 ..< maps.count{
+            var annotionCoordinate = CLLocationCoordinate2D()
+            annotionCoordinate.latitude = maps[i].latitude
+            annotionCoordinate.longitude = maps[i].longitude
+            
+            
+            let annotation = customAnnotation()
+            annotation.coordinate = annotionCoordinate
+            annotation.title = maps[i].name
+            annotation.subtitle = maps[i].address
+            
+            
+            self.mapView.addAnnotation(annotation)
+        }
         
     }
     

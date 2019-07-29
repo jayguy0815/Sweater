@@ -28,6 +28,6 @@ class Activity : NSManagedObject{
     @NSManaged var modifiedTime : Double
     @NSManaged var latestPost : String
     @NSManaged var latestPostTime : Double
-    @NSManaged var unread : Int
+    @NSManaged var unread : Bool
     @NSManaged var type : String
 }

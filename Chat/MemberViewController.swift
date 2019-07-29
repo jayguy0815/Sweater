@@ -7,20 +7,84 @@
 //
 
 import UIKit
+import CoreData
+import Firebase
 
 class MemberViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
     
+    var activity : Activity!
     var members : [Account]!
+    var activityListener : ListenerRegistration?
+    var accountListener : ListenerRegistration?
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.members.sort { (a1, a2) -> Bool in
+            a1.postTime>a2.postTime
+        }
+        self.activityListener = Firestore.firestore().collection("activities").document(self.activity.key).addSnapshotListener({ (snapshot, error) in
+            if let err = error {
+                print(err)
+            }
+            guard let queryActivity = snapshot?.data() else {
+                return
+            }
+            let count = queryActivity["participateCounter"] as! Int
+            let participates = queryActivity["participates"] as! [String]
+            var accounts = [Account]()
+            for participate in participates {
+                var account = Manager.shared.querySpecificAccount(uid: participate)
+                accounts.append(account)
+            }
+            accounts.sort(by: { (a1, a2) -> Bool in
+                a1.postTime > a2.postTime
+            })
+            if self.members == accounts{
+                return
+            }else{
+                self.members = accounts
+                self.tableView.reloadData()
+            }
+        })
+        
+        self.accountListener = Firestore.firestore().collection("user_data").addSnapshotListener({ (snapshot, error) in
+            if let err = error {
+                print(err)
+            }
+            guard let queryAccounts = snapshot?.documentChanges else {
+                return
+            }
+            queryAccounts.forEach({ (diff) in
+                for i in 0..<self.members.count {
+                    if self.members[i].uid == diff.document.data()["uid"] as! String {
+                        if self.members[i].accountImageURL != diff.document.data()["accountImageURL"] as! String{
+                            DispatchQueue.main.asyncAfter(deadline: .now()+1, execute: {
+                                self.tableView.reloadRows(at: [IndexPath(row: i, section: 0)], with: .automatic)
+                            })
+                        }
+                    }
+                }
+            })
+        })
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let backButton = UIBarButtonItem()
+        backButton.title = "返回"
+        self.navigationController?.navigationBar.topItem?.backBarButtonItem = backButton
         self.navigationItem.title = "成員"
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = UIColor(named: "backGreen")
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.activityListener?.remove()
     }
 }
 

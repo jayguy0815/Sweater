@@ -9,6 +9,7 @@
 import UIKit
 import CoreLocation
 import MapKit
+import Firebase
 
 class DetailViewController: UIViewController {
 
@@ -174,6 +175,53 @@ extension DetailViewController : UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        if indexPath.section == 2{
+            guard let uid = UserDefaults.standard.string(forKey: "uid") else{
+                return
+            }
+            var array = self.activity.participants
+            for i in 0..<array.count{
+                if array[i] == uid{
+                     array.remove(at: i)
+                     break
+                }
+            }
+            
+            guard let nickName = UserDefaults.standard.string(forKey: "nickname") else {
+                return
+            }
+            
+            let postTime = Double(Date().timeIntervalSince1970)
+           
+            let dic : [String:Any] = ["participates": array , "participateCounter" : array.count , "modifiedTime" : postTime , "lastMessage" : "\(nickName)已退出活動" , "lastMessageTime" : postTime]
+            let uuid = UUID().uuidString
+            
+            let message : [String:Any] = ["senderID":uid,"senderName":nickName ,"content":"\(nickName)已退出活動","sendDate":Date(),"messageId":uuid,"postTime":postTime]
+            
+            let alert = UIAlertController(title: "退出", message: "確定要退出活動？", preferredStyle: .actionSheet)
+            let okAction = UIAlertAction(title: "確定", style: .destructive) { (action) in
+                Firestore.firestore().collection("activities").document(self.activity.key).updateData(dic, completion: { (error) in
+                    if let err = error{
+                        print(err)
+                    }
+                    Firestore.firestore().collection("channels").document(self.activity.key).collection("messages").document(uuid).setData(message, completion: { (error) in
+                        if let err = error{
+                            print(err)
+                        }
+                        let okAlert = UIAlertController(title: "", message: "退出成功!", preferredStyle: .alert)
+                        let okAction2 = UIAlertAction(title: "好", style: .default, handler: { (action) in
+                            self.navigationController?.popToRootViewController(animated: true)
+                        })
+                        okAlert.addAction(okAction2)
+                        self.present(okAlert,animated: true , completion: nil)
+                    })
+                })
+            }
+            let cancelAction = UIAlertAction(title: "取消", style: .default, handler: nil)
+            alert.addAction(okAction)
+            alert.addAction(cancelAction)
+            self.present(alert,animated: true,completion: nil)
+        }
     }
     
     

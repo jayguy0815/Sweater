@@ -14,10 +14,13 @@ import FirebaseFirestore
 import IQKeyboardManagerSwift
 import NotificationCenter
 import Photos
+import CoreData
 
 
 class ChatRoomViewController: MessagesViewController {
     var listener : ListenerRegistration?
+    
+    var activityListener : ListenerRegistration?
     
     var messages: [Message] = []
     
@@ -102,6 +105,36 @@ class ChatRoomViewController: MessagesViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.navigationItem.title = "\(self.activity.name)(\(self.activity.participantCounter))"
+        self.activityListener = Firestore.firestore().collection("activities").document(self.activity.key).addSnapshotListener({ (snapshot, error) in
+            print("a")
+            if let err = error {
+                print(err)
+            }
+            guard let queryActivity = snapshot?.data() else {
+                return
+            }
+            let name = queryActivity["activityName"] as! String
+            let count = queryActivity["participateCounter"] as! Int
+            self.navigationItem.title = "\(name)(\(count))"
+            
+                self.messagesCollectionView.reloadDataAndKeepOffset()
+            let users = Manager.shared.queryAccountFromCoreData()
+            self.account.removeAll()
+            for i in 0..<users.count{
+                if self.activity.participants.contains(users[i].uid){
+                    self.account.append(users[i])
+                }
+            }
+                let ds = DS(activity: self.activity, participates: self.account)
+                self.peopleCollectionView.delegate = ds
+                self.peopleCollectionView.reloadData()
+                self.peopleCollectionView.layoutSubviews()
+            
+            
+            
+        })
+        
+       
         
         
         
@@ -152,12 +185,19 @@ class ChatRoomViewController: MessagesViewController {
     }
     
     @objc func didTapOnCollectionView (recognizer: UITapGestureRecognizer) {
+        self.collectionViewHeightCons.constant = 0
+        self.view.layoutIfNeeded()
+        self.peopleCollectionView.layoutSubviews()
+    
+        self.titletapped = false
         performSegue(withIdentifier: "memberSegue", sender: nil)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        let backButton = UIBarButtonItem()
+        backButton.title = "返回"
+        self.navigationController?.navigationBar.topItem?.backBarButtonItem = backButton
         let ds = DS(activity: self.activity, participates: self.account)
        
         let tap = UITapGestureRecognizer(target: self, action: #selector(didTapOnCollectionView(recognizer:)))
@@ -227,7 +267,10 @@ class ChatRoomViewController: MessagesViewController {
                                     self.messages.sort(by: { (m1, m2)-> Bool in
                                         m1.postTime!<m2.postTime!
                                     })
+                                    
                                     DispatchQueue.main.asyncAfter(deadline: .now()+1.0, execute: {
+                                       
+                                        Manager.shared.read(activityID: self.activity.key)
                                         self.messagesCollectionView.reloadData()
                                         self.messagesCollectionView.scrollToBottom(animated: true)
                                     })
@@ -240,6 +283,7 @@ class ChatRoomViewController: MessagesViewController {
                 self.messages.sort(by: { (m1, m2)-> Bool in
                     m1.postTime!<m2.postTime!
                 })
+                
                 self.messagesCollectionView.reloadData()
                 self.messagesCollectionView.scrollToBottom()
             }
@@ -253,6 +297,7 @@ class ChatRoomViewController: MessagesViewController {
             self.messagesCollectionView.reloadData()
             self.messagesCollectionView.scrollToBottom()
             self.listener = ref.document("\(activity.key)").collection("messages").whereField("postTime", isGreaterThan: UserDefaults.standard.double(forKey: "\(activity.key)updated")).addSnapshotListener({ (snapshot, error) in
+                print("b")
                 print("start listen")
                 if error != nil {
                     print(error)
@@ -275,7 +320,9 @@ class ChatRoomViewController: MessagesViewController {
                         self.messages.sort(by: { (m1, m2)-> Bool in
                             m1.postTime!<m2.postTime!
                         })
-                        DispatchQueue.main.asyncAfter(deadline: .now()+1.0, execute: {
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now()+3.0, execute: {
+                            Manager.shared.read(activityID: self.activity.key)
                             self.messagesCollectionView.reloadData()
                             self.messagesCollectionView.scrollToBottom(animated: true)
                         })
@@ -339,6 +386,7 @@ class ChatRoomViewController: MessagesViewController {
         IQKeyboardManager.shared.enable = true
         NotificationCenter.default.removeObserver(self)
         self.listener?.remove()
+        self.activityListener?.remove()
         UserDefaults.standard.set(self.messages.last?.postTime!, forKey: "\(self.activity.key)updated")
         
         
@@ -361,9 +409,16 @@ class ChatRoomViewController: MessagesViewController {
     private func save(_ message: Message) {
         
         let dic : [String:Any] = ["senderID":message.senderID,"senderName":message.senderName ,"content":message.text,"sendDate":message.sendTime,"messageId":message.messageId,"postTime":message.postTime]
+        let activityDic : [String:Any] = ["lastMessage":message.text , "lastMessageTime":message.postTime , "modifiedTime":message.postTime]
        
         
         ref.document(activity.key).collection("messages").addDocument(data: dic)
+        
+        Firestore.firestore().collection("activities").document(activity.key).updateData(activityDic) { (error) in
+            if let err = error {
+                print(err)
+            }
+        }
         
     }
     
@@ -382,6 +437,7 @@ class ChatRoomViewController: MessagesViewController {
             detailVC.activity = self.activity
         }else if segue.identifier == "memberSegue"{
             let memberVC = segue.destination as! MemberViewController
+            memberVC.activity = self.activity
             memberVC.members = self.account
         }
     }
@@ -507,7 +563,7 @@ extension ChatRoomViewController : MessagesDataSource {
         at indexPath: IndexPath,
         in messagesCollectionView: MessagesCollectionView) -> CGFloat {
         
-        return 12
+        return 14
     }
     
 //    func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
@@ -520,14 +576,28 @@ extension ChatRoomViewController : MessagesDataSource {
         var nSAttributedString = NSAttributedString(
             string: "使用者",
             attributes: [.font: UIFont.systemFont(ofSize: 10)])
-        for user in account {
-            if message.sender.senderId == user.uid{
-                nSAttributedString = NSAttributedString(
-                    string: user.nickname,
-                    attributes: [.font: UIFont.systemFont(ofSize: 10)])
-            }
-        }
+//        for user in account {
+//            if message.sender.senderId == user.uid{
+//                nSAttributedString = NSAttributedString(
+//                    string: user.nickname,
+//                    attributes: [.font: UIFont.systemFont(ofSize: 10)])
+//            }
+//        }
         
+        if self.activity.participants.contains(message.sender.senderId){
+            for account in self.account{
+                if account.uid == message.sender.senderId{
+                    nSAttributedString = NSAttributedString(
+                        string: account.nickname,
+                        attributes: [.font: UIFont.systemFont(ofSize: 10)])
+                }
+            }
+            
+        }else{
+            nSAttributedString = NSAttributedString(
+                string: "使用者",
+                attributes: [.font: UIFont.systemFont(ofSize: 10)])
+        }
         
         
         return nSAttributedString
@@ -536,17 +606,59 @@ extension ChatRoomViewController : MessagesDataSource {
 //    func messageBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
 //
 //    }
-    func cellBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+    func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
         return 12
     }
     
-    func cellBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
+    func messageBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
         var attributes = [NSAttributedString.Key: AnyObject]()
         attributes[.foregroundColor] = UIColor.lightGray.withAlphaComponent(0.6)
         attributes[.font] =  UIFont.systemFont(ofSize: 10)
         let timeInterval = messages[indexPath.section].postTime! as! TimeInterval
         let dateText = Manager.shared.timeIntervaltoDatetoString(timeInterval: timeInterval, format: "HH:mm")
         return NSAttributedString(string: dateText , attributes: attributes)
+    }
+    
+    func cellTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+        
+        if indexPath.section == 0 {
+            return 20
+        }else if indexPath.section > 0{
+             let timeInterval = messages[indexPath.section].postTime!
+            let timeInterval1 = messages[indexPath.section-1].postTime!
+            
+            let date = Date(timeIntervalSince1970: timeInterval)
+            let date1 = Date(timeIntervalSince1970: timeInterval1)
+            if date.compare(with: date1, only: .day) == 1 {
+                return 20
+            }
+            
+            }else {
+                return 0
+            }
+        return 0
+    
+    }
+    
+    func cellTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
+        let timeInterval = messages[indexPath.section].postTime!
+        let dateText = Manager.shared.timeIntervaltoDatetoString(timeInterval: timeInterval, format: "MM/dd")
+        if indexPath.section == 0 {
+            return NSAttributedString(string:  dateText, attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.darkGray])
+        }else if indexPath.section > 0{
+            let timeInterval1 = messages[indexPath.section-1].postTime!
+            let date = Date(timeIntervalSince1970: timeInterval)
+            let date1 = Date(timeIntervalSince1970: timeInterval1)
+            if date.compare(with: date1, only: .day) == 1 {
+                let dateText1 = Manager.shared.timeIntervaltoDatetoString(timeInterval: timeInterval, format: "MM/dd")
+                return NSAttributedString(string:  dateText1, attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.darkGray])
+            }else {
+                return nil
+            }
+        }
+            
+        
+        return nil
     }
     
     
@@ -608,7 +720,14 @@ extension UIView{
     }
 }
 
-
+extension Date {
+    
+    func compare(with date: Date, only component: Calendar.Component) -> Int {
+        let days1 = Calendar.current.component(component, from: self)
+        let days2 = Calendar.current.component(component, from: date)
+        return days1 - days2
+    }
+}
 
 
 

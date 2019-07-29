@@ -123,7 +123,23 @@ extension ActivityListViewController : UITableViewDelegate, UITableViewDataSourc
         cell.activityNameLabel.text = self.activities[indexPath.row].name
         cell.courtNameLabel.text = self.activities[indexPath.row].courtName
         cell.peopleCountLabel.text = "人數  \(self.activities[indexPath.row].participantCounter)/ \(self.activities[indexPath.row].peopleCounter)"
-        cell.sportTypeImageView.image = UIImage(named: "basketballCellIcon")
+        if self.activities[indexPath.row].type == "籃球"{
+            cell.sportTypeImageView.image = UIImage(named: "circle-basketball")!
+        }else if self.activities[indexPath.row].type == "健身"{
+            cell.sportTypeImageView.image = UIImage(named: "circle-workout")!
+        }else if self.activities[indexPath.row].type == "棒球"{
+            cell.sportTypeImageView.image = UIImage(named: "circle-baseball")!
+        }else if self.activities[indexPath.row].type == "游泳"{
+            cell.sportTypeImageView.image = UIImage(named: "circle-swim")!
+        }else if self.activities[indexPath.row].type == "網球"{
+            cell.sportTypeImageView.image = UIImage(named: "circle-tennis")!
+        }else if self.activities[indexPath.row].type == "足球"{
+            cell.sportTypeImageView.image = UIImage(named: "circle-soccer")!
+        }else if self.activities[indexPath.row].type == "排球"{
+            cell.sportTypeImageView.image = UIImage(named: "circle-volleyball")!
+        }else if self.activities[indexPath.row].type == "羽球"{
+            cell.sportTypeImageView.image = UIImage(named: "circle-badminton")!
+        }
         cell.backgroundColor = UIColor(named: "backGreen")
         return cell
     }

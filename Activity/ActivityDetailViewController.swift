@@ -79,7 +79,10 @@ class ActivityDetailViewController: UIViewController {
                 let count = part+1
                 let timeInterval:TimeInterval = Date().timeIntervalSince1970
                 let lastUpdateActivityTime = Double(timeInterval)
-                Firestore.firestore().collection("activities").document(self.activity.key).updateData(["participateCounter": count,"participates": FieldValue.arrayUnion([uid]),"modifiedTime":lastUpdateActivityTime], completion: { (error) in
+                guard let nickname = UserDefaults.standard.string(forKey: "nickname") else {
+                    return
+                }
+                Firestore.firestore().collection("activities").document(self.activity.key).updateData(["participateCounter": count,"participates": FieldValue.arrayUnion([uid]),"modifiedTime":lastUpdateActivityTime , "lastMessage" : "\(nickname)加入活動", "lastMessageTime" : lastUpdateActivityTime], completion: { (error) in
                     if let err = error{
                         print(err)
                         return
@@ -88,7 +91,7 @@ class ActivityDetailViewController: UIViewController {
                     guard let nickname = UserDefaults.standard.string(forKey: "nickname") else {
                         return
                     }
-                    let defaultMessage : [String:Any] = ["senderID":uid,"senderName":nickname ,"content":"\(nickname)加入活動","sendDate":Date(),"messageId":uuid,"postTime":Double(Date().timeIntervalSince1970)]
+                    let defaultMessage : [String:Any] = ["senderID":uid,"senderName":nickname ,"content":"\(nickname)加入活動","sendDate":Date(),"messageId":uuid,"postTime":lastUpdateActivityTime]
                     Firestore.firestore().collection("channels").document(key).collection("messages").document(uuid).setData(defaultMessage, completion: { (error) in
                         if error != nil {
                             print(error)

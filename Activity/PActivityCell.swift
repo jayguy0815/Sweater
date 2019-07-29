@@ -10,9 +10,16 @@ import UIKit
 
 class PActivityCell: UITableViewCell {
 
+    @IBOutlet weak var sportTypeImageView: UIImageView!
+    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var messageLabel: UILabel!
+    @IBOutlet weak var unreadLabel: UILabel!
+    @IBOutlet weak var timeLabel: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        sportTypeImageView.layer.cornerRadius = 5
+        sportTypeImageView.clipsToBounds = true
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

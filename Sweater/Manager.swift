@@ -228,6 +228,9 @@ class Manager {
                     activity.participants = document.get("participates") as! [String]
                     activity.postTime = document.get("postTime") as! Double
                     activity.modifiedTime = document.get("modifiedTime") as! Double
+                    activity.type = document.get("type") as! String
+                    activity.latestPost = document.get("lastMessage") as! String
+                    activity.latestPostTime = document.get("lastMessageTime") as! Double
                     CoreDataHelper.shared.saveContext()
                 }
             }
@@ -441,6 +444,9 @@ class Manager {
         activity.peopleCounter = diff.document.get("peopleCounter") as! Int
         activity.participants = diff.document.get("participates") as! [String]
         activity.postTime = diff.document.get("postTime") as! Double
+        activity.type = diff.document.get("type") as! String
+        activity.latestPost = diff.document.get("lastMessage") as! String
+        activity.latestPostTime = diff.document.get("lastMessageTime") as! Double
         CoreDataHelper.shared.saveContext()
     }
     
@@ -479,7 +485,7 @@ class Manager {
         
     }
     
-    func updateActivity (key : String, count : Int, uids : [String]) {
+    func updateActivity (key : String, count : Int, uids : [String], mess : String , time : Double) {
         
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Activity")
         request.predicate = NSPredicate(format:"(key = %@)", (key))
@@ -488,8 +494,11 @@ class Manager {
                 let results = try CoreDataHelper.shared.managedObjectContext().fetch(request)  as! [Activity]
                 
                 if results.count > 0 {
-                    
+                    results[0].modifiedTime = time
+                    results[0].latestPostTime = time
+                    results[0].latestPost = mess
                     results[0].participantCounter = count
+                    results[0].unread = true
                     results[0].participants.removeAll()
                     for uid in uids{
                         results[0].participants.append(uid)
@@ -658,11 +667,17 @@ class Manager {
                                     }
                                 }
                             }else {
+                                
+                                
+                                
+                                
                                 if updateTime < modTime{
                                     let uidArray = diff.document.get("participates") as! [String]
                                     let count = diff.document.get("participateCounter") as! Int
+                                    let mess = diff.document.get("lastMessage") as! String
+                                    let time = diff.document.get("lastMessageTime") as! Double
                                     print("modified")
-                                    Manager.shared.updateActivity(key: diff.document.documentID, count: count, uids: uidArray)
+                                    Manager.shared.updateActivity(key: diff.document.documentID, count: count, uids: uidArray , mess:  mess , time: time)
                                 }
                             }
                         }
@@ -675,8 +690,10 @@ class Manager {
                 if diff.type == .modified{
                     let uidArray = diff.document.get("participates") as! [String]
                     let count = diff.document.get("participateCounter") as! Int
+                    let mess = diff.document.get("lastMessage") as! String
+                    let time = diff.document.get("lastMessageTime") as! Double
                     print("modified")
-                    Manager.shared.updateActivity(key: diff.document.documentID, count: count, uids: uidArray)
+                     Manager.shared.updateActivity(key: diff.document.documentID, count: count, uids: uidArray , mess:  mess , time: time)
                 }
                 if diff.type == .removed{
                     let key = diff.document.documentID
@@ -730,6 +747,22 @@ class Manager {
         return accounts
     }
     
+    func querySpecificAccount(uid:String)->Account{
+        var account = Account()
+        let moc = CoreDataHelper.shared.managedObjectContext()
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Account")
+        request.predicate = NSPredicate(format:"(uid = %@)", (uid))
+        do{
+            let results = try moc.fetch(request) as! [Account]
+            if results.count > 0 {
+                account = results[0]
+            }
+        }catch{
+            fatalError()
+        }
+        return account
+    }
+    
     func saveMessage(key : String , messages : [Message]){
         let homeURL = URL(fileURLWithPath: NSHomeDirectory())
         let documents = homeURL.appendingPathComponent("Documents")
@@ -765,6 +798,25 @@ class Manager {
             print("error \(error)")
         }
         return messages
+    }
+    
+    func read(activityID : String){
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Activity")
+        request.predicate = NSPredicate(format:"(key = %@)", (activityID))
+        
+        do {
+            let results = try CoreDataHelper.shared.managedObjectContext().fetch(request)  as! [Activity]
+            
+            if results.count > 0 {
+                
+                results[0].unread = false
+                
+                CoreDataHelper.shared.saveContext()
+                
+            }
+        } catch {
+            fatalError("\(error)")
+        }
     }
     
 }

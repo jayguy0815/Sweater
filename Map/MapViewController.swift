@@ -209,6 +209,20 @@ class MapViewController: UIViewController , CLLocationManagerDelegate ,MKMapView
         }
     }
     
+    func mapViewDidFinishLoadingMap(_ mapView: MKMapView) {
+        if let userLocationView = mapView.view(for: mapView.userLocation) {
+            userLocationView.canShowCallout = false
+        }
+    }
+    
+    func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
+        for view in views {
+            if view.annotation is MKUserLocation {
+                view.canShowCallout = false
+            }
+        }
+    }
+    
     func loadFromFile(){
         let homeURL = URL(fileURLWithPath: NSHomeDirectory())
         let documents = homeURL.appendingPathComponent("Documents")

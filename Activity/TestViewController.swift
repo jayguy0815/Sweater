@@ -24,6 +24,7 @@ class TestViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDe
     var address : String = ""
     var lat : Double = 0.0
     var long : Double = 0.0
+    var flag = true
     
     var name : String?
     var touchPoint : CGPoint?
@@ -42,7 +43,16 @@ class TestViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDe
     
     @IBOutlet weak var navBtn: UIBarButtonItem!
     
-
+    @IBAction func backBtnPressed(_ sender: Any) {
+        self.mapView.setRegion(MKCoordinateRegion(
+            center: self.mapView.userLocation.coordinate,
+            span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+        ), animated: true)
+    }
+    
+    
+    
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
        
@@ -55,26 +65,49 @@ class TestViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDe
     }
 
     @IBAction func navBtnPressed(_ sender: Any) {
-        if (UIApplication.shared.canOpenURL(URL(string:"comgooglemaps://")!)) {
-            let address = self.address
-            let urlString = "comgooglemaps://?daddr=\(address)&directionsmode=driving"
-            guard let url = URL(string: urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!) else{
-                assertionFailure("Fail to get comgooglemaps url.")
-                return
+        
+        let alertCon = UIAlertController(title: "導航至該場地", message: "請選擇一種方式", preferredStyle: .actionSheet)
+        let googleAction = UIAlertAction(title: "Google Maps", style: .default) { (action) in
+            if (UIApplication.shared.canOpenURL(URL(string:"comgooglemaps://")!)) {
+                let address = self.address
+                let urlString = "comgooglemaps://?daddr=\(address)&directionsmode=driving"
+                guard let url = URL(string: urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!) else{
+                    assertionFailure("Fail to get comgooglemaps url.")
+                    return
+                }
+                UIApplication.shared.open(url, options: [:]) { (success) in
+                    self.mapView.deselectAnnotation(self.mapView.selectedAnnotations[0], animated: true)
+                }
+                
+                
+            } else {
+                self.notInstall()
             }
-            UIApplication.shared.open(url, options: [:]) { (success) in
-                self.mapView.deselectAnnotation(self.mapView.selectedAnnotations[0], animated: true)
-            }
-            
-            
-        } else {
+        }
+        
+        let appleAction = UIAlertAction(title: "Apple Maps", style: .default) { (action) in
             let sourceCoordinate = CLLocationCoordinate2D(latitude: self.lat, longitude: self.long)
             let sourcePlace = MKPlacemark(coordinate: sourceCoordinate, addressDictionary: nil)
             let targetMapItem = MKMapItem(placemark: sourcePlace)
-            let options = [MKLaunchOptionsDirectionsModeKey:MKLaunchOptionsDirectionsModeWalking]
+            let options = [MKLaunchOptionsDirectionsModeKey:MKLaunchOptionsDirectionsModeDriving]
             targetMapItem.openInMaps(launchOptions: options)
             self.mapView.deselectAnnotation(self.mapView.selectedAnnotations[0], animated: true)
         }
+        
+        let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)
+        
+        alertCon.addAction(googleAction)
+        alertCon.addAction(appleAction)
+        alertCon.addAction(cancelAction)
+        
+        self.present(alertCon, animated: true, completion: nil)
+    }
+    
+    func notInstall(){
+        let alert = UIAlertController(title: "錯誤", message: "未安裝Google Maps", preferredStyle: .alert)
+        let action = UIAlertAction(title: "好", style: .default, handler: nil)
+        alert.addAction(action)
+        self.present(alert, animated: true ,completion: nil)
     }
     
     override func viewDidLoad() {
@@ -90,6 +123,7 @@ class TestViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDe
         print(NSHomeDirectory())
         mapView.delegate = self
         mapView.showsUserLocation = true
+        
         locationManager = CLLocationManager()
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
@@ -104,11 +138,14 @@ class TestViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDe
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        let currentLocation:CLLocation = locations.last! as CLLocation
-        let span:MKCoordinateSpan=MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-        var region:MKCoordinateRegion=MKCoordinateRegion(center: currentLocation.coordinate, span: span)
-        region.center=currentLocation.coordinate
-        self.mapView.setRegion(region, animated: true)
+        if flag == true{
+            let currentLocation:CLLocation = locations.last! as CLLocation
+            let span:MKCoordinateSpan=MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+            var region:MKCoordinateRegion=MKCoordinateRegion(center: currentLocation.coordinate, span: span)
+            region.center=currentLocation.coordinate
+            self.mapView.setRegion(region, animated: true)
+            flag = false
+        }
     }
     
     @objc func handleLongPress(gestureRecognizer : UIGestureRecognizer){
@@ -192,7 +229,9 @@ extension TestViewController : UIPickerViewDelegate,UIPickerViewDataSource{
     }
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        let ann = view.annotation as! customAnnotation
+        guard let ann = view.annotation as? customAnnotation else{
+            return
+        }
         self.address = ann.subtitle!
         self.lat = ann.coordinate.latitude
         self.long = ann.coordinate.longitude
@@ -202,6 +241,20 @@ extension TestViewController : UIPickerViewDelegate,UIPickerViewDataSource{
     
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
         self.navBtn.isEnabled = false
+    }
+    
+    func mapViewDidFinishLoadingMap(_ mapView: MKMapView) {
+        if let userLocationView = mapView.view(for: mapView.userLocation) {
+            userLocationView.canShowCallout = false
+        }
+    }
+    
+    func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
+        for view in views {
+            if view.annotation is MKUserLocation {
+                view.canShowCallout = false
+            }
+        }
     }
     
 }

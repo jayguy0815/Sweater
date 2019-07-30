@@ -25,7 +25,12 @@ class MemberCenterViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+//        tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
+        let contentOffset = tableView.contentOffset
         tableView.reloadData()
+        tableView.layoutIfNeeded()
+        tableView.setContentOffset(contentOffset, animated: false)
+
     }
     
     override func viewDidLoad() {

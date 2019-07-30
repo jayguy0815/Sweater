@@ -316,12 +316,15 @@
                             <constraint firstItem="9ZX-sb-nBr" firstAttribute="trailing" secondItem="Ba1-sR-Ck6" secondAttribute="trailing" constant="20" id="1kY-sx-BsF"/>
                             <constraint firstItem="ChE-Oj-srx" firstAttribute="top" secondItem="Ba1-sR-Ck6" secondAttribute="bottom" constant="9" id="2CM-ov-rQf"/>
                             <constraint firstAttribute="bottom" secondItem="ChE-Oj-srx" secondAttribute="bottom" constant="10" id="2Cp-kl-wmh"/>
+                            <constraint firstItem="mKq-ia-97w" firstAttribute="leading" secondItem="9ZX-sb-nBr" secondAttribute="leading" id="2xH-b7-oMR"/>
                             <constraint firstItem="9ZX-sb-nBr" firstAttribute="trailing" secondItem="ChE-Oj-srx" secondAttribute="trailing" constant="20" id="HqC-pA-RpK"/>
                             <constraint firstItem="ChE-Oj-srx" firstAttribute="leading" secondItem="9ZX-sb-nBr" secondAttribute="leading" constant="20" id="MiV-EX-cpF"/>
                             <constraint firstItem="mKq-ia-97w" firstAttribute="leading" secondItem="9ZX-sb-nBr" secondAttribute="leading" id="NMZ-7W-MSt"/>
                             <constraint firstAttribute="bottom" secondItem="mKq-ia-97w" secondAttribute="bottom" id="Oja-gi-pi5"/>
                             <constraint firstItem="mKq-ia-97w" firstAttribute="trailing" secondItem="9ZX-sb-nBr" secondAttribute="trailing" id="Wtr-po-DjG"/>
                             <constraint firstItem="Ba1-sR-Ck6" firstAttribute="leading" secondItem="9ZX-sb-nBr" secondAttribute="leading" constant="20" id="aIA-3U-HSt"/>
+                            <constraint firstAttribute="bottom" secondItem="mKq-ia-97w" secondAttribute="bottom" id="cYM-nO-dZH"/>
+                            <constraint firstItem="mKq-ia-97w" firstAttribute="trailing" secondItem="9ZX-sb-nBr" secondAttribute="trailing" id="vsd-J4-m12"/>
                             <constraint firstItem="Ba1-sR-Ck6" firstAttribute="top" secondItem="9ZX-sb-nBr" secondAttribute="top" constant="5" id="xnJ-1H-pnf"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="9ZX-sb-nBr"/>
@@ -405,7 +408,7 @@
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="y6l-Yp-3gU">
                                 <rect key="frame" x="0.0" y="64" width="375" height="554"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" red="0.57254901960000004" green="0.98823529409999999" blue="0.78823529410000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="activity" id="dDP-ex-aMr" customClass="ActivityListCell" customModule="Sweater" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="375" height="44"/>
@@ -843,9 +846,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="KH5-Zb-xj0">
-                                <rect key="frame" x="0.0" y="64" width="375" height="554"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="KH5-Zb-xj0">
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="memberCell" rowHeight="70" id="GU5-1Y-Etr" customClass="MemberCell" customModule="Sweater" customModuleProvider="target">
@@ -878,10 +880,10 @@
                                                 <constraint firstAttribute="trailing" secondItem="MWm-WS-9cg" secondAttribute="trailing" constant="12" id="Elh-Ml-IAc"/>
                                                 <constraint firstAttribute="bottom" secondItem="okW-yb-5oA" secondAttribute="bottom" constant="10" id="UrO-Ur-ZHe"/>
                                                 <constraint firstItem="MWm-WS-9cg" firstAttribute="leading" secondItem="okW-yb-5oA" secondAttribute="trailing" constant="20" id="azm-ZC-1GI"/>
-                                                <constraint firstItem="MWm-WS-9cg" firstAttribute="top" secondItem="Q8m-4x-Qj5" secondAttribute="top" constant="20" id="evF-Gi-aSv"/>
-                                                <constraint firstAttribute="bottom" secondItem="MWm-WS-9cg" secondAttribute="bottom" constant="19.5" id="iz3-8q-3NP"/>
+                                                <constraint firstItem="MWm-WS-9cg" firstAttribute="centerY" secondItem="Q8m-4x-Qj5" secondAttribute="centerY" id="qsK-kt-gEo"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <color key="backgroundColor" name="backGreen"/>
                                         <connections>
                                             <outlet property="accountImageView" destination="okW-yb-5oA" id="VPg-yR-Tra"/>
                                             <outlet property="nameLabel" destination="MWm-WS-9cg" id="Uhe-gh-FX3"/>
@@ -891,6 +893,12 @@
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="KH5-Zb-xj0" firstAttribute="leading" secondItem="5Ya-xW-vRz" secondAttribute="leading" id="G0h-2R-gdd"/>
+                            <constraint firstItem="KH5-Zb-xj0" firstAttribute="top" secondItem="5Ya-xW-vRz" secondAttribute="top" id="UXu-Ge-Wna"/>
+                            <constraint firstItem="KH5-Zb-xj0" firstAttribute="trailing" secondItem="5Ya-xW-vRz" secondAttribute="trailing" id="lWc-nM-4Mb"/>
+                            <constraint firstAttribute="bottom" secondItem="KH5-Zb-xj0" secondAttribute="bottom" id="rYz-Di-0CB"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="5Ya-xW-vRz"/>
                     </view>
                     <navigationItem key="navigationItem" id="WsT-qB-HSy"/>
@@ -1061,21 +1069,34 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S0p-7N-oSd">
+                                <rect key="frame" x="315" y="558" width="45" height="45"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="45" id="Hvx-fg-45B"/>
+                                    <constraint firstAttribute="height" constant="45" id="gTT-r3-c6p"/>
+                                </constraints>
+                                <state key="normal" image="navigation-2.png"/>
+                                <connections>
+                                    <action selector="backBtnPressed:" destination="pTu-25-CWY" eventType="touchUpInside" id="GC9-Dl-nkO"/>
+                                </connections>
+                            </button>
                             <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="A1o-tK-S18">
                                 <rect key="frame" x="0.0" y="451" width="375" height="216"/>
                             </pickerView>
                         </subviews>
                         <color key="backgroundColor" name="backGreen"/>
                         <constraints>
-                            <constraint firstItem="A1o-tK-S18" firstAttribute="leading" secondItem="nYh-J4-7Al" secondAttribute="leading" id="6SH-VL-0yf"/>
                             <constraint firstItem="Gm1-7Q-mdv" firstAttribute="leading" secondItem="d6a-xA-Mou" secondAttribute="leading" id="76k-Q5-cv6"/>
                             <constraint firstItem="Gm1-7Q-mdv" firstAttribute="top" secondItem="YGa-94-hd7" secondAttribute="bottom" constant="5" id="9zh-MA-X79"/>
-                            <constraint firstAttribute="bottom" secondItem="A1o-tK-S18" secondAttribute="bottom" id="MQG-q8-TbU"/>
+                            <constraint firstItem="nYh-J4-7Al" firstAttribute="bottom" secondItem="S0p-7N-oSd" secondAttribute="bottom" constant="15" id="PAH-zx-7El"/>
                             <constraint firstItem="Gm1-7Q-mdv" firstAttribute="bottom" secondItem="nYh-J4-7Al" secondAttribute="bottom" id="Psc-Zt-BTe"/>
                             <constraint firstItem="YGa-94-hd7" firstAttribute="leading" secondItem="nYh-J4-7Al" secondAttribute="leading" constant="16" id="X0p-6v-Lqo"/>
-                            <constraint firstItem="A1o-tK-S18" firstAttribute="trailing" secondItem="nYh-J4-7Al" secondAttribute="trailing" id="Z12-H0-qlw"/>
                             <constraint firstItem="nYh-J4-7Al" firstAttribute="trailing" secondItem="YGa-94-hd7" secondAttribute="trailing" constant="16" id="bPa-bX-bCi"/>
+                            <constraint firstItem="A1o-tK-S18" firstAttribute="leading" secondItem="nYh-J4-7Al" secondAttribute="leading" id="bii-FU-wgY"/>
+                            <constraint firstItem="A1o-tK-S18" firstAttribute="trailing" secondItem="nYh-J4-7Al" secondAttribute="trailing" id="jWd-06-EoV"/>
                             <constraint firstItem="YGa-94-hd7" firstAttribute="top" secondItem="nYh-J4-7Al" secondAttribute="top" constant="5" id="l10-fo-1Nb"/>
+                            <constraint firstAttribute="bottom" secondItem="A1o-tK-S18" secondAttribute="bottom" id="mwo-Ee-pgQ"/>
+                            <constraint firstItem="nYh-J4-7Al" firstAttribute="trailing" secondItem="S0p-7N-oSd" secondAttribute="trailing" constant="15" id="sMR-le-MvR"/>
                             <constraint firstItem="Gm1-7Q-mdv" firstAttribute="trailing" secondItem="nYh-J4-7Al" secondAttribute="trailing" id="zwk-hR-PDq"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="nYh-J4-7Al"/>
@@ -1131,13 +1152,26 @@
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Bhb-nt-lF5">
                                 <rect key="frame" x="20" y="0.0" width="335" height="555"/>
                             </mapView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nok-c4-Nx8">
+                                <rect key="frame" x="289" y="488" width="50" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="LbR-TM-AJj"/>
+                                    <constraint firstAttribute="width" constant="50" id="ciD-Nf-N4Z"/>
+                                </constraints>
+                                <state key="normal" image="navigation-2.png"/>
+                                <connections>
+                                    <action selector="backBtnPressed:" destination="3Lr-6V-u2g" eventType="touchUpInside" id="4JT-UR-bq6"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="Bhb-nt-lF5" firstAttribute="top" secondItem="38Y-5P-joL" secondAttribute="top" id="2J3-Ll-Reb"/>
                             <constraint firstItem="Bhb-nt-lF5" firstAttribute="leading" secondItem="38Y-5P-joL" secondAttribute="leading" constant="20" id="UIL-wo-U5X"/>
                             <constraint firstAttribute="trailing" secondItem="Bhb-nt-lF5" secondAttribute="trailing" constant="20" id="YeJ-un-6Hz"/>
+                            <constraint firstItem="IGE-t9-ljt" firstAttribute="trailing" secondItem="nok-c4-Nx8" secondAttribute="trailing" constant="36" id="ZIT-6Y-2Oe"/>
                             <constraint firstAttribute="bottom" secondItem="Bhb-nt-lF5" secondAttribute="bottom" constant="10" id="bMS-cO-lZF"/>
+                            <constraint firstItem="IGE-t9-ljt" firstAttribute="bottom" secondItem="nok-c4-Nx8" secondAttribute="bottom" constant="27" id="yuP-nA-bJt"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="IGE-t9-ljt"/>
                     </view>
@@ -1179,7 +1213,7 @@
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="4Gu-xm-t7v">
                                 <rect key="frame" x="0.0" y="64" width="375" height="554"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" name="backGreen"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="participateActivity" rowHeight="65" id="wcE-kC-n27" customClass="PActivityCell" customModule="Sweater" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="375" height="65"/>
@@ -1869,6 +1903,7 @@
         <image name="defaultAccountImage" width="500" height="500"/>
         <image name="info-3.png" width="18" height="18"/>
         <image name="location.png" width="18" height="18"/>
+        <image name="navigation-2.png" width="46.545455932617188" height="46.545455932617188"/>
         <image name="participation.png" width="19.200000762939453" height="19.200000762939453"/>
         <image name="photo-camera-edited_opt-2.png" width="24" height="24"/>
         <image name="positioningIcon" width="32" height="32"/>

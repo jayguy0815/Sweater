@@ -13,6 +13,12 @@ import CoreLocation
 
 class MapSelectionViewController: UIViewController,CLLocationManagerDelegate {
     @IBOutlet weak var mapView: MKMapView!
+    @IBAction func backBtnPressed(_ sender: Any) {
+        self.mapView.setRegion(MKCoordinateRegion(
+            center: self.mapView.userLocation.coordinate,
+            span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+        ), animated: true)
+    }
     
     var activity : [String:Any] = [:]
     var mapVC : MapViewController?
@@ -78,6 +84,7 @@ class MapSelectionViewController: UIViewController,CLLocationManagerDelegate {
         
     }
     
+    
 }
 
 extension MapSelectionViewController : MKMapViewDelegate{
@@ -104,6 +111,11 @@ extension MapSelectionViewController : MKMapViewDelegate{
             mapVC?.address = self.address
             mapVC?.latitude = annotation.coordinate.latitude
             mapVC?.longitude = annotation.coordinate.longitude
+        }
+    }
+    func mapViewDidFinishLoadingMap(_ mapView: MKMapView) {
+        if let userLocationView = mapView.view(for: mapView.userLocation) {
+            userLocationView.canShowCallout = false
         }
     }
 }

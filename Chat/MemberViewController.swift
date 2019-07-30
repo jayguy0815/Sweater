@@ -76,6 +76,9 @@ class MemberViewController: UIViewController, ManagerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+//        self.members.sort { (a1, a2) -> Bool in
+//            a1.postTime>a2.postTime
+//        }
         Manager.shared.delegate = self
         let backButton = UIBarButtonItem()
         backButton.title = "返回"

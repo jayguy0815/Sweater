@@ -130,6 +130,7 @@ PODS:
   - nanopb/decode (0.3.901)
   - nanopb/encode (0.3.901)
   - Protobuf (3.8.0)
+  - Reachability (3.2)
   - RSKImageCropper (2.2.2)
 
 DEPENDENCIES:
@@ -143,6 +144,7 @@ DEPENDENCIES:
   - IQKeyboardManagerSwift
   - MessageInputBar
   - MessageKit
+  - Reachability
   - RSKImageCropper
 
 SPEC REPOS:
@@ -171,6 +173,7 @@ SPEC REPOS:
     - MessageKit
     - nanopb
     - Protobuf
+    - Reachability
     - RSKImageCropper
 
 SPEC CHECKSUMS:
@@ -198,8 +201,9 @@ SPEC CHECKSUMS:
   MessageKit: e892a9ca49ebe6d82684d3a93ad84021fa23e2c6
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   Protobuf: 3f617b9a6e73605565086864c9bc26b2bf2dd5a3
+  Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   RSKImageCropper: 05e3b82a18da83ea3c2b7bffa7f2199a621d6802
 
-PODFILE CHECKSUM: a675b5fc165cd60de365eb18aaad68cc0930bd8f
+PODFILE CHECKSUM: 90e8cdf932478f00c99a4cafdf5c7d6d15bb5ddc
 
 COCOAPODS: 1.6.1

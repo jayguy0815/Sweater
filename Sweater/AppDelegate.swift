@@ -14,6 +14,11 @@ import FirebaseAuth
 import IQKeyboardManagerSwift
 import CoreData
 
+protocol AppDelegateDelegate{
+    func didEnterBackground()
+    func didEnterForeground()
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
@@ -23,6 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var activityListener : ListenerRegistration?
     var accountListner : ListenerRegistration?
     var maplistener : ListenerRegistration?
+    var delegate : AppDelegateDelegate?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
@@ -109,6 +115,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
         //self.activityListener?.remove()
         //UserDefaults.standard.set(true, forKey: "isFirstLoadModified")
+        self.delegate?.didEnterBackground()
         self.activityListener?.remove()
         self.accountListner?.remove()
         UserDefaults.standard.set(Double(Date().timeIntervalSince1970), forKey: "lastLoadModifiedTime")
@@ -121,6 +128,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
+        self.delegate?.didEnterForeground()
         self.activityListener = Manager.shared.activityListener()
         self.accountListner = Manager.shared.accountListener()
     }

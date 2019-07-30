@@ -101,16 +101,12 @@ open class MessagesCollectionView: UICollectionView {
     }
 
     public func scrollToBottom(animated: Bool = false) {
-       
         let collectionViewContentHeight = collectionViewLayout.collectionViewContentSize.height
-        
+
         performBatchUpdates(nil) { _ in
             self.scrollRectToVisible(CGRect(0.0, collectionViewContentHeight - 1.0, 1.0, 1.0), animated: animated)
         }
-
-        
     }
-    
     
     public func reloadDataAndKeepOffset() {
         // stop scrolling

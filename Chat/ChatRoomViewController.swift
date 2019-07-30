@@ -17,7 +17,7 @@ import Photos
 import CoreData
 
 
-class ChatRoomViewController: MessagesViewController ,ManagerDelegate{
+class ChatRoomViewController: MessagesViewController, ManagerDelegate{
     func didFinishListen() {
         self.messagesCollectionView.reloadDataAndKeepOffset()
     }
@@ -48,6 +48,8 @@ class ChatRoomViewController: MessagesViewController ,ManagerDelegate{
     
     var titletapped = false
     
+    
+    
     var collectionView : UICollectionView!
     @IBOutlet weak var collectionViewHeightCons: NSLayoutConstraint!
     
@@ -63,6 +65,8 @@ class ChatRoomViewController: MessagesViewController ,ManagerDelegate{
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        
         tapGestureRecognizer = UITapGestureRecognizer(target:self, action: #selector(self.navBarTapped(_:)))
         
         self.navigationController?.navigationBar.addGestureRecognizer(tapGestureRecognizer)
@@ -78,7 +82,7 @@ class ChatRoomViewController: MessagesViewController ,ManagerDelegate{
 
         if self.titletapped == false{
             self.view.bringSubviewToFront(peopleCollectionView)
-            let ds = DS(activity: self.activity,participates: account)
+            let ds = DS(activity: self.activity,participates: self.account)
             self.peopleCollectionView.dataSource = ds
             self.peopleCollectionView.delegate = ds
             self.peopleCollectionView.backgroundColor = UIColor(named: "barGreen")
@@ -109,6 +113,46 @@ class ChatRoomViewController: MessagesViewController ,ManagerDelegate{
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.navigationItem.title = "\(self.activity.name)(\(self.activity.participantCounter))"
+        
+        if UserDefaults.standard.bool(forKey: "\(activity.key)performSegue") == true{
+            UserDefaults.standard.set(false, forKey: "\(activity.key)performSegue")
+            
+            self.listener = ref.document("\(activity.key)").collection("messages").whereField("postTime", isGreaterThan: UserDefaults.standard.double(forKey: "\(activity.key)updated")).addSnapshotListener({ (snapshot, error) in
+                print("b")
+                print("start listen")
+                if error != nil {
+                    print(error)
+                }
+                guard let querySnapshot = snapshot else {
+                    return
+                }
+                querySnapshot.documentChanges.forEach({ (diff) in
+                    if diff.type == .added{
+                        let newMessage = Message()
+                        newMessage.senderID = diff.document.get("senderID") as? String
+                        newMessage.senderName = diff.document.get("senderName") as? String
+                        newMessage.sendTime = diff.document.get("SendDate") as? Date
+                        newMessage.postTime = diff.document.get("postTime") as? Double
+                        newMessage.messageId = diff.document.documentID
+                        newMessage.text = diff.document.get("content") as? String
+                        
+                        self.messages.append(newMessage)
+                        Manager.shared.saveMessage(key: self.activity.key, messages: self.messages)
+                        self.messages.sort(by: { (m1, m2)-> Bool in
+                            m1.postTime!<m2.postTime!
+                        })
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now()+3.0, execute: {
+                            Manager.shared.read(activityID: self.activity.key)
+                            self.messagesCollectionView.reloadData()
+                            self.messagesCollectionView.scrollToBottom(animated: true)
+                        })
+                    }
+                })
+            })
+        }
+        
+        
         self.activityListener = Firestore.firestore().collection("activities").document(self.activity.key).addSnapshotListener({ (snapshot, error) in
             print("a")
             if let err = error {
@@ -120,8 +164,21 @@ class ChatRoomViewController: MessagesViewController ,ManagerDelegate{
             let name = queryActivity["activityName"] as! String
             let count = queryActivity["participateCounter"] as! Int
             self.navigationItem.title = "\(name)(\(count))"
+            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Activity")
+            request.predicate = NSPredicate(format:"(key = %@)", (self.activity.key))
             
-                self.messagesCollectionView.reloadDataAndKeepOffset()
+            do {
+                let results = try CoreDataHelper.shared.managedObjectContext().fetch(request)  as! [Activity]
+                
+                if results.count > 0 {
+                    results[0].unread = false
+                    CoreDataHelper.shared.saveContext()
+                    
+                }
+            } catch {
+                fatalError("\(error)")
+            }
+            self.messagesCollectionView.reloadDataAndKeepOffset()
             let users = Manager.shared.queryAccountFromCoreData()
             self.account.removeAll()
             for i in 0..<users.count{
@@ -129,6 +186,9 @@ class ChatRoomViewController: MessagesViewController ,ManagerDelegate{
                     self.account.append(users[i])
                 }
             }
+            self.account.sort(by: { (a1, a2) -> Bool in
+                a1.postTime>a2.postTime
+            })
                 let ds = DS(activity: self.activity, participates: self.account)
                 self.peopleCollectionView.delegate = ds
                 self.peopleCollectionView.reloadData()
@@ -199,6 +259,10 @@ class ChatRoomViewController: MessagesViewController ,ManagerDelegate{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let appDelgate = UIApplication.shared.delegate as! AppDelegate
+        appDelgate.delegate = self
+        
         Manager.shared.delegate = self
         let backButton = UIBarButtonItem()
         backButton.title = "返回"
@@ -214,6 +278,10 @@ class ChatRoomViewController: MessagesViewController ,ManagerDelegate{
             if self.activity.participants.contains(users[i].uid){
                 self.account.append(users[i])
             }
+            
+        }
+        account.sort { (a1, a2) -> Bool in
+            a1.postTime>a2.postTime
         }
         
         //self.navigationItem.rightBarButtonItem.fr
@@ -221,6 +289,8 @@ class ChatRoomViewController: MessagesViewController ,ManagerDelegate{
             return
         }
         self.uid = userid
+        
+        
         
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
@@ -230,18 +300,19 @@ class ChatRoomViewController: MessagesViewController ,ManagerDelegate{
         
         if UserDefaults.standard.bool(forKey: "\(activity.key)") == false{
             Firestore.firestore().collection("channels").document("\(activity.key)").collection("messages").order(by: "postTime", descending: false).getDocuments { (snapshot, error) in
+                print("message listening")
                 if error != nil {
                     print(error)
                 }
                 guard let fetchedMessages = snapshot?.documents else {
                     return
                 }
-
+                
                 for i in 0..<fetchedMessages.count{
                     let newMessage = Message()
                     newMessage.senderID = fetchedMessages[i].get("senderID") as! String
                     newMessage.senderName = fetchedMessages[i].get("senderName") as! String
-
+                    
                     newMessage.postTime = fetchedMessages[i].get("postTime") as! Double
                     let timeInterval64 = Int64(exactly: newMessage.postTime!.rounded())
                     newMessage.sendTime = Date(timeIntervalSince1970: TimeInterval(exactly: timeInterval64!)!)
@@ -274,9 +345,9 @@ class ChatRoomViewController: MessagesViewController ,ManagerDelegate{
                                     })
                                     
                                     DispatchQueue.main.asyncAfter(deadline: .now()+1.0, execute: {
-                                       
+                                        
                                         Manager.shared.read(activityID: self.activity.key)
-                                        self.messagesCollectionView.reloadData()
+                                        self.messagesCollectionView.reloadDataAndKeepOffset()
                                         self.messagesCollectionView.scrollToBottom(animated: true)
                                     })
                                 }
@@ -292,9 +363,10 @@ class ChatRoomViewController: MessagesViewController ,ManagerDelegate{
                 self.messagesCollectionView.reloadData()
                 self.messagesCollectionView.scrollToBottom()
             }
-           
+            
             UserDefaults.standard.set(true, forKey: "\(activity.key)")
-        }else if UserDefaults.standard.bool(forKey: "\(activity.key)") == true{
+        }
+        else if UserDefaults.standard.bool(forKey: "\(activity.key)") == true{
             self.messages = Manager.shared.loadMessage(key: activity.key)
             self.messages.sort(by: { (m1, m2)-> Bool in
                 m1.postTime!<m2.postTime!
@@ -335,6 +407,7 @@ class ChatRoomViewController: MessagesViewController ,ManagerDelegate{
                 })
             })
         }
+        
         
         
         
@@ -387,6 +460,7 @@ class ChatRoomViewController: MessagesViewController ,ManagerDelegate{
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+       print("viewWillDisappear")
         self.navigationController?.navigationBar.removeGestureRecognizer(tapGestureRecognizer)
         IQKeyboardManager.shared.enable = true
         NotificationCenter.default.removeObserver(self)
@@ -438,9 +512,11 @@ class ChatRoomViewController: MessagesViewController ,ManagerDelegate{
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "detailSegue" {
+            UserDefaults.standard.set(true, forKey: "\(activity.key)performSegue")
             let detailVC = segue.destination as! DetailViewController
             detailVC.activity = self.activity
         }else if segue.identifier == "memberSegue"{
+            UserDefaults.standard.set(true, forKey: "\(activity.key)performSegue")
             let memberVC = segue.destination as! MemberViewController
             memberVC.activity = self.activity
             memberVC.members = self.account
@@ -734,5 +810,16 @@ extension Date {
     }
 }
 
-
+extension ChatRoomViewController : AppDelegateDelegate{
+    func didEnterBackground() {
+//        UserDefaults.standard.set(self.messages.last?.postTime!, forKey: "\(self.activity.key)updated")
+//        self.activityListener?.remove()
+//        self.listener?.remove()
+        print("back")
+    }
+    
+    func didEnterForeground() {
+        print("front")
+    }
+}
 

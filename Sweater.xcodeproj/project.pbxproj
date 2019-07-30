@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1C50357D09967FFF7EB774CF /* Pods_Sweater.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39835F47F52F7EA2EDC0D609 /* Pods_Sweater.framework */; };
 		2D017B2722C33F22004E5C00 /* Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D017B2622C33F22004E5C00 /* Manager.swift */; };
 		2D04F38622E431EF004CE074 /* EditPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D04F38522E431EF004CE074 /* EditPasswordViewController.swift */; };
 		2D04F38822E433DF004CE074 /* EditPasswordCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D04F38722E433DF004CE074 /* EditPasswordCell.swift */; };
@@ -117,7 +118,6 @@
 		2DFF16B122B264F4002F4EE9 /* HanaMinA.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2DFF16B022B264F4002F4EE9 /* HanaMinA.ttf */; };
 		2DFF16F522B52A15002F4EE9 /* Method.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF16F422B52A15002F4EE9 /* Method.swift */; };
 		2DFF16F722B60F2B002F4EE9 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF16F622B60F2B002F4EE9 /* MapViewController.swift */; };
-		773815AD59FA5DB58325ECD6 /* Pods_Sweater.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 323902E647465D1EEE1FDB1D /* Pods_Sweater.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -234,9 +234,9 @@
 		2DFF16B022B264F4002F4EE9 /* HanaMinA.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = HanaMinA.ttf; sourceTree = "<group>"; };
 		2DFF16F422B52A15002F4EE9 /* Method.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Method.swift; sourceTree = "<group>"; };
 		2DFF16F622B60F2B002F4EE9 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
-		323902E647465D1EEE1FDB1D /* Pods_Sweater.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Sweater.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		725CE9A90FC3F29FE9AF2593 /* Pods-Sweater.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Sweater.release.xcconfig"; path = "Target Support Files/Pods-Sweater/Pods-Sweater.release.xcconfig"; sourceTree = "<group>"; };
-		9E8B81BA9AC1E0AEDD2507E4 /* Pods-Sweater.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Sweater.debug.xcconfig"; path = "Target Support Files/Pods-Sweater/Pods-Sweater.debug.xcconfig"; sourceTree = "<group>"; };
+		39835F47F52F7EA2EDC0D609 /* Pods_Sweater.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Sweater.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		41B3717CF34CDFACEF80146C /* Pods-Sweater.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Sweater.debug.xcconfig"; path = "Target Support Files/Pods-Sweater/Pods-Sweater.debug.xcconfig"; sourceTree = "<group>"; };
+		5D142F56A748E40BBB9DA7B7 /* Pods-Sweater.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Sweater.release.xcconfig"; path = "Target Support Files/Pods-Sweater/Pods-Sweater.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -244,7 +244,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				773815AD59FA5DB58325ECD6 /* Pods_Sweater.framework in Frameworks */,
+				1C50357D09967FFF7EB774CF /* Pods_Sweater.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -418,8 +418,8 @@
 				2D3F3FC5226F15360098B414 /* Products */,
 				2D060E8922AFDDD800BA34A6 /* plist */,
 				CCB3970F92647DE1F3F14B75 /* Pods */,
-				4EEB9B22BEDD6AAA2BC8FCC4 /* Frameworks */,
 				2D060E8C22AFDE3800BA34A6 /* Recovered References */,
+				DD38F7E1A4204E7F0E6AF942 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -508,21 +508,21 @@
 			path = Activity;
 			sourceTree = "<group>";
 		};
-		4EEB9B22BEDD6AAA2BC8FCC4 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				323902E647465D1EEE1FDB1D /* Pods_Sweater.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		CCB3970F92647DE1F3F14B75 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				9E8B81BA9AC1E0AEDD2507E4 /* Pods-Sweater.debug.xcconfig */,
-				725CE9A90FC3F29FE9AF2593 /* Pods-Sweater.release.xcconfig */,
+				41B3717CF34CDFACEF80146C /* Pods-Sweater.debug.xcconfig */,
+				5D142F56A748E40BBB9DA7B7 /* Pods-Sweater.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		DD38F7E1A4204E7F0E6AF942 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				39835F47F52F7EA2EDC0D609 /* Pods_Sweater.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -532,12 +532,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D3F3FD8226F15370098B414 /* Build configuration list for PBXNativeTarget "Sweater" */;
 			buildPhases = (
-				FC94C344CD769DAEACF5B702 /* [CP] Check Pods Manifest.lock */,
+				3EAEFB1DF5201DAFC55CFF5D /* [CP] Check Pods Manifest.lock */,
 				2D3F3FC0226F15360098B414 /* Sources */,
 				2D3F3FC1226F15360098B414 /* Frameworks */,
 				2D3F3FC2226F15360098B414 /* Resources */,
-				C7F6FF3BEAB7D1038D25F2FC /* [CP] Copy Pods Resources */,
-				0543FB416FDEC1F75B75F1F3 /* [CP] Embed Pods Frameworks */,
+				1277EDEB6E97BD68EDF53094 /* [CP] Embed Pods Frameworks */,
+				E06A4FD2DF8567FD62FA126D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -650,7 +650,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0543FB416FDEC1F75B75F1F3 /* [CP] Embed Pods Frameworks */ = {
+		1277EDEB6E97BD68EDF53094 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -668,6 +668,7 @@
 				"${BUILT_PRODUCTS_DIR}/MessageKit/MessageKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
 				"${BUILT_PRODUCTS_DIR}/RSKImageCropper/RSKImageCropper.framework",
+				"${BUILT_PRODUCTS_DIR}/Reachability/Reachability.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC-C++/grpcpp.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC-Core/grpc.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
@@ -686,6 +687,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MessageKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RSKImageCropper.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpcpp.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
@@ -696,7 +698,29 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Sweater/Pods-Sweater-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C7F6FF3BEAB7D1038D25F2FC /* [CP] Copy Pods Resources */ = {
+		3EAEFB1DF5201DAFC55CFF5D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Sweater-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E06A4FD2DF8567FD62FA126D /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -718,28 +742,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Sweater/Pods-Sweater-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		FC94C344CD769DAEACF5B702 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Sweater-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -925,7 +927,7 @@
 		};
 		2D3F3FD9226F15370098B414 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9E8B81BA9AC1E0AEDD2507E4 /* Pods-Sweater.debug.xcconfig */;
+			baseConfigurationReference = 41B3717CF34CDFACEF80146C /* Pods-Sweater.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -945,7 +947,7 @@
 		};
 		2D3F3FDA226F15370098B414 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 725CE9A90FC3F29FE9AF2593 /* Pods-Sweater.release.xcconfig */;
+			baseConfigurationReference = 5D142F56A748E40BBB9DA7B7 /* Pods-Sweater.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;

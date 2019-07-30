@@ -16,23 +16,51 @@ class DetailViewController: UIViewController {
     var activity : Activity!
     
     @IBAction func navBtnPressed(_ sender: Any) {
-        if (UIApplication.shared.canOpenURL(URL(string:"comgooglemaps://")!)) {
-            let address = activity.address
-            let urlString = "comgooglemaps://?daddr=\(address)&directionsmode=driving"
-            guard let url = URL(string: urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!) else{
-                assertionFailure("Fail to get comgooglemaps url.")
-                return
+        
+        let alertCon = UIAlertController(title: "導航至該場地", message: "請選擇一種方式", preferredStyle: .actionSheet)
+        let googleAction = UIAlertAction(title: "Google Maps", style: .default) { (action) in
+            if (UIApplication.shared.canOpenURL(URL(string:"comgooglemaps://")!)) {
+                let address = self.activity.address
+                let urlString = "comgooglemaps://?daddr=\(address)&directionsmode=driving"
+                guard let url = URL(string: urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!) else{
+                    assertionFailure("Fail to get comgooglemaps url.")
+                    return
+                }
+                UIApplication.shared.open(url, options: [:]) { (success) in
+                }
+                
+                
+            } else {
+                self.notInstall()
             }
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            
-        } else {
+        }
+        
+        let appleAction = UIAlertAction(title: "Apple Maps", style: .default) { (action) in
             let sourceCoordinate = CLLocationCoordinate2D(latitude: self.activity.latitue, longitude: self.activity.longitue)
             let sourcePlace = MKPlacemark(coordinate: sourceCoordinate, addressDictionary: nil)
             let targetMapItem = MKMapItem(placemark: sourcePlace)
-            let options = [MKLaunchOptionsDirectionsModeKey:MKLaunchOptionsDirectionsModeWalking]
+            let options = [MKLaunchOptionsDirectionsModeKey:MKLaunchOptionsDirectionsModeDriving]
             targetMapItem.openInMaps(launchOptions: options)
+           
         }
+        
+        let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)
+        
+        alertCon.addAction(googleAction)
+        alertCon.addAction(appleAction)
+        alertCon.addAction(cancelAction)
+        
+        self.present(alertCon, animated: true, completion: nil)
     }
+    
+    func notInstall(){
+        let alert = UIAlertController(title: "錯誤", message: "未安裝Google Maps", preferredStyle: .alert)
+        let action = UIAlertAction(title: "好", style: .default, handler: nil)
+        alert.addAction(action)
+        self.present(alert, animated: true ,completion: nil)
+    }
+    
+    
     
     
     @IBOutlet weak var detailTableView: UITableView!

@@ -12,6 +12,10 @@ import Firebase
 import CoreData
 import CoreLocation
 
+protocol ManagerDelegate {
+    func didFinishListen()
+}
+
 class Manager {
     var userAccount = Account()
     var activities = [Activity]()
@@ -19,6 +23,7 @@ class Manager {
     static var shared = Manager()
     static var mapData = MapData()
     var ref : DatabaseReference!
+    var delegate : ManagerDelegate?
     
     func loadImage(ref : StorageReference , imageName : String) -> Data{
         
@@ -472,6 +477,7 @@ class Manager {
                             results[0].accountImageURL = url
                         }
                         CoreDataHelper.shared.saveContext()
+                        self.delegate?.didFinishListen()
                     }
                 } catch {
                     fatalError("\(error)")
@@ -608,6 +614,7 @@ class Manager {
                                 let hobby = diff.document.get("hobby") as! String
                                 DispatchQueue.main.asyncAfter(deadline: .now()+1, execute: {
                                     Manager.shared.updateAccount(uid: id, nickname: nickname, hobby: hobby, url: url)
+                                    
                                 })
                                 print("user: \(id) modified")
                                 
@@ -624,6 +631,7 @@ class Manager {
                     let nickname = diff.document.get("nickname") as! String
                     let hobby = diff.document.get("hobby") as! String
                     Manager.shared.updateAccount(uid: diff.document.documentID, nickname: nickname, hobby: hobby, url: url)
+                    
                     print("user: \(diff.document.documentID) modified")
                 }
             })

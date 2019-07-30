@@ -17,7 +17,11 @@ import Photos
 import CoreData
 
 
-class ChatRoomViewController: MessagesViewController {
+class ChatRoomViewController: MessagesViewController ,ManagerDelegate{
+    func didFinishListen() {
+        self.messagesCollectionView.reloadDataAndKeepOffset()
+    }
+    
     var listener : ListenerRegistration?
     
     var activityListener : ListenerRegistration?
@@ -195,6 +199,7 @@ class ChatRoomViewController: MessagesViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        Manager.shared.delegate = self
         let backButton = UIBarButtonItem()
         backButton.title = "返回"
         self.navigationController?.navigationBar.topItem?.backBarButtonItem = backButton

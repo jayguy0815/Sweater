@@ -10,7 +10,11 @@ import UIKit
 import CoreData
 import Firebase
 
-class MemberViewController: UIViewController {
+class MemberViewController: UIViewController, ManagerDelegate {
+    func didFinishListen() {
+        self.tableView.reloadData()
+    }
+    
 
     @IBOutlet weak var tableView: UITableView!
     
@@ -49,29 +53,30 @@ class MemberViewController: UIViewController {
             }
         })
         
-        self.accountListener = Firestore.firestore().collection("user_data").addSnapshotListener({ (snapshot, error) in
-            if let err = error {
-                print(err)
-            }
-            guard let queryAccounts = snapshot?.documentChanges else {
-                return
-            }
-            queryAccounts.forEach({ (diff) in
-                for i in 0..<self.members.count {
-                    if self.members[i].uid == diff.document.data()["uid"] as! String {
-                        if self.members[i].accountImageURL != diff.document.data()["accountImageURL"] as! String{
-                            DispatchQueue.main.asyncAfter(deadline: .now()+1, execute: {
-                                self.tableView.reloadRows(at: [IndexPath(row: i, section: 0)], with: .automatic)
-                            })
-                        }
-                    }
-                }
-            })
-        })
+//        self.accountListener = Firestore.firestore().collection("user_data").addSnapshotListener({ (snapshot, error) in
+//            if let err = error {
+//                print(err)
+//            }
+//            guard let queryAccounts = snapshot?.documentChanges else {
+//                return
+//            }
+//            queryAccounts.forEach({ (diff) in
+//                for i in 0..<self.members.count {
+//                    if self.members[i].uid == diff.document.data()["uid"] as! String {
+//                        if self.members[i].accountImageURL != diff.document.data()["accountImageURL"] as! String{
+//                            DispatchQueue.main.asyncAfter(deadline: .now()+1, execute: {
+//                                self.tableView.reloadRows(at: [IndexPath(row: i, section: 0)], with: .automatic)
+//                            })
+//                        }
+//                    }
+//                }
+//            })
+//        })
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        Manager.shared.delegate = self
         let backButton = UIBarButtonItem()
         backButton.title = "返回"
         self.navigationController?.navigationBar.topItem?.backBarButtonItem = backButton
